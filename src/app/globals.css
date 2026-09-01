@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Design tokens — see .claude/context/DESIGN_SYSTEM.md
+   Single source of truth for color / typography tokens consumed by Tailwind
+   via @theme below. Only ONE accent is active at a time (spec §3).
+   ========================================================================== */
+
+:root {
+  --background-primary: #0a0a0a;
+  --background-secondary: #111111;
+  --surface: #141414;
+  --foreground-primary: #ffffff;
+  --foreground-muted: #8a8a8a;
+  --border: #242424;
+
+  /* Accent — swap this single value to change the site's dominant accent.
+     Alternatives: motorsport red #d62828, electric blue #2e6bff,
+     metallic silver #c7cbcf. See DECISIONS.md D-001. */
+  --accent: #e8b400;
+  --accent-foreground: #0a0a0a;
+}
+
+@theme inline {
+  --color-background-primary: var(--background-primary);
+  --color-background-secondary: var(--background-secondary);
+  --color-surface: var(--surface);
+  --color-foreground-primary: var(--foreground-primary);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --font-heading: var(--font-space-grotesk), sans-serif;
+  --font-technical: var(--font-jetbrains-mono), monospace;
+  --font-body: var(--font-inter), sans-serif;
+
+  /* Typography scale — see DESIGN_SYSTEM.md.
+     Spacing scale (4/8/12/16/24/32/48/64/96/128) is intentionally NOT
+     re-declared here: Tailwind's default spacing scale already follows a
+     4px base grid (1=4px, 2=8px, 3=12px, 4=16px, 6=24px, 8=32px, 12=48px,
+     16=64px, 24=96px, 32=128px), so the spec's spacing tokens are used via
+     Tailwind's built-in utilities directly. */
+  --text-display-xl: 5.5rem;
+  --text-display-xl--line-height: 1.0;
+  --text-display-xl--letter-spacing: -0.02em;
+
+  --text-display-lg: 3.75rem;
+  --text-display-lg--line-height: 1.05;
+  --text-display-lg--letter-spacing: -0.02em;
+
+  --text-heading-lg: 2.5rem;
+  --text-heading-lg--line-height: 1.1;
+  --text-heading-lg--letter-spacing: -0.01em;
+
+  --text-heading-md: 1.75rem;
+  --text-heading-md--line-height: 1.2;
+  --text-heading-md--letter-spacing: -0.01em;
+
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.6;
+
+  --text-body-md: 1rem;
+  --text-body-md--line-height: 1.6;
+
+  --text-caption: 0.875rem;
+  --text-caption--line-height: 1.5;
+
+  --text-technical-label: 0.75rem;
+  --text-technical-label--line-height: 1.4;
+  --text-technical-label--letter-spacing: 0.1em;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  background: var(--background-primary);
+  color: var(--foreground-primary);
+  font-family: var(--font-body);
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
