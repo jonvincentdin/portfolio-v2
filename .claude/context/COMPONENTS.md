@@ -31,6 +31,8 @@ Status legend: `[ ] planned  [~] in progress  [x] done`
 | ProjectFiles | File list + downloads + ZIP CTA | `project` | Server (renders the client `DownloadProjectButton`) | TechnicalLabel, DownloadProjectButton | [x] *(Milestone 06)* |
 | DownloadProjectButton | Idle/preparing/building/ready ZIP download trigger | `slug,folderName,className` | Client | — | [x] *(Milestone 06, not in original inventory — the client half of ProjectFiles' download state machine, spec §46)* |
 | CaseStudySection | Kicker + paragraph pattern for Overview/Problem/Objective/etc. | `label,content` | Server | TechnicalLabel, Reveal | [x] *(Milestone 06, not in original inventory)* |
+| EngineeringPrinciples | Numbered principles list (About page) | — (reads `ABOUT_CONTENT`) | Server | TechnicalLabel, Reveal | [x] *(Milestone 07, not in original inventory)* |
+| ServicesList | Services as vehicle-capability rows, not equal-sized cards | `services` | Server | TechnicalLabel, Reveal | [x] *(Milestone 07, not in original inventory — spec §55 didn't name a Services component explicitly)* |
 | ExperienceTimeline | Work history timeline | `entries[]` | Server | Reveal | [ ] |
 | EducationTimeline | Education history | `entries[]` | Server | Reveal | [ ] |
 | CertificationGallery | Cert list/grid | `certs[]` | Server | — | [ ] |

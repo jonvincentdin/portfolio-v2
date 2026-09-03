@@ -13,6 +13,12 @@
 | `/api/projects/[slug]/files/[...path]` | Serves a single downloadable file, whitelisted against that project's `files[]` entries | Route handler (Node runtime) |
 
 ## Notes
+- `/about` is fully built as of Milestone 07: headline + philosophy prose
+  (`lib/about.ts`), an Engineering Principles list, and Services (from
+  `getAllServices()`) — both lists deliberately avoid equal-sized card
+  grids (spec §11). Skills (the third piece of this route's original
+  grouping) is intentionally deferred to Milestone 08, added to this same
+  page rather than requiring a restructure.
 - `/projects/[slug]` is fully wired as of Milestone 06: hero, conditionally-
   rendered case study prose sections, features, specs, gallery, links, and
   Project Files all sourced from `getProjectBySlug()`. Every optional

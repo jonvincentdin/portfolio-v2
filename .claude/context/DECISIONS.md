@@ -5,6 +5,18 @@ Newest entries at the top.
 
 ---
 
+## D-017 — About page editorial content centralized in `lib/about.ts`
+**Decision:** The About page's headline, philosophy paragraphs, and
+engineering principles live in `src/lib/about.ts` as a plain constant
+(`ABOUT_CONTENT`), following the same pattern as `lib/site.ts` (D-011).
+**Reason:** This is personal/editorial copy — not one of the seven
+filesystem-discovered content types in CONTENT_SYSTEM.md — so it doesn't
+belong in `content/`. Keeping it in its own file rather than folding it
+into `site.ts` keeps `site.ts` focused on cross-page identity (name, role,
+social links) while About-page-specific prose has its own home, consistent
+with the project's existing "one small file per concern" pattern
+(`navigation.ts`, `social.ts`, `site.ts`).
+
 ## D-016 — Individual file downloads whitelisted against `files[]`, not just path-validated
 **Decision:** `/api/projects/[slug]/files/[...path]` only serves a request
 if the requested relative path exactly matches one of the project's own

@@ -1,7 +1,7 @@
 # PROGRESS.md
 
 ## Current Milestone
-MILESTONE 06 — PROJECT CASE STUDY + FILES (complete, awaiting approval to proceed)
+MILESTONE 07 — ABOUT + SERVICES (complete, awaiting approval to proceed)
 
 ## Completed
 ### Milestone 00 — Discovery
@@ -59,102 +59,73 @@ MILESTONE 06 — PROJECT CASE STUDY + FILES (complete, awaiting approval to proc
       reduced-motion branch logic in isolation via small Node scripts
 
 ### Milestone 06 — Project Case Study + Files
-- [x] `/projects/[slug]` fully built with `generateStaticParams()` sourced
-      from `getAllProjects()` — new project folders get a case study page
-      automatically, zero route changes
-- [x] Header (project number, name, tagline, year/role/status metadata),
-      giant hero image
-- [x] Case study prose sections (Overview, Problem, Objective, Solution,
-      Challenges, Results, Lessons) via new `CaseStudySection` component —
-      each rendered only when the corresponding `caseStudy` field is
-      actually non-empty. Fields the schema doesn't have (spec's separate
-      "Design Process"/"Architecture" split) are not fabricated — same
-      "only render what the data model actually has" discipline as every
-      prior milestone.
-- [x] Features section: new `ProjectFeature` component, alternating
-      left/right layout, gracefully handles a feature with no image
-      (verified: text spans full width, no broken image slot)
-- [x] Specifications: reused the existing `ProjectSpecs` component
-- [x] Screenshots: new `ProjectGallery` component, sourced from
-      `media.gallery`, simple CSS hover scale (no new `MotionImage`
-      component built — not required by this milestone's explicit scope,
-      noted in COMPONENTS.md as a candidate if a second real usage arises)
-- [x] Links section (Live/GitHub via `ArrowLink`) — hidden per-button when
-      empty, and the whole section hidden when both are empty
-- [x] Project Files: new `ProjectFiles` component — individual file list
-      (name, type, derived size via `getProjectFileSizeBytes()`/
-      `formatFileSize()`, download link) omitted entirely when `files[]` is
-      empty; new `DownloadProjectButton` client component implements the
-      idle → preparing → building → ready state machine (spec §46) and
-      always renders regardless of `files[]`, since it downloads the whole
-      folder
-- [x] Added a "View Case Study" link from the showroom (`ProjectViewer`) to
-      the new case study pages — spec §12 lists this as part of the
-      showroom screen, and it wasn't meaningful to add until the case study
-      page existed
-- [x] **ZIP download endpoint** (`/api/projects/[slug]/download`):
-      installed `archiver`; discovered during implementation that v8 ships
-      a class-based API (`ZipArchive`), not the classic factory function
-      D-004 had assumed — fixed and documented as D-015. Streams via
-      `Readable.toWeb`, never buffers the full archive, slug-validated
-      against `getAllProjects()`'s closed set (the path-traversal defense).
-- [x] **Individual file download endpoint**
-      (`/api/projects/[slug]/files/[...path]`): whitelisted against the
-      project's own `files[].path` entries specifically — stricter than
-      generic path-traversal prevention, since it also blocks downloading
-      real-but-undeclared files like `hero.webp` (D-016)
-- [x] `tsc --noEmit`, `eslint` clean (fixed an `archiver` type-import issue
-      along the way — `import * as archiver` doesn't match v8's named-export
-      class API; switched to `import { ZipArchive, type ArchiverError }`)
-- [x] `next build` clean, including the zero-projects edge case
-      (`generateStaticParams()` correctly returns `[]`, no crash) and the
-      full 3-project case (all three case study pages statically generated)
-- [x] Confirmed no `node:fs`/`node:stream`/`node:path` leaked into client
-      chunks despite the new server-only route handlers
-- [x] Verified against a running production server with real requests, not
-      just markup inspection:
-      - Both case study pages (full-featured Memora, lean CurriculumAxxer)
-        render correctly; unknown slug → 404
-      - Memora: all 7 case study sections present, both features render
-        correctly (with and without an image), gallery present, Links
-        section correctly absent (both URLs empty in the content), Project
-        Files list shows real derived sizes ("39 KB", "85 B")
-      - CurriculumAxxer: only Overview renders (the one non-empty
-        `caseStudy` field); every other optional section correctly absent;
-        "Download Project" still renders despite `files[]` being empty
-      - Individual file download: real PDF bytes returned, correct
-        `Content-Disposition` filename
-      - Individual file whitelist: requesting `hero.webp` through the files
-        route → 404 (real file, but not a declared downloadable)
-      - Path traversal attempt on the files route → 404
-      - Unknown slug on both API routes → 404
-      - ZIP download: `unzip -l` on the real downloaded archive confirmed
-        correct folder structure (`001-memora/files/...`,
-        `001-memora/screenshots/...`, etc.) under a top-level folder entry,
-        for both a project with a `files/` subfolder (Memora) and one
-        without (CurriculumAxxer)
+- [x] `/projects/[slug]` fully built with `generateStaticParams()`,
+      conditionally-rendered case study sections, alternating Features,
+      Specifications, Gallery, Links, and Project Files
+- [x] ZIP download endpoint (`/api/projects/[slug]/download`, `archiver`
+      v8's `ZipArchive` — D-015) and individual file download endpoint
+      (`/api/projects/[slug]/files/[...path]`, whitelisted against
+      `files[]` — D-016)
+- [x] `tsc --noEmit`, `eslint`, `next build` clean; verified against a
+      running production server with real downloads (`unzip -l` inspection
+      of the actual ZIP contents)
+
+### Milestone 07 — About + Services
+- [x] `src/lib/about.ts` — new `ABOUT_CONTENT` constant (headline,
+      philosophy paragraphs, engineering principles), same pattern as
+      `lib/site.ts`/`lib/social.ts` (D-011), now documented as D-017
+- [x] `EngineeringPrinciples` component: numbered list (title +
+      description per principle), stacked with dividers rather than a card
+      grid, staggered `Reveal` entrance
+- [x] `ServicesList` component: services from `getAllServices()` rendered
+      as full-width numbered rows — title, description, and capabilities as
+      a single dot-separated technical readout (e.g. "Frontend Architecture
+      · Backend APIs · Database Design") — explicitly not equal-sized
+      feature cards, per spec §11's own instruction
+- [x] About page rebuilt: headline + philosophy prose (mount-reveal, same
+      staggered pattern as Home's hero), Engineering Principles section,
+      Services section
+- [x] **Caught and fixed a real empty-state inconsistency during
+      verification, not just at code-review time:** with zero services, the
+      "Services" heading and intro sentence were still rendering even
+      though `ServicesList` itself correctly returned `null` — inconsistent
+      with every other empty-state section on the site (Links, Project
+      Files, gallery, etc.), which hide the whole section including its
+      heading. Fixed by wrapping the entire Services block in the same
+      `services.length > 0` check, then re-verified both states.
+- [x] Skills intentionally NOT added to this page yet — TODO.md's
+      Milestone 07 checklist scopes this milestone to Biography/Philosophy/
+      Services only; Skills is Milestone 08's own milestone in the spec and
+      will be appended to this same page without restructuring it
+- [x] `tsc --noEmit`, `eslint`, `next build` clean
+- [x] Verified against a running production server with real requests:
+      - Normal state: headline, all 4 principles, both services (with
+        correctly dot-joined capabilities), and the "Focused on..." intro
+        line all present in the rendered HTML
+      - Empty-services state (content temporarily emptied, then restored):
+        confirmed the bug above, fixed it, then re-verified the whole
+        Services block (heading included) is correctly absent
 
 ## In Progress
-- Nothing — Milestone 06 deliverables are complete; awaiting approval.
+- Nothing — Milestone 07 deliverables are complete; awaiting approval.
 
 ## Next
-- Wait for explicit instruction: "Proceed to Milestone 07."
-- Milestone 07 builds About + Services: biography, philosophy,
-  specialization, and the Services section (from `getAllServices()|`),
-  using editorial composition rather than generic equal-sized feature cards.
+- Wait for explicit instruction: "Proceed to Milestone 08."
+- Milestone 08 builds Skills: unique automotive telemetry-inspired display
+  from `getAllSkillCategories()`, explicitly not generic pills, with no
+  fabricated percentages (only the `level` enum when an author actually
+  supplies it). Appended to the existing `/about` page.
 
 ## Known Issues / Open Questions
 - **Sandbox-only:** `next build`/`next start` require temporarily stubbing
   `next/font/google` (unchanged since Milestone 01 — not a code defect).
 - **Sandbox-only:** Real click/keyboard/touch interaction testing via a
   headless browser still isn't possible in this container (unchanged since
-  Milestone 04). For Milestone 06 this mattered less than for 04/05, since
-  most of the new surface (case study page content, download endpoints) is
-  server-rendered/API-driven and was verified with real `curl` requests
-  rather than needing simulated clicks — the one exception is
-  `DownloadProjectButton`'s client-side state machine (idle → preparing →
-  building → ready), which was verified by code review only, not by
-  actually clicking it in a browser.
+  Milestone 04). Milestone 07's new surface is entirely server-rendered
+  prose/lists with no client interactivity of its own (only the pre-existing
+  `Reveal` component, whose scroll-trigger logic was already verified in
+  Milestone 03), so this gap matters less here than for the showroom
+  milestones.
 - Exact accent-color default (racing yellow) remains a placeholder pending
   user preference — unchanged from Milestone 01.
 - `zod` v4's issue type uses `PropertyKey[]` for `path` — accounted for in
@@ -162,7 +133,9 @@ MILESTONE 06 — PROJECT CASE STUDY + FILES (complete, awaiting approval to proc
 - Certification/achievement `date` sorting is a plain string comparison —
   correct for ISO-like values, best-effort for free text.
 - `archiver`'s `error` event handler logs and continues rather than
-  surfacing a failed download to the client in any special way — acceptable
-  for now (a failed stream just produces a truncated/broken ZIP in the
-  browser), but worth a closer look during Milestone 13's performance/
-  robustness pass if it becomes a real concern.
+  surfacing a failed download specially — worth a closer look during
+  Milestone 13's performance/robustness pass if it becomes a real concern.
+- `ABOUT_CONTENT`'s philosophy/principles copy is generic, editable
+  placeholder text (same spirit as `SITE_IDENTITY`'s "Your Name") — not
+  fabricated specific biographical claims, but intended to be personalized
+  before the site is actually published.

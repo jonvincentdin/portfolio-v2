@@ -110,13 +110,29 @@ Legend: `[ ]` planned · `[~]` in progress · `[x]` completed
       CONTENT_SYSTEM.md / DECISIONS.md
 - [x] **Await explicit approval: "Proceed to Milestone 07."**
 
-## Milestone 07 — About + Services (not started)
-- [ ] Biography / philosophy / specialization (editorial composition, not a
-      resume dump)
-- [ ] Services section from `getAllServices()` — not generic equal-sized
-      feature cards
-- [ ] Update context, then stop before Milestone 08
+## Milestone 07 — About + Services (complete)
+- [x] Biography / philosophy / specialization (editorial composition, not a
+      resume dump) — `lib/about.ts` + `EngineeringPrinciples`
+- [x] Services section from `getAllServices()` — not generic equal-sized
+      feature cards — `ServicesList`
+- [x] Found and fixed a real empty-state inconsistency (Services heading
+      rendering with no services present) during verification, not just
+      code review
+- [x] `tsc --noEmit`, `eslint`, `next build` clean
+- [x] Verified via running production server across normal and
+      empty-services states
+- [x] Update PROGRESS.md / ROUTES.md / COMPONENTS.md / DECISIONS.md
+- [x] **Await explicit approval: "Proceed to Milestone 08."**
 
-## Remaining milestones (08–14)
+## Milestone 08 — Skills (not started)
+- [ ] Automotive telemetry-inspired skills display from
+      `getAllSkillCategories()` — no generic pills
+- [ ] No fabricated percentages; `level` only rendered when explicitly
+      supplied
+- [ ] Appended to the existing `/about` page (not a new route)
+- [ ] Excellent desktop/mobile
+- [ ] Update context, then stop before Milestone 09
+
+## Remaining milestones (09–14)
 Tracked at a section level in this file as each becomes active; full detail
 lives in the master spec §79. Not expanded here yet to avoid premature detail.
