@@ -1,11 +1,6 @@
 import { Container } from "@/components/ui/Container";
 import { TechnicalLabel } from "@/components/ui/TechnicalLabel";
-
-const SOCIAL_LINKS = [
-  { label: "GitHub", href: "https://github.com" },
-  { label: "LinkedIn", href: "https://linkedin.com" },
-  { label: "Email", href: "mailto:hello@example.com" },
-];
+import { SOCIAL_LINKS } from "@/lib/social";
 
 export function Footer() {
   const year = new Date().getFullYear();

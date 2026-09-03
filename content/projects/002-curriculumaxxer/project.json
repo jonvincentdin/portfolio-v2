@@ -1,0 +1,22 @@
+{
+  "id": "002",
+  "slug": "curriculumaxxer",
+  "name": "CurriculumAxxer",
+  "shortName": "CurriculumAxxer",
+  "tagline": "Curriculum planning tool for self-taught developers",
+  "description": "A lightweight tool for mapping out a learning curriculum and tracking progress against it.",
+  "year": 2025,
+  "featured": false,
+  "order": 2,
+  "status": "Archived",
+  "category": ["Web Application"],
+  "role": ["Developer"],
+  "technologies": ["React", "TypeScript", "Vite"],
+  "media": {
+    "hero": "hero.webp",
+    "thumbnail": "thumbnail.webp"
+  },
+  "caseStudy": {
+    "overview": "A small side project for planning a self-directed learning curriculum."
+  }
+}

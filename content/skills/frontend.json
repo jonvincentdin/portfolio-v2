@@ -1,0 +1,9 @@
+{
+  "category": "Frontend Systems",
+  "skills": [
+    { "name": "React", "level": "Advanced", "featured": true },
+    { "name": "Next.js", "level": "Advanced", "featured": true },
+    { "name": "TypeScript", "level": "Advanced" },
+    { "name": "Tailwind CSS", "level": "Advanced" }
+  ]
+}

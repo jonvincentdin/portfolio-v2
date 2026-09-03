@@ -1,0 +1,19 @@
+{
+  "id": "003",
+  "slug": "example-project",
+  "name": "Example Project",
+  "shortName": "Example",
+  "tagline": "A newly added project used to verify auto-discovery",
+  "description": "Added purely to confirm the loader picks up new folders with zero code changes.",
+  "year": 2026,
+  "featured": false,
+  "order": 3,
+  "status": "Archived",
+  "category": ["Test"],
+  "role": ["Developer"],
+  "technologies": ["Next.js"],
+  "media": {
+    "hero": "hero.webp",
+    "thumbnail": "thumbnail.webp"
+  }
+}

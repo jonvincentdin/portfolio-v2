@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { NAV_ITEMS } from "@/lib/navigation";
+import { SITE_IDENTITY } from "@/lib/site";
 import { NavLink } from "./NavLink";
 import { MobileNavigation } from "./MobileNavigation";
 
@@ -16,7 +17,7 @@ export function SiteHeader() {
           href="/"
           className="font-heading text-lg font-medium uppercase tracking-tight text-foreground-primary"
         >
-          Your Name
+          {SITE_IDENTITY.name}
         </Link>
 
         <nav className="hidden items-center gap-10 lg:flex">

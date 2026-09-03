@@ -1,0 +1,8 @@
+{
+  "category": "Backend Systems",
+  "skills": [
+    { "name": "Node.js", "level": "Advanced" },
+    { "name": "PostgreSQL", "level": "Intermediate" },
+    { "name": "REST APIs", "level": "Advanced" }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "001",
+  "company": "Freelance",
+  "position": "Full Stack Developer",
+  "startDate": "2025-01",
+  "current": true,
+  "location": "Cebu, Philippines",
+  "description": "Building full-stack web applications for small business and personal-project clients.",
+  "responsibilities": [
+    "Design and build full-stack web applications end to end",
+    "Work directly with clients to scope and prioritize features"
+  ],
+  "technologies": ["Next.js", "TypeScript", "PostgreSQL", "Tailwind CSS"]
+}

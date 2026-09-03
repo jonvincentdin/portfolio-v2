@@ -1,0 +1,58 @@
+{
+  "id": "001",
+  "slug": "memora",
+  "name": "Memora",
+  "shortName": "Memora",
+  "tagline": "AI-assisted study platform",
+  "description": "A dynamic reviewer and examination platform that generates study material from a student's own notes.",
+  "year": 2026,
+  "featured": true,
+  "order": 1,
+  "status": "Active",
+  "category": ["Full Stack", "Education"],
+  "role": ["Developer", "Designer"],
+  "technologies": ["Next.js", "TypeScript", "PostgreSQL", "Vercel"],
+  "links": {
+    "live": "",
+    "github": ""
+  },
+  "media": {
+    "hero": "hero.webp",
+    "thumbnail": "thumbnail.webp",
+    "gallery": ["screenshots/dashboard.webp", "screenshots/quiz-engine.webp"]
+  },
+  "caseStudy": {
+    "overview": "Memora turns raw lecture notes into structured study material — reviewers, flashcards, and quizzes — without manual authoring.",
+    "problem": "Students spend more time reformatting notes into study material than actually studying.",
+    "objective": "Automate the reformatting step while keeping the student in control of what gets generated.",
+    "solution": "A pipeline that parses uploaded notes, extracts key concepts, and generates a reviewer and quiz engine the student can edit before finalizing.",
+    "challenges": "Keeping generated content faithful to the source notes rather than hallucinating unrelated material.",
+    "results": "Placeholder — real metrics to be added once available.",
+    "lessons": "Placeholder — real lessons-learned to be added once available."
+  },
+  "features": [
+    {
+      "title": "Smart Reviewer Generation",
+      "description": "Parses uploaded notes and produces a structured reviewer, organized by topic.",
+      "image": "screenshots/feature-smart-reviewer.webp"
+    },
+    {
+      "title": "Dynamic Quiz Engine",
+      "description": "Generates practice quizzes from the same source material, with difficulty that adapts to performance."
+    }
+  ],
+  "files": [
+    {
+      "name": "Project Documentation",
+      "path": "files/project-document.pdf",
+      "type": "pdf",
+      "description": "Complete project documentation (placeholder content)."
+    },
+    {
+      "name": "Architecture Notes",
+      "path": "files/architecture-notes.txt",
+      "type": "txt",
+      "description": "Short architecture notes (placeholder content)."
+    }
+  ]
+}

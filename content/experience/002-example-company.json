@@ -1,0 +1,15 @@
+{
+  "id": "002",
+  "company": "Example Company",
+  "position": "Frontend Developer Intern",
+  "startDate": "2024-06",
+  "endDate": "2024-12",
+  "current": false,
+  "location": "Cebu, Philippines",
+  "description": "Contributed to the company's internal admin dashboard.",
+  "responsibilities": [
+    "Implemented UI components from Figma designs",
+    "Fixed bugs reported by the QA team"
+  ],
+  "technologies": ["React", "TypeScript"]
+}

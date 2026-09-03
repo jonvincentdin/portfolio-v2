@@ -1,0 +1,6 @@
+{
+  "id": "01",
+  "title": "Full Stack Development",
+  "description": "End-to-end web application development, from database schema to deployed UI.",
+  "capabilities": ["Frontend Architecture", "Backend APIs", "Database Design"]
+}
