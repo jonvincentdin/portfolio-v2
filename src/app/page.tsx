@@ -7,6 +7,7 @@ import { FeaturedProject } from "@/components/projects/FeaturedProject";
 import { getFeaturedProjects } from "@/lib/content";
 import { SITE_IDENTITY } from "@/lib/site";
 import { SOCIAL_LINKS } from "@/lib/social";
+import Image from "next/image";
 
 /**
  * Home (spec §8–§9). Hero content reveals on mount, staggered, as the

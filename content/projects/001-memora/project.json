@@ -17,9 +17,9 @@
     "github": ""
   },
   "media": {
-    "hero": "hero.webp",
+    "hero": "hero.png",
     "thumbnail": "thumbnail.webp",
-    "gallery": ["screenshots/dashboard.webp", "screenshots/quiz-engine.webp"]
+    "gallery": ["screenshots/dashboard.png", "screenshots/quiz-engine.webp"]
   },
   "caseStudy": {
     "overview": "Memora turns raw lecture notes into structured study material — reviewers, flashcards, and quizzes — without manual authoring.",
