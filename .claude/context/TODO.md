@@ -124,15 +124,75 @@ Legend: `[ ]` planned · `[~]` in progress · `[x]` completed
 - [x] Update PROGRESS.md / ROUTES.md / COMPONENTS.md / DECISIONS.md
 - [x] **Await explicit approval: "Proceed to Milestone 08."**
 
-## Milestone 08 — Skills (not started)
-- [ ] Automotive telemetry-inspired skills display from
+## Milestone 08 — Skills (complete)
+- [x] Automotive telemetry-inspired skills display from
       `getAllSkillCategories()` — no generic pills
-- [ ] No fabricated percentages; `level` only rendered when explicitly
-      supplied
-- [ ] Appended to the existing `/about` page (not a new route)
-- [ ] Excellent desktop/mobile
-- [ ] Update context, then stop before Milestone 09
+- [x] No fabricated percentages; `level` only rendered when explicitly
+      supplied (discrete 5-segment bar keyed to the real enum rank — D-018)
+- [x] Appended to the existing `/about` page (not a new route)
+- [x] Excellent desktop/mobile (responsive grid, `AngularPanel` telemetry
+      panels)
+- [x] `tsc --noEmit`, `eslint`, `next build` clean
+- [x] Verified via running production server: real leveled skill (correct
+      segment count), real unleveled skill (no bar at all), empty-state
+      (heading correctly hidden)
+- [x] Update PROGRESS.md / ROUTES.md / COMPONENTS.md / DECISIONS.md
+- [x] **Await explicit approval: "Proceed to Milestone 09."**
 
-## Remaining milestones (09–14)
+## Milestone 09 — Experience (complete)
+- [x] `/experience`: Experience, Education, Certifications, Achievements —
+      one coherent timeline/specification page
+- [x] Sourced from `getAllExperience()`, `getAllEducation()`,
+      `getAllCertifications()`, `getAllAchievements()`
+- [x] Coherent timeline/specification design, dynamic content —
+      scroll-linked growing line for Experience (D-019), stacked lists for
+      Education, `AngularPanel` grids for Certifications/Achievements
+- [x] Every section (heading included) hidden entirely when empty
+- [x] `tsc --noEmit`, `eslint`, `next build` clean; confirmed no Node
+      built-ins leaked into client chunks
+- [x] Verified via running production server: correct sort order and date
+      formatting, correct SSR initial state for the scroll-linked line,
+      all-empty edge case
+- [x] Update PROGRESS.md / ROUTES.md / COMPONENTS.md / DECISIONS.md
+- [x] **Await explicit approval: "Proceed to Milestone 10."**
+
+## Milestone 10 — Contact (complete)
+- [x] Form: name, email, subject, message
+- [x] Email, GitHub, LinkedIn, social links
+- [x] Validation (shared Zod schema, client pre-check + server re-check)
+- [x] Idle / sending / success / error states
+- [x] Polished motion (staggered mount-reveal, matching Home/About/Experience)
+- [x] `tsc --noEmit`, `eslint`, `next build` clean; confirmed no Node
+      built-ins leaked into client chunks
+- [x] Verified via running production server: real POST requests (valid,
+      invalid, malformed), label/input accessibility association, correct
+      social-links filtering
+- [x] Documented a real (not sandbox-only) limitation: no email provider is
+      wired up yet — D-020
+- [x] Update PROGRESS.md / ROUTES.md / COMPONENTS.md / DECISIONS.md
+- [x] **Await explicit approval: "Proceed to Milestone 11."**
+
+## Milestone 11 — Responsive Polish (complete)
+- [x] Audit 375 / 430 / 768 / 1024 / 1280 / 1440 / 1920 (real headless
+      browser, 42 breakpoint × page combinations, zero overflow confirmed)
+- [x] Fix: overflow (D-022), image proportions (D-023), mobile menu (D-024
+      — the milestone's most significant finding), unwanted page scroll
+      (D-025), single-word heading overflow (`break-words` sitewide)
+- [x] Re-verified keyboard/click/swipe/menu interactions with real browser
+      input, closing out gaps flagged since Milestones 04/05/09
+- [x] `tsc --noEmit`, `eslint`, `next build` clean
+- [x] Update RESPONSIVE.md with findings and methodology
+- [x] Update context, then stop before Milestone 12
+- [x] **Await explicit approval: "Proceed to Milestone 12."**
+
+## Milestone 12 — Motion + Microinteractions (not started)
+- [ ] Audit all motion: navigation, project transitions, buttons, image
+      masks, page transitions, section reveals, project controls, file
+      download interactions
+- [ ] Remove unnecessary animation
+- [ ] Update MOTION.md
+- [ ] Update context, then stop before Milestone 13
+
+## Remaining milestones (13–14)
 Tracked at a section level in this file as each becomes active; full detail
 lives in the master spec §79. Not expanded here yet to avoid premature detail.

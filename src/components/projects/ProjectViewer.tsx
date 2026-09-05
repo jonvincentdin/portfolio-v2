@@ -100,14 +100,14 @@ export function ProjectViewer({
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.12}
       onDragEnd={handleDragEnd}
-      className="touch-pan-y lg:grid lg:grid-cols-[380px_1fr] lg:items-start lg:gap-x-14"
+      className="touch-pan-y lg:grid lg:grid-cols-[380px_1fr] lg:gap-x-14"
     >
       <motion.div variants={itemVariants} className="lg:[grid-column:1] lg:[grid-row:1]">
         <ProgressIndicator current={index + 1} total={total} direction={direction} />
       </motion.div>
 
       <motion.div variants={itemVariants} className="mt-3 lg:mt-0 lg:[grid-column:1] lg:[grid-row:2]">
-        <h1 className="font-heading text-heading-lg uppercase tracking-tight sm:text-display-lg">
+        <h1 className="font-heading text-heading-lg uppercase tracking-tight break-words sm:text-display-lg">
           {project.name}
         </h1>
         <p className="mt-2 font-body text-body-lg text-foreground-muted">{project.tagline}</p>
@@ -117,7 +117,7 @@ export function ProjectViewer({
         variants={itemVariants}
         className="mt-6 lg:mt-0 lg:[grid-column:2] lg:[grid-row:1/5]"
       >
-        <AngularPanel className="relative aspect-[16/10] overflow-hidden">
+        <AngularPanel className="relative aspect-[16/10] overflow-hidden lg:aspect-auto lg:h-full lg:min-h-[420px]">
           <Image
             src={getProjectMediaUrl(project, project.media.hero)}
             alt={`${project.name} — ${project.tagline}`}

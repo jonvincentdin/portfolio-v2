@@ -7,8 +7,8 @@
  * About) share one source rather than duplicating name/role text.
  */
 export const SITE_IDENTITY = {
-  name: "Jon Vincent Din",
-  role: "Bachelor of Science in Information Technology",
+  name: "Your Name",
+  role: "Full Stack Developer",
   supportingStatement:
     "Engineering digital experiences with performance, precision, and purpose.",
   introduction:
@@ -16,4 +16,5 @@ export const SITE_IDENTITY = {
   location: "Philippines",
   specialization: "Full Stack Development",
   status: "Available for opportunities",
+  contactEmail: "hello@example.com",
 } as const;

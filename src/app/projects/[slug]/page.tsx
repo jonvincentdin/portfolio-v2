@@ -74,7 +74,7 @@ export default async function ProjectCaseStudyPage({ params }: PageProps) {
       <TechnicalLabel accent as="div">
         Project {project.id}
       </TechnicalLabel>
-      <h1 className="mt-3 font-heading text-display-lg uppercase tracking-tight sm:text-display-xl">
+      <h1 className="mt-3 font-heading text-display-lg uppercase tracking-tight break-words sm:text-display-xl">
         {project.name}
       </h1>
       <p className="mt-4 max-w-2xl font-body text-body-lg text-foreground-muted">{project.tagline}</p>

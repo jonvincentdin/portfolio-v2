@@ -6,8 +6,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Jon Vincent Din — Full Stack Developer",
-    template: "%s — Jon Vincent Din",
+    default: "Your Name — Full Stack Developer",
+    template: "%s — Your Name",
   },
   description:
     "Full stack developer portfolio, engineered like a premium digital showroom.",

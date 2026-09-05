@@ -1,131 +1,123 @@
 # PROGRESS.md
 
 ## Current Milestone
-MILESTONE 07 — ABOUT + SERVICES (complete, awaiting approval to proceed)
+MILESTONE 11 — RESPONSIVE POLISH (complete, awaiting approval to proceed)
 
 ## Completed
-### Milestone 00 — Discovery
-- [x] Studied full specification
-- [x] Proposed architecture, routes, component hierarchy, content
-      architecture, visual direction, motion strategy, responsive strategy
-- [x] Created `.claude/context/` documentation structure
+### Milestones 00–10
+All prior milestones (Discovery, Foundation, Content Engine, Home, Project
+Showroom Foundation + Motion, Project Case Study + Files, About + Services,
+Skills, Experience, Contact) are complete. See DECISIONS.md (D-001 through
+D-020) and each milestone's git history for full detail. Summary: the full
+public site is built — Home, Projects showroom with case studies and ZIP
+downloads, About/Services/Skills, Experience/Education/Certifications/
+Achievements, and Contact — all sourced from the filesystem content engine,
+with a working (if not-yet-email-connected) contact form.
 
-### Milestone 01 — Foundation
-- [x] Scaffolded Next.js 16 (App Router) + TypeScript (strict) + Tailwind v4
-- [x] Fonts, design tokens, root layout, SiteHeader/Footer shell,
-      SectionHeading/TechnicalLabel/AngularPanel/Container, placeholder routes
-- [x] `tsc --noEmit`, `eslint`, and `next build` all verified clean
-
-### Milestone 02 — Content Engine
-- [x] Zod schemas + filesystem loaders for all seven content types
-- [x] Example content authored under `content/`, including three example
-      projects exercising full/lean/auto-discovery cases
-- [x] Verified: auto-discovery, missing-file errors, multi-field schema
-      errors, duplicate-slug errors, malformed-JSON errors, file-size
-      derivation — all via a temporary script (written, run, deleted)
-- [x] `tsc --noEmit`, `eslint`, `next build` clean
-
-### Milestone 03 — Home
-- [x] Resolved the content-media serving gap: `/content-media/[...path]`
-      route handler and `getProjectMediaUrl()` helper
-- [x] New shared primitives: `StatusIndicator`, `ArrowLink`, `Reveal`
-- [x] Centralized site identity (`lib/site.ts`) and social links
-      (`lib/social.ts`)
-- [x] `FeaturedProject` component sourced from `getFeaturedProjects()`
-- [x] Home page rebuilt with staggered page-load reveal
-- [x] `tsc --noEmit`, `eslint`, `next build` clean; verified against a
-      running production server with `curl`
-
-### Milestone 04 — Project Showroom Foundation
-- [x] `/projects` fully wired: loader → client `ProjectShowroom`, explicit
-      empty-state and single-project handling
-- [x] `ProjectShowroom`, `ProjectViewer`, `ProjectNavigation`,
-      `ProjectThumbnailRail`, `ProjectSpecs`/`SpecificationRow`,
-      `ProgressIndicator` built (functionality only, no animation)
-- [x] Found and fixed a real Turbopack build bug (D-012): `getProjectMediaUrl`
-      isolated into a Node-free module so client components can safely
-      import it
-- [x] `tsc --noEmit`, `eslint`, `next build` clean; verified against a
-      running production server across normal/empty/single-project states
-
-### Milestone 05 — Project Showroom Motion
-- [x] Installed `framer-motion` (first real use case, per D-008/D-014)
-- [x] Directional card transitions (spec §32), animated counter (spec §34),
-      thumbnail active-indicator motion (spec §33), touch/swipe via drag on
-      the card itself, all gated by a new central `usePrefersReducedMotion`
-      hook
-- [x] `tsc --noEmit`, `eslint`, `next build` clean; confirmed no `node:fs`
-      leaked into client chunks; verified swipe-threshold and
-      reduced-motion branch logic in isolation via small Node scripts
-
-### Milestone 06 — Project Case Study + Files
-- [x] `/projects/[slug]` fully built with `generateStaticParams()`,
-      conditionally-rendered case study sections, alternating Features,
-      Specifications, Gallery, Links, and Project Files
-- [x] ZIP download endpoint (`/api/projects/[slug]/download`, `archiver`
-      v8's `ZipArchive` — D-015) and individual file download endpoint
-      (`/api/projects/[slug]/files/[...path]`, whitelisted against
-      `files[]` — D-016)
-- [x] `tsc --noEmit`, `eslint`, `next build` clean; verified against a
-      running production server with real downloads (`unzip -l` inspection
-      of the actual ZIP contents)
-
-### Milestone 07 — About + Services
-- [x] `src/lib/about.ts` — new `ABOUT_CONTENT` constant (headline,
-      philosophy paragraphs, engineering principles), same pattern as
-      `lib/site.ts`/`lib/social.ts` (D-011), now documented as D-017
-- [x] `EngineeringPrinciples` component: numbered list (title +
-      description per principle), stacked with dividers rather than a card
-      grid, staggered `Reveal` entrance
-- [x] `ServicesList` component: services from `getAllServices()` rendered
-      as full-width numbered rows — title, description, and capabilities as
-      a single dot-separated technical readout (e.g. "Frontend Architecture
-      · Backend APIs · Database Design") — explicitly not equal-sized
-      feature cards, per spec §11's own instruction
-- [x] About page rebuilt: headline + philosophy prose (mount-reveal, same
-      staggered pattern as Home's hero), Engineering Principles section,
-      Services section
-- [x] **Caught and fixed a real empty-state inconsistency during
-      verification, not just at code-review time:** with zero services, the
-      "Services" heading and intro sentence were still rendering even
-      though `ServicesList` itself correctly returned `null` — inconsistent
-      with every other empty-state section on the site (Links, Project
-      Files, gallery, etc.), which hide the whole section including its
-      heading. Fixed by wrapping the entire Services block in the same
-      `services.length > 0` check, then re-verified both states.
-- [x] Skills intentionally NOT added to this page yet — TODO.md's
-      Milestone 07 checklist scopes this milestone to Biography/Philosophy/
-      Services only; Skills is Milestone 08's own milestone in the spec and
-      will be appended to this same page without restructuring it
-- [x] `tsc --noEmit`, `eslint`, `next build` clean
-- [x] Verified against a running production server with real requests:
-      - Normal state: headline, all 4 principles, both services (with
-        correctly dot-joined capabilities), and the "Focused on..." intro
-        line all present in the rendered HTML
-      - Empty-services state (content temporarily emptied, then restored):
-        confirmed the bug above, fixed it, then re-verified the whole
-        Services block (heading included) is correctly absent
+### Milestone 11 — Responsive Polish
+- [x] **A real headless browser became usable this milestone** (Chromium
+      via Playwright, already present in this sandbox though a full
+      `playwright install` had failed in earlier milestones due to network
+      restrictions on the browser *download* specifically — a binary was
+      already present and directly usable). This is a meaningful capability
+      change from every prior milestone, which relied on code review plus
+      `curl`-based HTML inspection. Documented as D-021.
+- [x] Audited all 7 breakpoints (375/430/768/1024/1280/1440/1920) × 6
+      representative pages (Home, About, Projects showroom, a project case
+      study, Experience, Contact) — 42 combinations — for horizontal
+      overflow via `document.documentElement.scrollWidth` vs `clientWidth`,
+      with full-page screenshots for visual review
+- [x] **Found and fixed 4 real bugs**, none of which were visible via code
+      review or `curl`-based HTML inspection alone:
+      1. `SpecificationRow`/`SkillItem` used `flex-shrink: 0` on
+         potentially-long joined-text values (technologies list, skill
+         level+bar), forcing horizontal overflow at 375px when that text
+         didn't fit. Fixed by removing `shrink-0` and allowing wrap
+         (D-022).
+      2. The showroom's project image used a fixed aspect ratio instead of
+         matching its metadata column's height, leaving a large empty gap
+         above the Previous/Next controls at 1024–1280px. Fixed by
+         stretching the image to fill its grid row-span on `lg+` (D-023).
+      3. **The mobile menu was not actually full-screen or opaque** —
+         `<header>`'s `backdrop-blur-sm` made it the CSS containing block
+         for the menu's `position: fixed`, confining the "full-screen"
+         overlay to the header's own ~64px height and letting its nav
+         links overflow, uncovered, into the page beneath. Both the
+         overlay and the page share the same background color, which is
+         exactly why this was invisible to every prior HTML-only check —
+         it only manifests visually. Fixed by rendering the overlay via
+         `createPortal` into `document.body` (D-024). This is the most
+         significant finding of the milestone: it affected the primary
+         mobile navigation pattern across the entire site, for every
+         visitor, since Milestone 01.
+      4. The project showroom's thumbnail rail called `scrollIntoView` on
+         its very first mount (not just on real selection changes), and
+         since the rail starts below the fold on most viewports, this
+         silently auto-scrolled the entire page ~360px downward on every
+         load of `/projects` with zero user interaction. Fixed by skipping
+         the first run and scrolling the rail's own container directly
+         instead of the page (D-025).
+      5. (Found alongside the above, same audit pass) A single unbroken
+         word ("EXPERIENCE") at `text-display-xl` size cannot wrap at a
+         space and overflowed 375px — other pages' headlines happened to
+         have multiple words and never exposed this. Fixed defensively
+         with `break-words` on every large heading sitewide (all five page
+         `<h1>`s, `SectionHeading`, and `ProjectViewer`'s project-name
+         heading), not just the one that broke.
+- [x] **Re-verified interaction gaps flagged as "known issues" in
+      Milestones 04, 05, and 09 — all confirmed genuinely working**, closing
+      them out rather than leaving them open indefinitely:
+      - Keyboard navigation (arrow keys) on the showroom: confirmed working
+        with a real keypress
+      - Thumbnail click navigation: confirmed working, `aria-selected`
+        updates correctly
+      - Touch/swipe drag gesture on the showroom card: confirmed working
+        with a synthesized real drag
+      - Mobile menu open/click-link/auto-close-on-navigate: confirmed
+        working end-to-end (after the D-024 fix)
+      (Two of these initially appeared broken in hasty first attempts
+      because the test script's wait time after `networkidle` was too
+      short for hydration to complete in this environment — re-tested with
+      a longer wait and confirmed correct; documented in RESPONSIVE.md so
+      this hydration-timing characteristic doesn't get mistaken for a site
+      bug in future testing.)
+- [x] Identified and ruled out two screenshot-tooling artifacts (Playwright
+      full-page screenshots duplicating `position: sticky` elements; scroll-
+      triggered `Reveal` sections appearing blank without a scroll-through
+      pass) — documented in RESPONSIVE.md so they aren't mistaken for real
+      bugs by anyone reviewing the audit process later.
+- [x] `tsc --noEmit`, `eslint`, `next build` clean after all fixes (one
+      lint exception added with justification: the `isMounted` client-mount
+      pattern required for SSR-safe portals is a standard, unavoidable
+      `useState`-in-effect pattern)
+- [x] Re-ran the full 42-combination overflow audit after all fixes: 0
+      overflows (same as before the fixes were applied to confirm the
+      audit script itself was working — i.e., the bugs were real and are
+      now genuinely resolved, not just no-longer-detected)
+- [x] Update PROGRESS.md / RESPONSIVE.md / COMPONENTS.md / DECISIONS.md
 
 ## In Progress
-- Nothing — Milestone 07 deliverables are complete; awaiting approval.
+- Nothing — Milestone 11 deliverables are complete; awaiting approval.
 
 ## Next
-- Wait for explicit instruction: "Proceed to Milestone 08."
-- Milestone 08 builds Skills: unique automotive telemetry-inspired display
-  from `getAllSkillCategories()`, explicitly not generic pills, with no
-  fabricated percentages (only the `level` enum when an author actually
-  supplies it). Appended to the existing `/about` page.
+- Wait for explicit instruction: "Proceed to Milestone 12."
+- Milestone 12 audits and polishes motion across the whole site (navigation,
+  project transitions, buttons, image masks, page transitions, section
+  reveals, project controls, file download interactions), removing any
+  unnecessary animation. With real browser access now available, this
+  milestone can also be verified by actually watching the animations run,
+  not just reading the Framer Motion variant code.
 
 ## Known Issues / Open Questions
 - **Sandbox-only:** `next build`/`next start` require temporarily stubbing
   `next/font/google` (unchanged since Milestone 01 — not a code defect).
-- **Sandbox-only:** Real click/keyboard/touch interaction testing via a
-  headless browser still isn't possible in this container (unchanged since
-  Milestone 04). Milestone 07's new surface is entirely server-rendered
-  prose/lists with no client interactivity of its own (only the pre-existing
-  `Reveal` component, whose scroll-trigger logic was already verified in
-  Milestone 03), so this gap matters less here than for the showroom
-  milestones.
+- **No longer an issue as of this milestone:** real click/keyboard/touch
+  interaction testing, previously flagged as impossible in this sandbox in
+  Milestones 04, 05, and 09 — a real headless browser was available all
+  along; only the browser *installation* step had been blocked by network
+  restrictions. Future milestones should default to using it.
+- **Real limitation, not sandbox-only:** `/api/contact` does not deliver
+  actual email — no provider credentials exist in this environment (D-020).
 - Exact accent-color default (racing yellow) remains a placeholder pending
   user preference — unchanged from Milestone 01.
 - `zod` v4's issue type uses `PropertyKey[]` for `path` — accounted for in
@@ -135,7 +127,13 @@ MILESTONE 07 — ABOUT + SERVICES (complete, awaiting approval to proceed)
 - `archiver`'s `error` event handler logs and continues rather than
   surfacing a failed download specially — worth a closer look during
   Milestone 13's performance/robustness pass if it becomes a real concern.
-- `ABOUT_CONTENT`'s philosophy/principles copy is generic, editable
-  placeholder text (same spirit as `SITE_IDENTITY`'s "Your Name") — not
-  fabricated specific biographical claims, but intended to be personalized
-  before the site is actually published.
+- `ABOUT_CONTENT`'s philosophy/principles copy, `SITE_IDENTITY`'s
+  `contactEmail`, and the example experience/education/certification/
+  achievement content are all generic, editable placeholder text/data —
+  intended to be personalized before the site is actually published.
+- This milestone's audit covered a representative page set (one project
+  case study, not all three) and did not separately re-audit the mobile
+  editor/admin surfaces (none exist yet — that's the separate, gated
+  Milestone 15 appendix). A future full-site pass (Milestone 13/14) could
+  spot-check the remaining two case studies for good measure, though they
+  share the same components and layout as the one audited here.

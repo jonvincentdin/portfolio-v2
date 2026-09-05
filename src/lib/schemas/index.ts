@@ -6,3 +6,4 @@ export * from "./certification";
 export * from "./achievement";
 export * from "./service";
 export * from "./skill";
+export * from "./contact";

@@ -7,7 +7,6 @@ import { FeaturedProject } from "@/components/projects/FeaturedProject";
 import { getFeaturedProjects } from "@/lib/content";
 import { SITE_IDENTITY } from "@/lib/site";
 import { SOCIAL_LINKS } from "@/lib/social";
-import Image from "next/image";
 
 /**
  * Home (spec §8–§9). Hero content reveals on mount, staggered, as the
@@ -28,7 +27,7 @@ export default function HomePage() {
             <TechnicalLabel accent>{SITE_IDENTITY.role}</TechnicalLabel>
           </Reveal>
           <Reveal mode="mount" delayMs={80}>
-            <h1 className="mt-3 font-heading text-display-lg uppercase tracking-tight sm:text-display-xl">
+            <h1 className="mt-3 font-heading text-display-lg uppercase tracking-tight break-words sm:text-display-xl">
               {SITE_IDENTITY.name}
             </h1>
           </Reveal>

@@ -11,14 +11,24 @@
 | `/content-media/[...path]` | Serves image files from `content/` for use with `next/image` (image extensions only — not a general file server) | Route handler, dynamic |
 | `/api/projects/[slug]/download` | Streams full project folder as ZIP | Route handler (Node runtime) |
 | `/api/projects/[slug]/files/[...path]` | Serves a single downloadable file, whitelisted against that project's `files[]` entries | Route handler (Node runtime) |
+| `/api/contact` | Validates and (currently) logs a contact form submission | Route handler (Node runtime) |
 
 ## Notes
-- `/about` is fully built as of Milestone 07: headline + philosophy prose
-  (`lib/about.ts`), an Engineering Principles list, and Services (from
-  `getAllServices()`) — both lists deliberately avoid equal-sized card
-  grids (spec §11). Skills (the third piece of this route's original
-  grouping) is intentionally deferred to Milestone 08, added to this same
-  page rather than requiring a restructure.
+- `/contact` is fully built as of Milestone 10: form (name/email/subject/
+  message) with client + server validation sharing one Zod schema, an
+  idle/sending/success/error state machine, and a direct email + social
+  links block below. `POST /api/contact` genuinely validates and logs
+  submissions but doesn't yet deliver real email — see DECISIONS.md D-020.
+- `/experience` is fully built as of Milestone 09: Experience (scroll-linked
+  timeline), Education, Certifications, and Achievements, each sourced from
+  its own loader and each section — heading included — hidden entirely when
+  its content is empty.
+- `/about` is fully built as of Milestone 08: headline + philosophy prose
+  (`lib/about.ts`), Engineering Principles, Services (from
+  `getAllServices()`), and Skills (from `getAllSkillCategories()`, telemetry
+  panels via `SkillDashboard`) — all three lists deliberately avoid
+  equal-sized card grids / generic pills (spec §11, §25). This completes the
+  route's original three-piece grouping (About Me + Services + Skills).
 - `/projects/[slug]` is fully wired as of Milestone 06: hero, conditionally-
   rendered case study prose sections, features, specs, gallery, links, and
   Project Files all sourced from `getProjectBySlug()`. Every optional

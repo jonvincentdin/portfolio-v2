@@ -5,6 +5,149 @@ Newest entries at the top.
 
 ---
 
+## D-025 — ProjectThumbnailRail no longer scrolls the page on initial mount
+**Decision:** `ProjectThumbnailRail`'s scroll-into-view effect now skips
+its very first run (tracked via a `isFirstRender` ref) and, when it does
+run, scrolls the rail's own horizontal scroll container directly
+(`rail.scrollTo({ left: ... })`) rather than calling
+`element.scrollIntoView()`.
+**Reason:** Found with a real browser, not code review: on load, the page
+was silently auto-scrolling ~360px downward with zero user interaction.
+`scrollIntoView()`'s effect ran on mount (as all effects do, since
+`activeIndex` starts at 0), and because the thumbnail rail starts below the
+fold on most viewports, bringing it into view pulled the *entire page*
+down — a jarring, unrequested jump on every single page load. Scrolling
+the rail's own container directly also removes any future risk of the
+same side effect recurring for other reasons `scrollIntoView` might decide
+vertical scroll is needed. Verified: `window.scrollY` is `0` immediately
+after load and stays `0`, while pressing the arrow keys or clicking a
+thumbnail still correctly scrolls the rail horizontally.
+
+## D-024 — MobileNavigation overlay rendered via a portal, escaping the header's backdrop-blur containing block
+**Decision:** The full-screen mobile menu is now rendered with
+`createPortal` directly into `document.body`, rather than inline inside
+`SiteHeader`.
+**Reason:** A serious, invisible-in-code-review bug found only through an
+actual browser click during this milestone's audit: `<header>` has
+`backdrop-blur-sm` (a `backdrop-filter`), which per the CSS spec makes it
+the *containing block* for any `position: fixed` descendant. With the
+overlay nested inside the header, its `fixed inset-0` resolved
+`top/right/bottom/left: 0` against the header's own ~64px-tall box instead
+of the viewport — so the "full-screen" menu was actually only ~64px tall,
+with its nav links simply overflowing, uncovered, into the page below. The
+menu's own background color and the page's base background are the same
+color (`#0a0a0a`), which is exactly why this was invisible in every
+previous milestone's `curl`-based HTML verification — the bug only shows up
+visually, through actual rendering. A portal is the standard, correct fix:
+it renders the overlay as a sibling of `<body>`'s other children, entirely
+outside the header's containing-block-creating subtree. Verified with a
+real click, across three different viewport sizes and two different pages:
+the overlay is now fully opaque, correctly full-height, vertically centered
+with all five links visible, and the active-page underline renders
+correctly.
+
+## D-023 — ProjectViewer's image column stretches to match content height instead of using a fixed aspect ratio on desktop
+**Decision:** On `lg+` breakpoints, the project image panel uses
+`lg:aspect-auto lg:h-full` (filling its grid area's height) instead of the
+fixed `aspect-[16/10]` used on mobile; the outer grid's `items-start` was
+removed so grid items default to `align-items: stretch`.
+**Reason:** Found via real screenshots at 1024px: the image, sized purely
+by its aspect ratio, was noticeably shorter than the left metadata column,
+leaving a large, visually awkward empty gap between the image and the
+Previous/Next controls beneath it — worse at narrower desktop widths where
+the left column's text wraps more. Letting the image stretch to fill the
+full height of its row-span (rows 1–4) while the mobile/tablet single-column
+flow keeps the original aspect ratio (where there's no shared row height to
+match) fixes this at every desktop width without affecting the mobile
+layout at all. Verified visually at 1024px, 1280px, and 1440px after the
+fix — the image and left column now always end at the same height.
+
+## D-022 — Flex `shrink-0` removed from row values that can contain long joined text
+**Decision:** `SpecificationRow`'s value span and `SkillItem`'s
+level+bar group no longer use `shrink-0`; the rows now use `flex-wrap` so
+content can drop to a second line when it doesn't fit, instead of forcing
+horizontal overflow.
+**Reason:** Two real, reproducible 375px-viewport overflows found via
+screenshot audit: `flex-shrink: 0` forces a flex item to render at its
+max-content width regardless of available space — for a joined
+technologies list ("Next.js / TypeScript / PostgreSQL / Vercel") or a
+skill's level+segment-bar group, that max-content width can exceed a narrow
+viewport's available space, and `shrink-0` explicitly disables the normal
+wrap/shrink behavior that would otherwise prevent this. Removing it (and
+adding `flex-wrap` at the row level) lets these rows degrade gracefully on
+narrow screens instead of pushing the whole page wider. Verified: zero
+horizontal overflow across all 7 breakpoints × 6 pages after the fix.
+
+## D-021 — Milestone 11's responsive audit used a real headless browser
+**Decision:** Milestone 11 was audited with an actual headless Chromium
+browser (via Playwright, already present in this sandbox environment
+though not previously confirmed working) — real screenshots, real overflow
+measurements (`scrollWidth`/`clientWidth`), and real clicks/keyboard/drag
+interactions — rather than the code-review-plus-`curl` approach used in
+every prior milestone.
+**Reason:** This is a meaningful capability change worth recording: Milestones
+04, 05, and 09 explicitly flagged "real click/keyboard/touch interaction
+testing isn't possible in this sandbox" as a known limitation. That
+limitation turned out to be specific to attempting a full Playwright
+*install* (browser binary download blocked by the network allowlist) —
+a browser was already present at `/opt/pw-browsers` and usable directly.
+This audit both fixed real bugs no amount of code review would have caught
+(D-022 through D-025) and retroactively confirmed that keyboard navigation,
+thumbnail clicks, and the drag/swipe gesture from Milestones 04/05 all
+genuinely work correctly — closing out those previously-flagged gaps rather
+than leaving them open indefinitely.
+
+## D-020 — Contact form submission validated and logged, not actually emailed
+**Decision:** `POST /api/contact` validates the submission server-side
+(`ContactFormSchema.safeParse`, mirroring the client-side check so the two
+can't drift) and logs a valid submission via `console.log`, returning
+`{ ok: true }`. No real email provider (SMTP, Resend, etc.) is wired up.
+**Reason:** No email-provider credentials exist in this environment, and
+PROJECT.md's non-negotiables already establish the pattern of being honest
+about what's genuinely wired vs. stubbed (see the "Data Loading vs. Runtime
+Storage" note in ARCHITECTURE.md). Fabricating a working-looking email
+integration with no real credentials behind it would be worse than a
+clearly-documented placeholder — the form and its validation are fully
+real and testable end-to-end (verified with real `curl` requests: valid
+submission succeeds, invalid data returns precise per-field errors,
+malformed JSON is handled), and wiring a real provider later is an
+isolated one-line change inside the route handler.
+
+## D-019 — ExperienceTimeline's scroll-linked line growth built now, not deferred to Milestone 12
+**Decision:** The Experience Timeline's growing vertical line (spec §42) —
+tied to scroll progress via Framer Motion's `useScroll`, scoped to the
+timeline's own container rather than the whole page — was built as part of
+Milestone 09, not deferred to Milestone 12 (Motion + Microinteractions).
+**Reason:** Spec §42 describes this as intrinsic to the Experience Timeline
+component itself, and the master spec's own Milestone 09 description
+doesn't scope it out. Milestone 12 is an audit/polish pass over motion
+that's already been built elsewhere on the site, not the first
+implementation of a component's core defining visual. Building it now
+avoids a half-built "timeline" that's really just a plain list until a
+later milestone. Respects `usePrefersReducedMotion()` (line renders fully
+grown immediately, no animated fill) and uses a small square marker instead
+of a circular dot to stay consistent with the site's angular geometry
+language (DESIGN_SYSTEM.md — "Angular, not rounded").
+
+## D-018 — Skill levels visualized as a discrete 5-segment bar, not a percentage
+**Decision:** `SkillItem` renders a skill's `level` (when supplied) as a
+5-segment bar where the filled-segment count equals the level's ordinal
+rank in the `SkillLevel` enum (`Learning`=1 … `Primary`=5) — never a
+computed/invented percentage. When `level` is absent, no bar renders at
+all, not a default or zero-filled one.
+**Reason:** Spec §25/§26 explicitly forbid fabricated percentages (no
+"React — 95%"), but §41 explicitly permits animating "the visual
+representation of the provided level" once supplied. A discrete segmented
+bar keyed to the exact enum value the author chose satisfies both: it's a
+truthful visualization of real categorical data, not a synthesized number
+with false precision. The segment count is derived from
+`SkillLevelSchema.options.indexOf(level)` — the same enum ordering defined
+back in Milestone 02 — rather than a second hardcoded ranking array, so
+there's one source of truth for level order. Verified against real content:
+a leveled skill (React, "Advanced") renders exactly 4 filled + 1 unfilled
+segment; an unleveled skill (Docker, added specifically to exercise this
+path) renders no bar and no level text at all.
+
 ## D-017 — About page editorial content centralized in `lib/about.ts`
 **Decision:** The About page's headline, philosophy paragraphs, and
 engineering principles live in `src/lib/about.ts` as a plain constant

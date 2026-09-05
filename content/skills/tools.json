@@ -1,0 +1,8 @@
+{
+  "category": "Tools & DevOps",
+  "skills": [
+    { "name": "Git", "level": "Advanced" },
+    { "name": "Vercel", "level": "Intermediate" },
+    { "name": "Docker" }
+  ]
+}

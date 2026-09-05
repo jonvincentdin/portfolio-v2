@@ -31,7 +31,7 @@ export function SectionHeading({
       ) : null}
       <h2
         id={headingId}
-        className="font-heading text-heading-lg sm:text-display-lg text-foreground-primary uppercase tracking-tight"
+        className="font-heading text-heading-lg sm:text-display-lg text-foreground-primary uppercase tracking-tight break-words"
       >
         {title}
       </h2>

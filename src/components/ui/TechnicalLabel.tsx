@@ -5,7 +5,9 @@ type TechnicalLabelProps = {
   className?: string;
   /** Renders with the accent color instead of the muted foreground. */
   accent?: boolean;
-  as?: "span" | "div" | "p";
+  as?: "span" | "div" | "p" | "label";
+  /** Only meaningful when as="label" — associates the label with its field. */
+  htmlFor?: string;
 };
 
 /**
@@ -17,9 +19,11 @@ export function TechnicalLabel({
   className,
   accent = false,
   as: Tag = "span",
+  htmlFor,
 }: TechnicalLabelProps) {
   return (
     <Tag
+      htmlFor={htmlFor}
       className={cn(
         "font-technical text-technical-label uppercase tracking-[0.1em]",
         accent ? "text-accent" : "text-foreground-muted",
