@@ -1,5 +1,24 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Owner Editor
+
+The logo opens the private `/owner` verification flow. Configure `OWNER_EMAIL`,
+`AUTH_SECRET`, `RESEND_API_KEY`, and `AUTH_FROM_EMAIL` for production OTP
+delivery. For local-only work, set `AUTH_DEV_MODE=true`; the code is logged by
+the server and never returned to the browser. Authenticated owners can edit at
+`/editor`, preview drafts, save validated content, manage every discovered
+portfolio section, create projects with a guided builder, upload/reuse media,
+manage project attachments and visitor access, and log out. The editor handles
+IDs, slugs, folders, references, ordering, and serialization internally.
+
+Portfolio content, contact submissions, profile media, and project assets are
+stored in PostgreSQL through Prisma. Set `DATABASE_URL`, then initialize the
+schema and import the repository content with `npm run db:setup`. The database
+is required for owner saves and runtime uploads. Without it, the public site
+still renders the checked-in `content/` baseline while editor actions explain
+that the database must be configured. See [docs/ADDING_CONTENT.md](docs/ADDING_CONTENT.md)
+for setup and content guidance.
+
 ## Getting Started
 
 First, run the development server:

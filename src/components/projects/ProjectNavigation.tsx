@@ -23,7 +23,7 @@ export function ProjectNavigation({ onPrevious, onNext, disabled = false, classN
         onClick={onPrevious}
         disabled={disabled}
         aria-label="Previous project"
-        className="group inline-flex items-center gap-3 font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-primary transition-colors duration-150 hover:text-accent disabled:pointer-events-none disabled:opacity-30"
+        className="group inline-flex items-center gap-3 font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-primary transition-[color,transform] duration-150 hover:text-accent active:scale-95 disabled:pointer-events-none disabled:opacity-30"
       >
         <span className="inline-block transition-transform duration-150 group-hover:-translate-x-1" aria-hidden="true">
           ←
@@ -36,7 +36,7 @@ export function ProjectNavigation({ onPrevious, onNext, disabled = false, classN
         onClick={onNext}
         disabled={disabled}
         aria-label="Next project"
-        className="group inline-flex items-center gap-3 font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-primary transition-colors duration-150 hover:text-accent disabled:pointer-events-none disabled:opacity-30"
+        className="group inline-flex items-center gap-3 font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-primary transition-[color,transform] duration-150 hover:text-accent active:scale-95 disabled:pointer-events-none disabled:opacity-30"
       >
         Next
         <span className="inline-block transition-transform duration-150 group-hover:translate-x-1" aria-hidden="true">

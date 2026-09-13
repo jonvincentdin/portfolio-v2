@@ -1,6 +1,6 @@
 import { TechnicalLabel } from "@/components/ui/TechnicalLabel";
 import { Reveal } from "@/components/motion/Reveal";
-import { ABOUT_CONTENT } from "@/lib/about";
+import type { AboutContentData } from "@/lib/schemas";
 
 /**
  * Engineering principles as a numbered list (spec §10's "engineering
@@ -8,10 +8,10 @@ import { ABOUT_CONTENT } from "@/lib/about";
  * equal-sized cards — same anti-generic-card discipline spec §11 requires
  * for Services, applied here for visual consistency across the page.
  */
-export function EngineeringPrinciples() {
+export function EngineeringPrinciples({ principles }: { principles: ReadonlyArray<AboutContentData["principles"][number]> }) {
   return (
     <div className="divide-y divide-border border-t border-b border-border">
-      {ABOUT_CONTENT.principles.map((principle, index) => (
+      {principles.map((principle, index) => (
         <Reveal key={principle.title} delayMs={index * 60}>
           <div className="flex flex-col gap-2 py-6 sm:flex-row sm:items-baseline sm:gap-8">
             <TechnicalLabel accent className="shrink-0 sm:w-12">

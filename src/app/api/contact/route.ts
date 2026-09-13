@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { ContactFormSchema } from "@/lib/schemas/contact";
+import { databaseConfigured, db } from "@/lib/db";
 
 export const runtime = "nodejs";
 
@@ -10,15 +11,9 @@ export const runtime = "nodejs";
  * client-side validation alone) using the same `ContactFormSchema` the
  * form itself pre-checks against, so the two can't drift.
  *
- * IMPORTANT — honest limitation, not a hidden gap: no email provider is
- * configured in this milestone. There's no SMTP/Resend/etc. credential
- * available in this environment, so wiring a real "actually deliver this
- * email" integration here would mean fabricating working infrastructure
- * that doesn't exist. Instead, a validated submission is logged
- * server-side (`console.log`) and a success response is returned — the
- * form is genuinely functional and testable end-to-end up to that point.
- * Wiring a real provider later is a small, isolated change: replace the
- * `console.log` below with the provider's send call.
+ * Contact submissions are persisted in PostgreSQL when the database is
+ * configured. The existing log fallback keeps local development usable
+ * before the database is provisioned.
  */
 export async function POST(request: Request) {
   let body: unknown;
@@ -36,8 +31,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "Validation failed.", fieldErrors }, { status: 400 });
   }
 
-  // Placeholder for real delivery — see the doc comment above.
-  console.log("Contact form submission:", result.data);
+  if (databaseConfigured) {
+    await db.contactSubmission.create({ data: result.data });
+  } else {
+    console.log("Contact form submission:", result.data);
+  }
 
   return NextResponse.json({ ok: true });
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { LayoutGroup, motion } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
@@ -94,14 +94,10 @@ export function ProjectThumbnailRail({ projects, activeIndex, onSelect }: Projec
                   className="object-cover"
                 />
               </span>
-              <span
-                className={cn(
-                  "mt-2 block font-technical text-technical-label uppercase tracking-[0.1em]",
-                  isActive ? "text-accent" : "text-foreground-muted",
-                )}
-              >
-                Project {project.id}
-              </span>
+              <ProjectNameLabel
+                name={`Project ${project.id}`}
+                active={isActive}
+              />
 
               {isActive ? (
                 <motion.span
@@ -118,5 +114,48 @@ export function ProjectThumbnailRail({ projects, activeIndex, onSelect }: Projec
         })}
       </div>
     </LayoutGroup>
+  );
+}
+
+function ProjectNameLabel({ name, active }: { name: string; active: boolean }) {
+  const viewportRef = useRef<HTMLSpanElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+
+  useEffect(() => {
+    const measure = () => {
+      const viewport = viewportRef.current;
+      const text = textRef.current;
+      if (viewport && text) setIsOverflowing(text.scrollWidth > viewport.clientWidth + 1);
+    };
+
+    measure();
+    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure);
+    if (observer && viewportRef.current) observer.observe(viewportRef.current);
+    if (observer && textRef.current) observer.observe(textRef.current);
+    return () => observer?.disconnect();
+  }, [name]);
+
+  const duration = `${Math.max(7, name.length * 0.2)}s`;
+
+  return (
+    <span
+      ref={viewportRef}
+      aria-label={name}
+      title={isOverflowing ? name : undefined}
+      className={cn(
+        "mt-2 block w-24 overflow-hidden whitespace-nowrap font-technical text-technical-label uppercase tracking-[0.1em] sm:w-32",
+        active ? "text-accent" : "text-foreground-muted",
+      )}
+    >
+      <span
+        ref={textRef}
+        className={cn("inline-flex min-w-max", isOverflowing && "project-name-marquee")}
+        style={{ "--project-marquee-duration": duration } as React.CSSProperties}
+      >
+        <span>{name}</span>
+        {isOverflowing ? <span aria-hidden="true" className="pl-10">{name}</span> : null}
+      </span>
+    </span>
   );
 }

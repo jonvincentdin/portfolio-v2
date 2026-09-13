@@ -1,7 +1,29 @@
 # RESPONSIVE.md
 
+## Editor Responsive Behavior (database CMS)
+At 375/390/430px section navigation becomes a full-width select; fields and
+textareas use `min-w-0` and controls wrap. At 768px the editor remains one
+comfortable column; at `lg` it becomes a sticky section rail plus constrained
+canvas. The editor root prevents accidental horizontal page overflow. Project
+asset controls use wrapping rows so upload buttons, file names, and paths remain
+usable on narrow screens.
+
 ## Audited Breakpoints
 `375 · 430 · 768 · 1024 · 1280 · 1440 · 1920`
+
+## Milestone 14 Follow-up
+
+The final design pass kept the existing responsive structure intact. The only
+responsive code polish was in `ProjectFiles`: file rows now use a wrapping flex
+layout and constrain the filename block, so long authored filenames remain
+readable and the download action remains reachable at narrow widths. The Home
+calibration frame is desktop-only (`lg+`) and is hidden on mobile, where the
+deliberate stack remains the primary composition.
+
+The in-app browser was unavailable during this pass, so this follow-up was
+verified through rendered HTML/CSS from the local development server plus the
+production route smoke test; it does not replace the earlier real-browser
+breakpoint audit documented below.
 
 ## Milestone 11 Audit — Findings and Fixes
 

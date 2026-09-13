@@ -6,6 +6,12 @@ import { getAllProjects } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Projects",
+  description:
+    "A showroom of full-stack development projects — browse specs, tech stack, and case studies.",
+  openGraph: {
+    title: "Projects",
+    description: "A showroom of full-stack development projects.",
+  },
 };
 
 /**
@@ -14,8 +20,8 @@ export const metadata: Metadata = {
  * basic thumbnail selector — functionality first. Directional transition
  * motion and touch gestures land in Milestone 05.
  */
-export default function ProjectsPage() {
-  const projects = getAllProjects();
+export default async function ProjectsPage() {
+  const projects = await getAllProjects();
 
   if (projects.length === 0) {
     return (

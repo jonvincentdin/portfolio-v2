@@ -13,6 +13,14 @@
   --foreground-primary: #ffffff;
   --foreground-muted: #8a8a8a;
   --border: #242424;
+  /* Decorative dividers/panel edges use --border (~1.3:1 against
+     background — deliberately subtle, not conveying interactive
+     affordance on its own). Interactive element boundaries that need to
+     independently signal "this is a control" (e.g. form input edges) use
+     --border-strong instead, which meets WCAG 1.4.11's 3:1 non-text
+     contrast minimum for UI components. Added Milestone 13 after
+     computing actual contrast ratios — see DECISIONS.md D-030. */
+  --border-strong: #606060;
 
   /* Accent — swap this single value to change the site's dominant accent.
      Alternatives: motorsport red #d62828, electric blue #2e6bff,
@@ -28,6 +36,7 @@
   --color-foreground-primary: var(--foreground-primary);
   --color-foreground-muted: var(--foreground-muted);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
 
@@ -98,9 +107,82 @@ html {
 }
 
 body {
-  background: var(--background-primary);
+  background-color: var(--background-primary);
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.018) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.018) 1px, transparent 1px);
+  background-size: 64px 64px;
+  background-position: center top;
   color: var(--foreground-primary);
   font-family: var(--font-body);
+}
+
+body > :not(.cursor-grid-glow) {
+  position: relative;
+  z-index: 1;
+}
+
+.cursor-grid-glow {
+  --cursor-x: 50vw;
+  --cursor-y: 50vh;
+  --cursor-glow-opacity: 0;
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--cursor-glow-opacity);
+  background-image:
+    linear-gradient(to right, rgb(232 180 0 / 0.28) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(232 180 0 / 0.28) 1px, transparent 1px);
+  background-size: 64px 64px;
+  background-position: center top;
+  mask-image: radial-gradient(circle 220px at var(--cursor-x) var(--cursor-y), #000 0%, rgb(0 0 0 / 0.72) 42%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle 220px at var(--cursor-x) var(--cursor-y), #000 0%, rgb(0 0 0 / 0.72) 42%, transparent 100%);
+  transition: opacity 180ms ease;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+.angular-panel::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3rem;
+  height: 1px;
+  background: var(--accent);
+  content: "";
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+@keyframes project-name-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-50% - 1.25rem));
+  }
+}
+
+.project-name-marquee {
+  animation: none;
+}
+
+.group:hover .project-name-marquee {
+  animation: project-name-marquee var(--project-marquee-duration, 8s) linear infinite;
+}
+
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
 }
 
 ::selection {

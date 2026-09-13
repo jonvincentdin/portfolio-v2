@@ -5,6 +5,15 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
 import type { NavItem } from "@/lib/navigation";
 
+type NavLinkProps = {
+  item: NavItem;
+  onClick?: () => void;
+  /** Forwarded to the underlying `<a>` — used by MobileNavigation to focus the first link on open. */
+  linkRef?: React.Ref<HTMLAnchorElement>;
+  /** Used by MobileNavigation to remove closed-menu links from the tab order (they're still in the DOM, just invisible). */
+  tabIndex?: number;
+};
+
 /**
  * Determining the active route requires the current pathname, which is only
  * available via the `usePathname` client hook — this component exists
@@ -13,21 +22,23 @@ import type { NavItem } from "@/lib/navigation";
  * MobileNavigation stay server/simple-client and delegate active-state
  * detection to this component.
  */
-export function NavLink({ item, onClick }: { item: NavItem; onClick?: () => void }) {
+export function NavLink({ item, onClick, linkRef, tabIndex }: NavLinkProps) {
   const pathname = usePathname();
   const isActive = pathname === item.href;
 
   return (
     <Link
+      ref={linkRef}
       href={item.href}
       onClick={onClick}
+      tabIndex={tabIndex}
       aria-current={isActive ? "page" : undefined}
       className={cn(
         "group inline-flex items-center gap-2 font-technical text-technical-label uppercase tracking-[0.1em] transition-colors",
         isActive ? "text-foreground-primary" : "text-foreground-muted hover:text-foreground-primary",
       )}
     >
-      <span className={cn(isActive ? "text-accent" : "text-foreground-muted/60")}>
+      <span className={cn(isActive ? "text-accent" : "text-foreground-muted")}>
         {item.index}
       </span>
       <span className="relative">

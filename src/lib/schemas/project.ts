@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { RelativePathSchema, SlugSchema, OptionalLinkSchema } from "./common";
+import {
+  AdditionalLinkSchema,
+  RelativePathSchema,
+  SlugSchema,
+  OptionalLinkSchema,
+  VisibilitySchema,
+} from "./common";
 
 /**
  * Project schema — the core content type. See CONTENT_SYSTEM.md §Project and
@@ -42,6 +48,7 @@ const ProjectFileSchema = z.object({
     "other",
   ]),
   description: z.string().default(""),
+  access: z.enum(["downloadable", "visible", "hidden"]).default("downloadable"),
 });
 
 const ProjectFeatureSchema = z.object({
@@ -69,6 +76,7 @@ const ProjectCaseStudySchema = z.object({
 const ProjectLinksSchema = z.object({
   live: OptionalLinkSchema,
   github: OptionalLinkSchema,
+  additional: z.array(AdditionalLinkSchema).default([]),
 });
 
 export const ProjectSchema = z.object({
@@ -80,12 +88,14 @@ export const ProjectSchema = z.object({
   description: z.string().min(1),
   year: z.number().int().gte(2000).lte(2100),
   featured: z.boolean().default(false),
+  visible: VisibilitySchema,
+  downloadable: z.boolean().default(true),
   order: z.number().int(),
   status: ProjectStatusSchema,
   category: z.array(z.string()).min(1),
   role: z.array(z.string()).min(1),
   technologies: z.array(z.string()).min(1),
-  links: ProjectLinksSchema.default({ live: "", github: "" }),
+  links: ProjectLinksSchema.default({ live: "", github: "", additional: [] }),
   media: ProjectMediaSchema,
   caseStudy: ProjectCaseStudySchema.default({
     overview: "",

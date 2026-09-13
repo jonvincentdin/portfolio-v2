@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
@@ -27,11 +27,21 @@ import { NavLink } from "./NavLink";
  * 11 responsive audit — see DECISIONS.md D-021. The portal renders the
  * overlay directly under `<body>`, escaping the header's containing-block
  * entirely, which is the standard fix for this category of bug.
+ *
+ * Milestone 13 accessibility pass: the overlay is a real modal dialog
+ * (`role="dialog"`, `aria-modal="true"`) with Escape-to-close, a focus
+ * trap keeping Tab cycling within the menu's links while open, focus
+ * moving to the first link on open, and focus returning to the trigger
+ * button on close — none of which existed before (the menu worked for
+ * mouse/touch users but not for keyboard-only or screen-reader users).
  */
 export function MobileNavigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const pathname = usePathname();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const firstLinkRef = useRef<HTMLAnchorElement>(null);
+  const navRef = useRef<HTMLElement>(null);
 
   // Standard, unavoidable "detect client mount" pattern: document.body
   // doesn't exist during SSR, and there's no way to know we're mounted
@@ -58,18 +68,69 @@ export function MobileNavigation() {
     };
   }, [isOpen]);
 
+  // Focus management: move focus into the menu on open, back to the
+  // trigger button on close. Escape closes it. A simple Tab-trap keeps
+  // keyboard focus cycling within the menu's links while it's open,
+  // since the rest of the page is meant to be inert while this is shown.
+  useEffect(() => {
+    if (isOpen) {
+      firstLinkRef.current?.focus();
+    } else {
+      triggerRef.current?.focus();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const focusable = navRef.current?.querySelectorAll<HTMLElement>("a");
+      if (!focusable || focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
+
   const overlay = (
     <div
       id="mobile-navigation"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Site navigation"
+      aria-hidden={!isOpen}
       className={cn(
         "fixed inset-0 z-40 flex flex-col justify-center bg-background-primary transition-opacity duration-300",
         isOpen ? "opacity-100" : "pointer-events-none opacity-0",
       )}
     >
-      <nav className="flex flex-col items-start gap-8 px-8">
-        {NAV_ITEMS.map((item) => (
+      <nav ref={navRef} aria-label="Mobile" className="flex flex-col items-start gap-8 px-8">
+        {NAV_ITEMS.map((item, index) => (
           <div key={item.href} className="text-2xl font-heading">
-            <NavLink item={item} onClick={() => setIsOpen(false)} />
+            <NavLink
+              item={item}
+              onClick={() => setIsOpen(false)}
+              linkRef={index === 0 ? firstLinkRef : undefined}
+              tabIndex={isOpen ? 0 : -1}
+            />
           </div>
         ))}
       </nav>
@@ -79,12 +140,13 @@ export function MobileNavigation() {
   return (
     <div className="lg:hidden">
       <button
+        ref={triggerRef}
         type="button"
         aria-expanded={isOpen}
         aria-controls="mobile-navigation"
         aria-label={isOpen ? "Close menu" : "Open menu"}
         onClick={() => setIsOpen((v) => !v)}
-        className="relative z-50 flex h-10 w-10 flex-col items-center justify-center gap-1.5"
+        className="relative z-50 flex h-10 w-10 flex-col items-center justify-center gap-1.5 transition-transform duration-150 active:scale-90"
       >
         <span
           className={cn(

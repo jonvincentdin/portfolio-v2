@@ -32,9 +32,13 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
+
+# Runtime owner editor data and uploaded profile media
+/.data/
 
 # typescript
 *.tsbuildinfo

@@ -3,7 +3,264 @@
 Record of architectural/design decisions, each with the reasoning behind it.
 Newest entries at the top.
 
+## D-040 — PostgreSQL is the runtime CMS source of truth
+The editor persists one Zod-validated snapshot into normalized PostgreSQL
+records through Prisma. Project and profile uploads are stored as database
+binary data, while checked-in `content/` remains the seedable fallback. A
+single Prisma transaction keeps a multi-section editor save consistent; the
+editor refuses persistence when `DATABASE_URL` is not configured.
+
+The earlier `.data/portfolio-overrides.json` implementation from Milestone 15
+is superseded because runtime project creation and binary uploads require a
+durable database-backed store.
+
+## D-041 — Reusable media library plus project-specific links
+Binary uploads are stored once in `MediaAsset`. Projects reference them through
+`ProjectAsset` rows that retain project-relative paths and usage kinds. This
+allows one image or file to be reused across projects, preserves the existing
+public URL/download contract, and avoids coupling a global asset to one
+project's editorial structure. Legacy project binaries are backfilled with a
+separate migration command.
+
+## D-037 — Full runtime snapshot over source defaults
+This historical Milestone 15 decision is superseded by D-040. The ignored JSON
+override file is no longer read or written; runtime content persistence now
+requires PostgreSQL.
+
+## D-038 — OTP delivery with explicit development mode
+Owner access uses hashed, expiring, single-use OTP challenges. Production
+delivery requires Resend credentials; `AUTH_DEV_MODE=true` is the explicit
+local fallback and logs the code only on the server.
+
+## D-039 — Fixed profile media target and server validation
+Profile media uses a fixed database record and a dedicated serving route;
+extension, MIME, magic bytes, byte size, and dimensions are checked before
+replacement. Project assets use validated relative paths and database rows to
+avoid filename/path traversal risk.
+
 ---
+
+## D-036 — Final visual QA favors restrained system cues over new features
+**Decision:** Milestone 14's final design polish adds a low-contrast technical
+grid to the global dark canvas, a desktop-only angular calibration frame to
+the Home hero, a short accent registration mark to shared `AngularPanel`
+surfaces, balanced/prettier text wrapping, and safe wrapping for project-file
+rows. No new route, content type, feature, interaction, or animation system
+was introduced.
+**Reason:** Source-level review of the completed site showed that its strongest
+custom qualities already came from the showroom, specification rows, angular
+geometry, typography pairing, and restrained motion. The remaining risk was
+not missing functionality but isolated areas reading as a conventional
+developer template. These small, shared cues strengthen the existing visual
+language across pages without competing with project imagery or violating the
+single-accent / quality-over-quantity rules. The in-app browser was unavailable
+for this pass, so verification used compiled development CSS, rendered HTML,
+production build output, and route/API smoke tests; no screenshot-based result
+is inferred.
+
+## D-035 — Mobile menu given full dialog semantics: focus trap, Escape-to-close, and landmark labeling
+**Decision:** The mobile menu overlay now has `role="dialog"`,
+`aria-modal="true"`, `aria-hidden={!isOpen}`, a distinct `aria-label`, and
+a real focus trap: opening it moves focus to the first nav link, `Tab`/
+`Shift+Tab` cycle only among the menu's own links (never escaping into the
+page behind it), `Escape` closes it, and closing returns focus to the
+hamburger button. Both the desktop (`SiteHeader`) and mobile
+(`MobileNavigation`) `<nav>` elements also gained distinct `aria-label`s
+("Primary" / "Mobile").
+**Reason:** A `position: fixed`, `aria-modal="true"` overlay that
+functionally blocks interaction with the rest of the page needs to behave
+like an actual modal for keyboard and screen reader users, not just
+visually — without a focus trap, `Tab` would silently move focus into
+invisible content behind the overlay; without `aria-hidden` toggling, a
+screen reader could perceive the closed menu's links as a second, always-
+present navigation landmark, which is also what `axe-core`'s
+`landmark-unique` rule flagged (two `<nav>` elements with no distinguishing
+label — see D-033). Verified with real keyboard input, not just code
+review: opening the menu moves focus to "Home" (the first link); pressing
+`Tab` six times (more than the five real links) wraps back around within
+the menu rather than escaping it; `Escape` closes the menu and returns
+focus to the "Open menu" button; and a full re-run of the `axe-core` scan
+confirms zero landmark violations remain.
+
+## D-034 — Section-title labels promoted to real `<h2>` where they precede `<h3>` content
+**Decision:** `TechnicalLabel`'s `as` prop gained an `"h2"` option, and every
+section-title label that directly precedes `<h3>`-headed content (About's
+Engineering Principles/Services/Development Systems; Experience's Work
+History/Education/Certifications/Achievements; the case study's Features)
+now renders as a real `<h2>` instead of a styled `<div>`.
+**Reason:** Found by an automated `axe-core` scan (see D-033), not code
+review: About, Experience, and the case study page each had at least one
+`<h1>` → `<h3>` jump with no `<h2>` in between, a real WCAG 2.4.6/1.3.1
+semantic-heading violation, not just a linter nitpick — screen reader users
+navigating by heading list would encounter unlabeled content structure.
+Section labels that don't precede any heading-level content (e.g. "Project
+Specifications," "Screenshots," "Links," "Direct," kicker labels like
+"Project 001" that sit beside an existing `<h2>`) were deliberately left as
+non-heading elements — promoting every visual label to a heading regardless
+of content would dilute the document outline rather than clarify it.
+Verified: re-running the same `axe-core` scan afterward found zero
+heading-order violations on any of the 6 audited pages.
+
+## D-033 — Milestone 13 accessibility audit used axe-core, not just manual/contrast checks
+**Decision:** In addition to manually computing WCAG contrast ratios and
+manually testing keyboard/focus behavior, Milestone 13 ran Google's
+`axe-core` (industry-standard automated accessibility testing engine,
+installed temporarily via `npm install --no-save`, never added to
+`package.json`) against all 6 representative pages via a real headless
+browser, checking the full `wcag2a`/`wcag2aa`/`best-practice` rule sets.
+**Reason:** Automated scanning catches classes of issues manual spot-
+checking reliably misses — exactly what happened here: it found 3 distinct
+real bugs (a genuine color-contrast failure on nav index numbers at a
+reduced opacity that "looked fine" visually but measured well under 4.5:1;
+missing heading levels; and duplicate unlabeled `<nav>` landmarks) that
+weren't part of the pre-planned fix list. Re-running the exact same scan
+after fixing all three confirms zero violations across every page — a
+concrete, reproducible pass/fail signal beyond "looks right." `axe-core`
+was removed from `node_modules` after use, then discovered to actually be
+a real transitive dependency of `eslint-plugin-jsx-a11y` (used by this
+project's own ESLint config) — reinstalled via a plain `npm install` to
+restore it, rather than left broken.
+
+## D-032 — Dynamic sitemap, robots.txt, and per-page OpenGraph/Twitter metadata
+**Decision:** `src/app/sitemap.ts` and `src/app/robots.ts` (Next.js's
+App Router conventions) were added; every page's `metadata` export now
+includes an explicit `openGraph` (and, for the case study, `twitter`)
+override, not just a bare `title`/`description`.
+**Reason:** Two real, distinct SEO gaps. First, no sitemap or robots.txt
+existed at all — `sitemap.ts` generates project case-study URLs from
+`getAllProjects()` (the same loader every other page uses, so a new
+`content/projects/` folder appears in the sitemap automatically);
+`robots.ts` allows normal crawling while blocking `/api/` and
+`/content-media/`, neither of which is meant to be indexed. Second, Next.js
+metadata merges `openGraph`/`twitter` as whole objects between a route and
+its parent layout — a child page that doesn't define its own `openGraph`
+silently inherits the ROOT layout's (the homepage's title/description), so
+without a per-page override, sharing a link to `/about` or a project case
+study on social media would show the homepage's title, not the actual
+page's. The case study page's `openGraph.images` uses the project's real
+hero image via the existing `getProjectMediaUrl()` helper.
+
+## D-031 — Skip link target needs `tabIndex={-1}`, not just a matching `id`
+**Decision:** `<main id="main-content">` gained `tabIndex={-1}` (and
+`outline-none`, since it's never part of the normal Tab sequence — only a
+script/fragment-navigation target).
+**Reason:** A real, verified-with-a-real-keypress bug: the skip link
+(`<a href="#main-content">`) correctly received focus on the first Tab
+press and correctly scrolled the page when activated, but keyboard focus
+itself landed on `<body>`, not `<main>` — browsers scroll to a URL
+fragment's target but only move *focus* there if the target is actually
+focusable. Without `tabIndex={-1}`, a keyboard user activating the skip
+link would have to Tab again from the very top of the page, defeating the
+skip link's entire purpose. Verified before and after: `document.
+activeElement.id` was `"BODY"` before the fix, `"main-content"` after.
+
+## D-030 — A second, more visible border token added for interactive-element boundaries
+**Decision:** `--border-strong: #606060` was added alongside the existing
+`--border: #242424`, used specifically for form input boundaries (the
+Contact form's fields), not for the site's decorative dividers/panel
+borders, which keep using the original subtle `--border`.
+**Reason:** Computing actual WCAG contrast ratios (not just eyeballing)
+found `--border` measures only 1.28:1 against `--background-primary` — far
+below the 3:1 WCAG 1.4.11 "non-text contrast" minimum for UI component
+boundaries. This is an acceptable, deliberate choice for ambient dividers
+and panel edges (which aren't the sole indicator of an interactive
+affordance — buttons and links get accent-colored hover/focus states
+regardless of their border), but a real usability problem for form input
+edges specifically, where the border IS how a user perceives the field's
+clickable/typeable boundary. `#606060` measures 3.15:1, clearing the
+threshold. The Contact form's inputs also had their `outline-none` (with
+only a subtle `focus:border-accent` color change as the sole focus
+indicator) reconsidered — kept the border-color change but no longer
+relies on it alone, restoring the native focus outline as a second,
+independent signal.
+
+## D-029 — Milestone 12 motion scope: what was deliberately not expanded
+**Decision:** Beyond the fixes and additions above, Milestone 12
+deliberately did NOT: (a) build a general-purpose `MotionImage` component
+for hover scale/translate — the two existing usages (`ProjectGallery`'s
+`hover:scale-[1.02]`, and nowhere else needs it) are simple enough that a
+shared component would be premature abstraction; (b) add intrinsic
+entrance animation to `AngularPanel` itself (spec §37's "clipped panel
+reveals") — every real usage of `AngularPanel` is already wrapped in
+`Reveal` or `ImageMask` at the call site, which already provides a
+panel-level entrance animation; adding a second, redundant animation
+inside `AngularPanel` itself would violate spec §28's "quality over
+quantity" directive; (c) apply the `active:scale-95` press state to purely
+textual navigation links (`NavLink`, the header logo) — spec §36's press
+example is specifically framed around button-style controls
+("DOWNLOAD PROJECT"), and a scale-down press on inline nav text would look
+inconsistent with its underline-only hover treatment.
+**Reason:** Recorded so these are legible as deliberate choices, not gaps
+that were simply missed during the audit.
+
+## D-028 — Tailwind v4 arbitrary-value `scale-[...]` combined with `active:` does not compile; use standard scale steps
+**Decision:** All press-state additions in this milestone use
+`active:scale-95` (a named Tailwind scale step), not the originally-written
+`active:scale-[0.98]` (an arbitrary bracket value).
+**Reason:** A real, silent build issue found only by inspecting the
+compiled CSS output, not by code review: `active:scale-[0.98]` produced no
+CSS rule at all in this project's exact Tailwind v4 version — confirmed by
+grepping the built `.css` file directly and finding zero occurrences,
+compared to `hover:scale-[1.02]` (arbitrary value, different variant) and
+`active:scale-90` (named value, same variant) which both compiled
+correctly. The combination of `active:` specifically with a bracketed
+arbitrary value is what silently failed. This is also why the bug was
+invisible for a while even after adding real-browser interaction tests:
+checking `getComputedStyle(el).transform` (the traditional CSS transform
+property) always reported `"none"`, which looked like confirmation the
+press state wasn't applying — but Tailwind v4's scale utilities set the
+native CSS `scale` property, not `transform: scale(...)`, so that check was
+looking at the wrong property regardless. Verified the fix by checking
+`getComputedStyle(el).scale` directly during a real mouse-down: reports
+`"0.95"` as expected, across all four affected components.
+
+## D-027 — ImageMask uses a manual IntersectionObserver, split across two elements
+**Decision:** `ImageMask` does not use Framer Motion's `whileInView` prop.
+It uses the same manually-managed `IntersectionObserver` pattern as
+`Reveal`, and — critically — observes a plain, unclipped wrapper `<div>`
+rather than the `motion.div` that actually carries the animated
+`clip-path`.
+**Reason:** Two real bugs found via real-browser testing, not code review:
+(1) `whileInView` never fired in this project's exact Framer Motion
+version, leaving the image permanently hidden; switching to the proven
+manual-observer pattern fixed this. (2) Even after that fix, observing the
+SAME element that carries `clip-path: inset(0 0 0 100%)` still failed —
+because a target clipped down to zero visible area has zero intersection
+by definition, `IntersectionObserver` correctly reports `isIntersecting:
+false` for it regardless of scroll position, since clip-path (like
+`overflow: hidden`) is one of the properties browsers account for when
+computing the actual visible intersecting area, not just raw layout
+geometry. Splitting the observed (unclipped) wrapper from the animated
+(clipped) inner element resolves the self-defeating combination. Verified
+by sampling the clip-path value at multiple timepoints during the reveal —
+it animates smoothly from `inset(0 0 0 100%)` to `inset(0 0 0 0%)` over the
+expected ~700ms.
+
+## D-026 — Page transitions require `app/template.tsx`, not a manual `usePathname()` key in the layout
+**Decision:** Route-level page transitions are split into two pieces:
+`PageTransition` (a persistent `AnimatePresence` wrapper, rendered once in
+`layout.tsx`) and `app/template.tsx` (the actual `motion.div` with
+enter/exit variants).
+**Reason:** A real, serious bug found via real-browser testing: an initial
+implementation used a single component in `layout.tsx` with
+`<AnimatePresence><motion.div key={usePathname()}>{children}</motion.div>
+</AnimatePresence>`. The exit animation played correctly, but the incoming
+page then rendered permanently invisible (stuck at the exit's final
+`opacity: 0`) — confirmed by sampling `opacity`/`transform` at multiple
+timepoints after a real click and watching it never recover. Root cause:
+`usePathname()` and Next.js's routed `children` prop both update in the
+same render pass on navigation, so `AnimatePresence` never observed a
+genuine "old element removed, new element added" transition — just one
+already-mounted instance whose content silently changed, which Framer
+Motion doesn't replay `initial → animate` for (that sequence only runs on
+a true mount). `template.tsx` is Next.js's own documented mechanism for
+this exact scenario: it creates a genuinely new component instance on
+every navigation, which is the real mount/unmount signal
+`AnimatePresence` needs. Verified after the fix: sampling opacity/x at
+seven timepoints across a real click shows a clean 0→1 / 30→0 curve that
+settles at `opacity: 1, transform: none` and stays there — confirmed
+`prefers-reduced-motion` also collapses correctly to an instant, opacity-
+only settle.
 
 ## D-025 — ProjectThumbnailRail no longer scrolls the page on initial mount
 **Decision:** `ProjectThumbnailRail`'s scroll-into-view effect now skips
@@ -257,7 +514,8 @@ traversal and only serves recognized image extensions — everything else
 **Reason:** `public/` is Next's only statically-served directory, but
 copying/symlinking `content/` into it would either duplicate assets on disk
 or fight the dev/build tooling. A narrow, purpose-built route handler keeps
-`content/` as the single source of truth (per PROJECT.md) while still
+`content/` as the seed/fallback source while PostgreSQL is the runtime source,
+while still
 letting `next/image` optimize the images. Restricting it to image
 extensions is deliberate: it keeps this route from becoming a second,
 undeliberate way to fetch project files that are meant to go through the

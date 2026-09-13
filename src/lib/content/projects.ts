@@ -10,6 +10,9 @@ import {
   readJsonFile,
 } from "./fs-utils";
 import { ProjectSchema, type Project, type ProjectFile } from "@/lib/schemas";
+import { databaseConfigured } from "@/lib/db";
+import { getDatabaseSnapshot } from "./database";
+import { db } from "@/lib/db";
 
 const PROJECTS_DIR = path.join(CONTENT_ROOT, "projects");
 
@@ -89,7 +92,12 @@ function sortProjects(projects: LoadedProject[]): LoadedProject[] {
  * Adding a new folder here is the entire authoring workflow — no code
  * changes anywhere else (spec §17, §72).
  */
-export function getAllProjects(): LoadedProject[] {
+export async function getAllProjects(): Promise<LoadedProject[]> {
+  if (databaseConfigured) return (await getDatabaseSnapshot()).projects.filter((project) => project.visible);
+  return (await getAllProjectsForEditor()).filter((project) => project.visible);
+}
+
+function getBaseProjects(): LoadedProject[] {
   if (cache) return cache;
 
   const folderNames = listDirectories(PROJECTS_DIR);
@@ -112,14 +120,25 @@ export function getAllProjects(): LoadedProject[] {
   return cache;
 }
 
+/** Returns the source projects used before a database is provisioned. */
+export function getSourceProjectsForEditor(): LoadedProject[] {
+  const base = getBaseProjects();
+  return base;
+}
+
+export async function getAllProjectsForEditor(): Promise<LoadedProject[]> {
+  if (databaseConfigured) return getDatabaseSnapshot().then((snapshot) => snapshot.projects);
+  return getSourceProjectsForEditor();
+}
+
 /** Looks up a single project by its URL slug, or undefined if none matches. */
-export function getProjectBySlug(slug: string): LoadedProject | undefined {
-  return getAllProjects().find((project) => project.slug === slug);
+export async function getProjectBySlug(slug: string): Promise<LoadedProject | undefined> {
+  return (await getAllProjects()).find((project) => project.slug === slug);
 }
 
 /** All featured projects, in the same sorted order as getAllProjects(). */
-export function getFeaturedProjects(): LoadedProject[] {
-  return getAllProjects().filter((project) => project.featured);
+export async function getFeaturedProjects(): Promise<LoadedProject[]> {
+  return (await getAllProjects()).filter((project) => project.featured);
 }
 
 /**
@@ -127,7 +146,11 @@ export function getFeaturedProjects(): LoadedProject[] {
  * maintained in project.json (spec §68) — always computed here from the
  * real file.
  */
-export function getProjectFileSizeBytes(project: LoadedProject, file: ProjectFile): number | null {
+export async function getProjectFileSizeBytes(project: LoadedProject, file: ProjectFile): Promise<number | null> {
+  if (databaseConfigured) {
+    const asset = await db.projectAsset.findFirst({ where: { projectId: project.id, path: file.path }, select: { size: true, mediaAsset: { select: { size: true } } } });
+    return asset?.size ?? asset?.mediaAsset?.size ?? null;
+  }
   const projectDir = getProjectDirectoryPath(project.folderName);
   return getFileSizeBytes(path.join(projectDir, file.path));
 }

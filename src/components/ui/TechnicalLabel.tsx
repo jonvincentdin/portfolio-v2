@@ -5,7 +5,7 @@ type TechnicalLabelProps = {
   className?: string;
   /** Renders with the accent color instead of the muted foreground. */
   accent?: boolean;
-  as?: "span" | "div" | "p" | "label";
+  as?: "span" | "div" | "p" | "label" | "h2";
   /** Only meaningful when as="label" — associates the label with its field. */
   htmlFor?: string;
 };

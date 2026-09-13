@@ -1,5 +1,26 @@
 # CONTENT_SYSTEM.md
 
+## Runtime Owner Editing (database CMS)
+Source JSON/media remains the seedable baseline. An authenticated owner saves a
+validated `EditorSnapshotSchema` into PostgreSQL through Prisma, while project
+creation and asset uploads write database rows and binary data. Public loaders
+read the database when configured and retain the source fallback otherwise. A
+hidden project disappears from the showroom and returns 404 from its
+case-study/download routes; `downloadable: false` independently hides Project
+Files and both download endpoints. Profile media and contact submissions are
+also database-backed.
+
+## Media Library
+
+`MediaAsset` is the reusable binary record. It stores the original bytes,
+display name, MIME/type metadata, description, and internal storage key once.
+`ProjectAsset` is a project-specific link containing the relative path and
+usage kind (`hero`, `thumbnail`, `gallery`, `file`, or `asset`). A library item
+can be linked to many projects without re-uploading or re-storing the binary.
+The owner editor exposes `/api/editor/media` for library management and the
+project Asset Manager for linking. Existing project binaries can be backfilled
+with `npm run db:migrate-media` after `npm run db:push`.
+
 > **Status:** Implemented in Milestone 02. Schemas live in `src/lib/schemas/`,
 > loaders in `src/lib/content/`, example content in `content/`. Nothing here
 > is wired into a page/route yet — that starts in Milestone 03 (Home) and
@@ -18,7 +39,9 @@ content/
 ```
 Each directory is read by exactly one loader in `lib/content/`, validated by
 exactly one schema in `lib/schemas/`, and drives exactly one section of UI.
-Adding a new JSON file (or, for projects, a new folder) is the entire
+Adding a new JSON file (or, for projects, a new folder) updates the seed
+baseline. Runtime authors should use the owner editor, which writes PostgreSQL
+records and binary assets without component or route edits. The source
 authoring workflow — no component or route edits.
 
 ## Schemas (Zod, TypeScript types inferred)

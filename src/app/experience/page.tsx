@@ -13,6 +13,12 @@ import { getAllAchievements } from "@/lib/content/achievements";
 
 export const metadata: Metadata = {
   title: "Experience",
+  description:
+    "Work history, education, certifications, and achievements.",
+  openGraph: {
+    title: "Experience",
+    description: "Work history, education, certifications, and achievements.",
+  },
 };
 
 /**
@@ -21,11 +27,8 @@ export const metadata: Metadata = {
  * — when its underlying content is empty (the pattern learned the hard way
  * in Milestone 07 and applied correctly from the start here).
  */
-export default function ExperiencePage() {
-  const experience = getAllExperience();
-  const education = getAllEducation();
-  const certifications = getAllCertifications();
-  const achievements = getAllAchievements();
+export default async function ExperiencePage() {
+  const [experience, education, certifications, achievements] = await Promise.all([getAllExperience(), getAllEducation(), getAllCertifications(), getAllAchievements()]);
 
   return (
     <Container className="py-16 sm:py-24">
@@ -40,7 +43,7 @@ export default function ExperiencePage() {
 
       {experience.length > 0 ? (
         <div className="mt-16">
-          <TechnicalLabel accent as="div" className="mb-8">
+          <TechnicalLabel accent as="h2" className="mb-8">
             Work History
           </TechnicalLabel>
           <ExperienceTimeline entries={experience} />
@@ -49,7 +52,7 @@ export default function ExperiencePage() {
 
       {education.length > 0 ? (
         <div className="mt-16">
-          <TechnicalLabel accent as="div" className="mb-6">
+          <TechnicalLabel accent as="h2" className="mb-6">
             Education
           </TechnicalLabel>
           <EducationTimeline entries={education} />
@@ -58,7 +61,7 @@ export default function ExperiencePage() {
 
       {certifications.length > 0 ? (
         <div className="mt-16">
-          <TechnicalLabel accent as="div" className="mb-6">
+          <TechnicalLabel accent as="h2" className="mb-6">
             Certifications
           </TechnicalLabel>
           <CertificationGallery certifications={certifications} />
@@ -67,7 +70,7 @@ export default function ExperiencePage() {
 
       {achievements.length > 0 ? (
         <div className="mt-16">
-          <TechnicalLabel accent as="div" className="mb-6">
+          <TechnicalLabel accent as="h2" className="mb-6">
             Achievements
           </TechnicalLabel>
           <AchievementPanel achievements={achievements} />

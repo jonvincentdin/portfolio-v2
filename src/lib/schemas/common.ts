@@ -29,7 +29,7 @@ export const RelativePathSchema = z
  * field being omitted, which keeps the shape of `links` predictable.
  */
 export const OptionalLinkSchema = z
-  .union([z.literal(""), z.string().url()])
+  .union([z.literal(""), z.string().url().refine((value) => ["http:", "https:"].includes(new URL(value).protocol), "must use http or https")])
   .default("");
 
 export const SkillLevelSchema = z.enum([
@@ -39,5 +39,12 @@ export const SkillLevelSchema = z.enum([
   "Advanced",
   "Primary",
 ]);
+
+export const VisibilitySchema = z.boolean().default(true);
+
+export const AdditionalLinkSchema = z.object({
+  label: z.string().min(1),
+  url: z.string().url().refine((value) => ["http:", "https:"].includes(new URL(value).protocol), "must use http or https"),
+});
 
 export type SkillLevel = z.infer<typeof SkillLevelSchema>;

@@ -1,5 +1,12 @@
 # DESIGN_SYSTEM.md
 
+## Owner Editor (database CMS)
+The private editor reuses the dark technical canvas, clipped panels, accent
+labels, underlined inputs, and restrained borders. Save is the filled primary
+action, Preview is outlined, and Log Out is quiet text. Structured fields and
+upload controls use the same technical styling; no unsafe rich-text editor or
+second visual language was introduced.
+
 ## Color Tokens
 ```
 --background-primary:   #0A0A0A
@@ -7,7 +14,8 @@
 --surface:               #141414
 --foreground-primary:   #FFFFFF
 --foreground-muted:     #8A8A8A
---border:                #242424
+--border:                #242424   /* decorative dividers/panels only */
+--border-strong:         #606060   /* interactive boundaries (form inputs) — 3:1 min contrast */
 --accent:                #E8B400   /* racing yellow — default, configurable */
 ```
 Accent is a single CSS variable so the whole system can swap to motorsport red
@@ -15,6 +23,17 @@ Accent is a single CSS variable so the whole system can swap to motorsport red
 changing one value. Only one accent is active at a time; it is never used for
 large fills, only for thin lines, numerals, active indicators, and small
 geometric marks.
+
+`--border` measures only 1.28:1 against `--background-primary` — fine for
+ambient dividers, since they're never the sole indicator of an interactive
+affordance, but well under WCAG 1.4.11's 3:1 non-text contrast minimum for
+UI component boundaries. `--border-strong` (3.15:1) exists specifically for
+cases where the border itself communicates "this is a control" — currently
+just the Contact form's inputs. Added Milestone 13 after computing actual
+contrast ratios rather than assuming; see DECISIONS.md D-030. All text-role
+color pairs (`foreground-primary`/`foreground-muted`/`accent` against
+`background-primary` and `surface`) were verified to clear WCAG AA's 4.5:1
+normal-text minimum — computed directly, not eyeballed.
 
 ## Typography
 - **Headings:** Space Grotesk — geometric, technical, strong at large sizes.
@@ -36,6 +55,14 @@ thin 1px borders (`--border`), and diagonal separators rather than shadows or
 large border-radius. Used structurally — to frame the showroom image, to mark
 active states, to divide spec sections — never as pure ornament.
 
+Milestone 14 polish adds two restrained system-level cues: the dark canvas uses
+a low-contrast 64px technical grid, and every `AngularPanel` carries a short
+accent registration mark along its top edge. The Home hero also uses a quiet
+angular calibration frame to make its desktop composition intentional while
+the actual content remains the focus. These cues are structural and use the
+existing single accent token; they are not decorative gradients or a new
+visual subsystem.
+
 ## Buttons & Interaction States
 - Default: text + thin underline/arrow, no filled pill buttons as the primary
   pattern (a filled accent button is reserved for the single strongest CTA
@@ -56,3 +83,13 @@ controls), not a naive reflow. Full detail in RESPONSIVE.md.
 Glassmorphism/blur-heavy panels, randomly-hued gradients, oversized
 rounded-corner cards, neon glow, cyberpunk color clashes, Bootstrap-style
 default component shapes, and multi-accent-color pages.
+
+## Final Design QA Notes (Milestone 14)
+- Headings use balanced wrapping and body copy uses pretty wrapping so the
+  editorial hierarchy holds when content changes or labels get longer.
+- Project-file rows use a wrapping flex layout on narrow screens, preserving
+  the specification-list language without allowing a long filename to push a
+  download action off-canvas.
+- Existing motion remains intentionally sparse: the QA pass refined the
+  visual field without adding another animation layer. `prefers-reduced-motion`
+  continues to collapse both CSS and Framer Motion effects.

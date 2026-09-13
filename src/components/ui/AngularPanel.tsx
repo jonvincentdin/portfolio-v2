@@ -28,7 +28,7 @@ export function AngularPanel({
 }: AngularPanelProps) {
   return (
     <Tag
-      className={cn("bg-surface border border-border", className)}
+      className={cn("angular-panel relative border border-border bg-surface", className)}
       style={variant === "clip" ? { clipPath: CLIP_PATH } : undefined}
     >
       {children}

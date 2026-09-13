@@ -1,3 +1,4 @@
+
 /**
  * Site identity — name, role, and hero/metadata copy. This is intentionally
  * a plain constant, not a JSON content type: CONTENT_SYSTEM.md's dynamic
@@ -17,4 +18,19 @@ export const SITE_IDENTITY = {
   specialization: "Full Stack Development",
   status: "Available for opportunities",
   contactEmail: "hello@example.com",
+  /**
+   * Placeholder production URL — update to the real deployed domain before
+   * launch. Used for `metadataBase` (resolves relative OpenGraph/Twitter
+   * image URLs to absolute ones, required by most social platforms) and
+   * for `sitemap.ts`/`robots.ts` (Milestone 13). No trailing slash.
+   */
+  siteUrl: "https://yourname.dev",
+  viewProjectsLabel: "View Projects",
+  contactLabel: "Contact",
 } as const;
+
+export async function getSiteIdentity() {
+  const { databaseConfigured } = await import("@/lib/db");
+  if (databaseConfigured) return (await import("@/lib/content/database")).getDatabaseSnapshot().then((snapshot) => snapshot.site);
+  return SITE_IDENTITY;
+}

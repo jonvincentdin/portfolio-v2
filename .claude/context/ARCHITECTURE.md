@@ -1,5 +1,24 @@
 # ARCHITECTURE.md
 
+## Owner Editor + Database Architecture
+The logo opens `/owner`, where a six-digit OTP is requested and verified by
+`/api/auth/request-code` and `/api/auth/verify-code`. OTPs are hashed,
+single-use, five-attempt, ten-minute challenges with IP cooldown/rate limits.
+Successful verification creates a hashed server-side session represented by an
+HTTP-only `owner_session` cookie; `/api/auth/logout` revokes it. Resend is the
+production delivery provider; `AUTH_DEV_MODE=true` is an explicit local-only
+fallback that logs the code server-side.
+
+`/editor` is server-gated, while `EditorShell` owns client draft state. Save
+parses `EditorSnapshotSchema`, validates database project/asset references,
+writes normalized relational records in one Prisma transaction, and
+revalidates the public layout. With `DATABASE_URL` configured, public loaders
+read PostgreSQL; without it they retain the checked-in filesystem baseline for
+local preview, while editor persistence/uploads are disabled with an explicit
+setup error. Profile/project uploads are validated and stored as database
+binary data, then served through `/profile-media`, `/content-media`, and the
+download routes. Auth challenge/session state remains in `.data/`.
+
 ## Confirmed Stack Versions (as of Milestone 01)
 Next.js 16 (App Router, Turbopack build), React 19, TypeScript 5 (strict),
 Tailwind CSS v4 (CSS-first config via `@theme inline` in `globals.css` — no
@@ -8,15 +27,16 @@ Tailwind CSS v4 (CSS-first config via `@theme inline` in `globals.css` — no
 in environments without network access for font fetching (see PROGRESS.md).
 
 ## High-Level Architecture
-Next.js App Router project, server-first by default. Content lives as JSON +
-media files under `content/`, is discovered at build/dev time by filesystem
-readers in `lib/content/`, validated with Zod schemas in `lib/schemas/`, and
-exposed to pages/components as typed data. Interactive pieces (the showroom,
-mobile nav, contact form, gesture handling) are isolated client components;
-everything else renders on the server.
+Next.js App Router project, server-first by default. Checked-in JSON/media under
+`content/` is the seedable fallback and development source baseline. Runtime
+content is normalized into PostgreSQL by Prisma, mapped back through the same
+Zod schemas in `lib/schemas/`, and exposed to pages/components as typed data.
+Interactive pieces (the showroom, mobile nav, contact form, gesture handling,
+and editor controls) are isolated client components; everything else renders
+on the server.
 
 ```
-content (filesystem, source of truth)
+content (seed/fallback) + PostgreSQL (runtime source of truth)
    │  fs.readdir / fs.readFile
    ▼
 lib/content/*.ts  (loaders: discover, parse, sort)
@@ -178,14 +198,55 @@ Schemas are the single source of truth for both runtime validation and
 compile-time types.
 
 ## Data Loading vs. Runtime Storage (see PROJECT.md, spec §64)
-`content/` is committed to the Git repository and is the correct model for
-projects I add myself during development. If a future admin UI needs to let
-me (or anyone) upload projects at runtime against a deployed instance, that
-requires persistent object storage (e.g. S3/R2/Blob storage) plus a database
-or index — a deployed serverless function cannot durably write back into the
-Git repository. This limitation will be documented in `docs/ADDING_CONTENT.md`
-when that milestone is reached; no runtime upload system is being proposed
-in the current milestone plan.
+`content/` remains committed as the reviewable seed and local fallback.
+Runtime owner edits use PostgreSQL through Prisma; uploads are stored as
+database binary assets rather than written to the Git repository. The editor
+rejects content saves until the database is provisioned. Auth challenge/session
+state remains in `.data/`.
+
+## Runtime Database Model
+`prisma/schema.prisma` models site/about/contact settings, social links, all
+portfolio collections, projects, project links/features/assets, profile media,
+and contact submissions. `prisma/seed.ts` imports the checked-in baseline and
+stores every project binary as a `ProjectAsset` row. `src/lib/content/database.ts`
+maps rows back to the existing editor/public schemas, so the UI and download
+contracts do not diverge between source fallback and database mode.
+
+## SEO Infrastructure (Milestone 13)
+`src/app/sitemap.ts` and `src/app/robots.ts` use Next.js's App Router
+conventions (a default-exported function returning `MetadataRoute.Sitemap`/
+`MetadataRoute.Robots`) rather than static XML/text files, so the sitemap
+stays in sync with `getAllProjects()` automatically. `src/app/
+opengraph-image.tsx` uses `next/og`'s `ImageResponse` to generate a
+branded default share image at build time (Node runtime — the `edge`
+runtime this route originally used is deprecated in this Next.js version).
+Every page's `metadata` export includes an explicit `openGraph` override
+(and the case study additionally sets `twitter` and a real project image)
+since Next.js merges `openGraph`/`twitter` as whole objects between a
+route and its parent layout — without a per-page override, every page
+would silently inherit the root layout's homepage-branded social preview.
+
+## Accessibility Architecture (Milestone 13)
+- **Skip link:** a visually-hidden-until-focused `<a href="#main-content">`
+  as the very first focusable element in `<body>`; its target (`<main>`)
+  has `tabIndex={-1}` so keyboard focus actually lands there, not just
+  scroll position (a plain matching `id` alone isn't sufficient — see
+  DECISIONS.md D-031).
+- **Mobile menu as a real dialog:** `role="dialog"`, `aria-modal="true"`,
+  `aria-hidden` toggled with open state, a focus trap (Tab/Shift+Tab cycle
+  within the menu only), Escape-to-close, and focus returned to the
+  trigger button on close — see DECISIONS.md D-035.
+- **Two-tier border tokens:** `--border` (subtle, decorative dividers/
+  panels) vs. `--border-strong` (form input boundaries, meeting WCAG
+  1.4.11's 3:1 non-text contrast minimum) — see DECISIONS.md D-030.
+- **Heading hierarchy:** every page has exactly one `<h1>`; section labels
+  that precede `<h3>`-headed content render as real `<h2>` elements via
+  `TechnicalLabel`'s `as="h2"` option, preserving identical visual styling
+  — see DECISIONS.md D-034.
+- Verified with `axe-core` (industry-standard automated accessibility
+  testing, temporarily installed and removed — see DECISIONS.md D-033)
+  against all 6 representative pages, checking `wcag2a`/`wcag2aa`/
+  `best-practice` rules: zero violations after the fixes above.
 
 ## Technical Risks & Mitigations
 | Risk | Mitigation |

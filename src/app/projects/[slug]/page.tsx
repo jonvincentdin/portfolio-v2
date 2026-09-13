@@ -6,6 +6,7 @@ import { TechnicalLabel } from "@/components/ui/TechnicalLabel";
 import { AngularPanel } from "@/components/ui/AngularPanel";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { Reveal } from "@/components/motion/Reveal";
+import { ImageMask } from "@/components/motion/ImageMask";
 import { CaseStudySection } from "@/components/projects/CaseStudySection";
 import { ProjectFeature } from "@/components/projects/ProjectFeature";
 import { ProjectGallery } from "@/components/projects/ProjectGallery";
@@ -23,18 +24,27 @@ type PageProps = {
  * discovers — adding a new content/projects/ folder needs zero route
  * changes (spec §17, §72).
  */
-export function generateStaticParams() {
-  return getAllProjects().map((project) => ({ slug: project.slug }));
+export async function generateStaticParams() {
+  return (await getAllProjects()).map((project) => ({ slug: project.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
   if (!project) return {};
 
   return {
     title: project.name,
     description: project.tagline,
+    openGraph: {
+      title: project.name,
+      description: project.tagline,
+      images: [{ url: getProjectMediaUrl(project, project.media.hero) }],
+    },
+    twitter: {
+      title: project.name,
+      description: project.tagline,
+    },
   };
 }
 
@@ -47,7 +57,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
  */
 export default async function ProjectCaseStudyPage({ params }: PageProps) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
 
   if (!project) {
     notFound();
@@ -67,7 +77,7 @@ export default async function ProjectCaseStudyPage({ params }: PageProps) {
     { label: "Lessons", content: caseStudy.lessons },
   ].filter((section) => section.content.trim().length > 0);
 
-  const hasLinks = project.links.live !== "" || project.links.github !== "";
+  const hasLinks = project.links.live !== "" || project.links.github !== "" || project.links.additional.length > 0;
 
   return (
     <Container className="py-16 sm:py-24">
@@ -101,14 +111,16 @@ export default async function ProjectCaseStudyPage({ params }: PageProps) {
       </dl>
 
       <AngularPanel className="relative mt-12 aspect-[16/9] overflow-hidden">
-        <Image
-          src={getProjectMediaUrl(project, project.media.hero)}
-          alt={`${project.name} — ${project.tagline}`}
-          fill
-          sizes="100vw"
-          className="object-cover"
-          priority
-        />
+        <ImageMask className="absolute inset-0">
+          <Image
+            src={getProjectMediaUrl(project, project.media.hero)}
+            alt={`${project.name} — ${project.tagline}`}
+            fill
+            sizes="100vw"
+            className="object-cover"
+            priority
+          />
+        </ImageMask>
       </AngularPanel>
 
       <div className="mt-16 flex flex-col gap-16">
@@ -122,7 +134,7 @@ export default async function ProjectCaseStudyPage({ params }: PageProps) {
 
         {project.features.length > 0 ? (
           <div>
-            <TechnicalLabel accent as="div" className="mb-8">
+            <TechnicalLabel accent as="h2" className="mb-8">
               Features
             </TechnicalLabel>
             <div className="flex flex-col gap-16">
@@ -160,6 +172,11 @@ export default async function ProjectCaseStudyPage({ params }: PageProps) {
                     Source Code
                   </ArrowLink>
                 ) : null}
+                {project.links.additional.map((link) => (
+                  <ArrowLink key={link.url} href={link.url} variant="secondary" external>
+                    {link.label}
+                  </ArrowLink>
+                ))}
               </div>
             </div>
           </Reveal>

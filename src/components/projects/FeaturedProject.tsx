@@ -3,6 +3,7 @@ import { AngularPanel } from "@/components/ui/AngularPanel";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { TechnicalLabel } from "@/components/ui/TechnicalLabel";
+import { ImageMask } from "@/components/motion/ImageMask";
 import { getProjectMediaUrl, type LoadedProject } from "@/lib/content";
 
 type FeaturedProjectProps = {
@@ -24,14 +25,16 @@ export function FeaturedProject({ project }: FeaturedProjectProps) {
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-16">
         <AngularPanel className="relative aspect-[16/10] overflow-hidden">
-          <Image
-            src={getProjectMediaUrl(project, project.media.hero)}
-            alt={`${project.name} — ${project.tagline}`}
-            fill
-            sizes="(min-width: 1024px) 55vw, 100vw"
-            className="object-cover"
-            priority
-          />
+          <ImageMask className="absolute inset-0">
+            <Image
+              src={getProjectMediaUrl(project, project.media.hero)}
+              alt={`${project.name} — ${project.tagline}`}
+              fill
+              sizes="(min-width: 1024px) 55vw, 100vw"
+              className="object-cover"
+              priority
+            />
+          </ImageMask>
         </AngularPanel>
 
         <div>

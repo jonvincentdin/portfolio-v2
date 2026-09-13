@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { getProjectBySlug, getProjectDirectoryPath } from "@/lib/content/projects";
+import { databaseConfigured, db } from "@/lib/db";
 
 export const runtime = "nodejs";
 
@@ -28,9 +29,9 @@ export async function GET(
   { params }: { params: Promise<{ slug: string; path: string[] }> },
 ) {
   const { slug, path: segments } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
 
-  if (!project) {
+  if (!project || !project.downloadable) {
     return new Response("Project not found", { status: 404 });
   }
 
@@ -39,6 +40,19 @@ export async function GET(
 
   if (!fileEntry) {
     return new Response("File not found", { status: 404 });
+  }
+
+  if (fileEntry.access !== "downloadable") {
+    return new Response("File is not downloadable", { status: 404 });
+  }
+
+  if (databaseConfigured) {
+    const asset = await db.projectAsset.findFirst({ where: { projectId: project.id, path: requestedPath, kind: "file" }, include: { mediaAsset: true } });
+    const data = asset?.mediaAsset?.data ?? asset?.data;
+    if (!asset || !data) return new Response("File not found", { status: 404 });
+    const name = asset.name ?? asset.mediaAsset?.name ?? fileEntry.name;
+    const size = asset.size ?? asset.mediaAsset?.size ?? data.byteLength;
+    return new Response(new Uint8Array(data), { headers: { "Content-Type": asset.mediaAsset?.mimeType ?? asset.mimeType ?? "application/octet-stream", "Content-Disposition": `attachment; filename="${name.replace(/"/g, "")}"`, "Content-Length": String(size) } });
   }
 
   const projectDir = getProjectDirectoryPath(project.folderName);

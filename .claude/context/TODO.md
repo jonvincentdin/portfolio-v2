@@ -1,5 +1,29 @@
 # TODO.md
 
+## Database CMS Extension (implemented)
+- [x] Prisma relational model and binary asset storage
+- [x] Seed existing JSON/files into PostgreSQL
+- [x] Database-backed public loaders, media, project downloads, and metadata
+- [x] Structured editor forms for portfolio text, collections, projects, and
+      project uploads
+- [x] Database-backed contact submissions and documentation
+- [x] Configure a real `DATABASE_URL` and initialize the deployment database
+
+## Media Library Extension (complete)
+- [x] Reusable `MediaAsset` records and project-specific link rows
+- [x] Owner media library management and project library picker
+- [x] Existing-asset migration command and documentation
+- [x] Apply schema/backfill to the deployment database and verify linked
+      image/file delivery end to end
+
+## Milestone 15 — Owner Editor / CMS (complete)
+- [x] Owner OTP/session flow and owner-only editor/profile APIs
+- [x] Runtime snapshot persistence, Zod validation, visibility/downloadable
+      behavior, and profile upload validation
+- [x] Responsive ten-section editor with preview, save, logout, dirty guard,
+      and updated public runtime content integration
+- [x] Updated README, `docs/ADDING_CONTENT.md`, and affected context docs
+
 Legend: `[ ]` planned · `[~]` in progress · `[x]` completed
 
 ## Milestone 00 — Discovery
@@ -185,14 +209,52 @@ Legend: `[ ]` planned · `[~]` in progress · `[x]` completed
 - [x] Update context, then stop before Milestone 12
 - [x] **Await explicit approval: "Proceed to Milestone 12."**
 
-## Milestone 12 — Motion + Microinteractions (not started)
-- [ ] Audit all motion: navigation, project transitions, buttons, image
+## Milestone 12 — Motion + Microinteractions (complete)
+- [x] Audit all motion: navigation, project transitions, buttons, image
       masks, page transitions, section reveals, project controls, file
       download interactions
-- [ ] Remove unnecessary animation
-- [ ] Update MOTION.md
-- [ ] Update context, then stop before Milestone 13
+- [x] Built the two real gaps found: `PageTransition`+`template.tsx` (page
+      transitions, spec §31) and `ImageMask` (image mask reveal, spec §30)
+- [x] Added `active:` press states to every button-style control (spec §36)
+- [x] Found and fixed 3 real bugs via real-browser testing: page
+      transitions leaving pages permanently invisible (D-026), ImageMask
+      never revealing (D-027), press-state CSS silently not compiling
+      (D-028)
+- [x] Deliberately scoped out unnecessary additions (no `MotionImage`
+      component, no intrinsic `AngularPanel` animation, no press-scale on
+      text nav links) — documented as D-029
+- [x] `tsc --noEmit`, `eslint`, `next build` clean; confirmed no Node
+      built-ins leaked into client chunks
+- [x] Re-ran the full Milestone 11 responsive audit (5 breakpoints × 6
+      pages + mobile menu + no-autoscroll checks): 0 overflow, no
+      regressions
+- [x] Update PROGRESS.md / MOTION.md / COMPONENTS.md / ROUTES.md /
+      DECISIONS.md
+- [x] **Await explicit approval: "Proceed to Milestone 13."**
 
-## Remaining milestones (13–14)
-Tracked at a section level in this file as each becomes active; full detail
-lives in the master spec §79. Not expanded here yet to avoid premature detail.
+## Milestone 13 — Performance + Accessibility (complete)
+- [x] Audit: semantic HTML, ARIA, keyboard navigation, focus, contrast
+      (computed real ratios, found/fixed 2 real gaps: --border-strong for
+      form inputs, skip-link focus target)
+- [x] Audit: images, loading, SEO, metadata, OpenGraph, sitemap, robots
+      (all built/fixed: sitemap.ts, robots.ts, per-page OG/Twitter overrides,
+      opengraph-image.tsx runtime fix)
+- [x] Ran an automated `axe-core` scan across all 6 pages; found and fixed
+      3 real violations (contrast, heading order, duplicate landmarks);
+      re-ran to confirm zero violations remain
+- [x] Gave the mobile menu full dialog semantics (focus trap, Escape,
+      focus management) — verified with real keyboard input
+- [x] `tsc --noEmit`, `eslint`, `next build` clean; re-ran Milestone 11's
+      overflow audit to confirm no regressions
+- [x] Update PROGRESS.md / ARCHITECTURE.md / ROUTES.md / DESIGN_SYSTEM.md /
+      COMPONENTS.md / DECISIONS.md
+- [x] **Await explicit approval: "Proceed to Milestone 14."**
+
+## Milestone 14 — Final Design QA (complete)
+- [x] Full visual audit: "does this look like a custom premium automotive
+      experience, or a developer template?"
+- [x] Inspect typography, spacing, navigation, project showcase, skills,
+      timeline, buttons, downloads, mobile, visual rhythm, and animations
+- [x] Polish only — no new features
+- [x] Update context; this is the final public-site milestone in the original
+      spec

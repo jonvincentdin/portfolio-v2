@@ -29,7 +29,7 @@ const BUTTON_LABEL: Record<SubmitState, string> = {
  * route re-checks server-side, and an idle/sending/success/error state
  * machine rather than a plain "submitted" flag.
  */
-export function ContactForm() {
+export function ContactForm({ submitLabel = "Send Message" }: { submitLabel?: string }) {
   const [values, setValues] = useState<ContactFormValues>(EMPTY_VALUES);
   const [errors, setErrors] = useState<ContactFormErrors>({});
   const [state, setState] = useState<SubmitState>("idle");
@@ -93,8 +93,8 @@ export function ContactForm() {
             onChange={(event) => updateField(field, event.target.value)}
             disabled={isDisabled}
             className={cn(
-              "w-full border-b bg-transparent py-2 font-body text-body-md text-foreground-primary outline-none transition-colors duration-150 placeholder:text-foreground-muted/50 focus:border-accent",
-              errors[field] ? "border-red-400" : "border-border",
+              "w-full border-b bg-transparent py-2 font-body text-body-md text-foreground-primary transition-colors duration-150 placeholder:text-foreground-muted/50 focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+              errors[field] ? "border-red-400" : "border-border-strong",
             )}
           />
           {errors[field] ? (
@@ -116,8 +116,8 @@ export function ContactForm() {
           onChange={(event) => updateField("message", event.target.value)}
           disabled={isDisabled}
           className={cn(
-            "w-full resize-none border-b bg-transparent py-2 font-body text-body-md text-foreground-primary outline-none transition-colors duration-150 focus:border-accent",
-            errors.message ? "border-red-400" : "border-border",
+            "w-full resize-none border-b bg-transparent py-2 font-body text-body-md text-foreground-primary transition-colors duration-150 focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+            errors.message ? "border-red-400" : "border-border-strong",
           )}
         />
         {errors.message ? (
@@ -142,9 +142,9 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={isDisabled}
-        className="group inline-flex w-fit items-center gap-3 bg-accent px-6 py-3 font-technical text-technical-label uppercase tracking-[0.1em] text-accent-foreground transition-colors duration-150 hover:bg-accent/90 disabled:cursor-default disabled:opacity-80"
+        className="group inline-flex w-fit items-center gap-3 bg-accent px-6 py-3 font-technical text-technical-label uppercase tracking-[0.1em] text-accent-foreground transition-[background-color,transform] duration-150 hover:bg-accent/90 active:scale-95 disabled:cursor-default disabled:opacity-80 disabled:active:scale-100"
       >
-        {BUTTON_LABEL[state]}
+        {state === "idle" ? submitLabel : BUTTON_LABEL[state]}
         {state === "idle" ? (
           <span
             className="inline-block transition-transform duration-150 group-hover:translate-x-1"

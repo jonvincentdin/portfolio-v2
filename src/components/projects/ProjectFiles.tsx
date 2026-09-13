@@ -15,8 +15,11 @@ type ProjectFilesProps = {
  * it downloads the whole folder, not the `files[]` list, so it's available
  * even for a project with no explicitly listed files.
  */
-export function ProjectFiles({ project }: ProjectFilesProps) {
-  const hasListedFiles = project.files.length > 0;
+export async function ProjectFiles({ project }: ProjectFilesProps) {
+  if (!project.downloadable) return null;
+  const listedFiles = project.files.filter((file) => file.access !== "hidden");
+  const hasListedFiles = listedFiles.length > 0;
+  const fileSizes = await Promise.all(listedFiles.map((file) => getProjectFileSizeBytes(project, file)));
 
   return (
     <div>
@@ -26,28 +29,23 @@ export function ProjectFiles({ project }: ProjectFilesProps) {
 
       {hasListedFiles ? (
         <div className="mb-8 divide-y divide-border border-t border-b border-border">
-          {project.files.map((file, index) => {
-            const sizeBytes = getProjectFileSizeBytes(project, file);
+          {listedFiles.map((file, index) => {
+            const sizeBytes = fileSizes[index];
             return (
-              <div key={file.path} className="flex items-center justify-between gap-4 py-4">
-                <div className="flex items-baseline gap-4">
+              <div key={file.path} className="flex flex-wrap items-center justify-between gap-4 py-4">
+                <div className="flex min-w-0 items-baseline gap-4">
                   <span className="font-technical text-technical-label text-foreground-muted">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <div>
-                    <p className="font-body text-body-md text-foreground-primary">{file.name}</p>
+                    <p className="break-words font-body text-body-md text-foreground-primary">{file.name}</p>
                     <p className="mt-1 font-technical text-technical-label uppercase tracking-[0.08em] text-foreground-muted">
                       {file.type}
                       {sizeBytes !== null ? ` · ${formatFileSize(sizeBytes)}` : ""}
                     </p>
                   </div>
                 </div>
-                <a
-                  href={`/api/projects/${project.slug}/files/${file.path}`}
-                  className="font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-primary underline decoration-border underline-offset-4 transition-colors duration-150 hover:text-accent hover:decoration-accent"
-                >
-                  Download
-                </a>
+                {file.access === "downloadable" ? <a href={`/api/projects/${project.slug}/files/${file.path}`} className="font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-primary underline decoration-border underline-offset-4 transition-[color,opacity] duration-150 hover:text-accent hover:decoration-accent active:opacity-70">Download</a> : <span className="font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-muted">Visible only</span>}
               </div>
             );
           })}

@@ -1,9 +1,10 @@
 import { Container } from "@/components/ui/Container";
 import { TechnicalLabel } from "@/components/ui/TechnicalLabel";
-import { SOCIAL_LINKS } from "@/lib/social";
+import { getSocialLinks } from "@/lib/social";
 
-export function Footer() {
+export async function Footer() {
   const year = new Date().getFullYear();
+  const socialLinks = await getSocialLinks();
 
   return (
     <footer className="mt-auto border-t border-border">
@@ -11,7 +12,7 @@ export function Footer() {
         <TechnicalLabel>© {year} — Built with precision.</TechnicalLabel>
 
         <nav className="flex gap-6">
-          {SOCIAL_LINKS.map((link) => (
+          {socialLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}

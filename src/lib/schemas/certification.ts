@@ -1,7 +1,10 @@
 import { z } from "zod";
-import { OptionalLinkSchema, RelativePathSchema } from "./common";
+import { OptionalLinkSchema, RelativePathSchema, VisibilitySchema } from "./common";
 
 export const CertificationSchema = z.object({
+  id: z.string().min(1).default("certification"),
+  order: z.number().int().default(0),
+  visible: VisibilitySchema,
   title: z.string().min(1),
   issuer: z.string().min(1),
   date: z.string().min(1),

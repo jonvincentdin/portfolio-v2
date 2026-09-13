@@ -59,7 +59,7 @@ export function DownloadProjectButton({ slug, folderName, className }: DownloadP
       onClick={handleClick}
       disabled={state !== "idle"}
       className={cn(
-        "group inline-flex items-center gap-3 bg-accent px-6 py-3 font-technical text-technical-label uppercase tracking-[0.1em] text-accent-foreground transition-colors duration-150 hover:bg-accent/90 disabled:cursor-default disabled:opacity-80",
+        "group inline-flex items-center gap-3 bg-accent px-6 py-3 font-technical text-technical-label uppercase tracking-[0.1em] text-accent-foreground transition-[background-color,transform] duration-150 hover:bg-accent/90 active:scale-95 disabled:cursor-default disabled:opacity-80 disabled:active:scale-100",
         className,
       )}
     >

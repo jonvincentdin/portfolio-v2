@@ -1,10 +1,13 @@
 import { z } from "zod";
+import { VisibilitySchema } from "./common";
 
 /** YYYY-MM month string, e.g. "2025-01". */
 const MonthSchema = z.string().regex(/^\d{4}-\d{2}$/, "must be in YYYY-MM format");
 
 export const ExperienceSchema = z.object({
   id: z.string().min(1),
+  order: z.number().int().default(0),
+  visible: VisibilitySchema,
   company: z.string().min(1),
   position: z.string().min(1),
   startDate: MonthSchema,

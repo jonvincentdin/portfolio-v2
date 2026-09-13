@@ -1,6 +1,7 @@
 import { Readable } from "node:stream";
 import { ZipArchive, type ArchiverError } from "archiver";
 import { getProjectBySlug, getProjectDirectoryPath } from "@/lib/content/projects";
+import { databaseConfigured, db } from "@/lib/db";
 
 export const runtime = "nodejs";
 
@@ -23,13 +24,11 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> },
 ) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
 
-  if (!project) {
+  if (!project || !project.downloadable) {
     return new Response("Project not found", { status: 404 });
   }
-
-  const projectDir = getProjectDirectoryPath(project.folderName);
 
   const archive = new ZipArchive({ zlib: { level: 9 } });
   archive.on("error", (error: ArchiverError) => {
@@ -41,7 +40,16 @@ export async function GET(
 
   // Preserves the full folder structure under a top-level
   // <folderName>/ entry, exactly as spec §62 requires.
-  archive.directory(projectDir, project.folderName);
+  if (databaseConfigured) {
+    const assets = await db.projectAsset.findMany({ where: { projectId: project.id }, include: { mediaAsset: true }, orderBy: { path: "asc" } });
+    for (const asset of assets) {
+      const data = asset.mediaAsset?.data ?? asset.data;
+      if (data) archive.append(Buffer.from(data), { name: `${project.folderName}/${asset.path}` });
+    }
+  } else {
+    const projectDir = getProjectDirectoryPath(project.folderName);
+    archive.directory(projectDir, project.folderName);
+  }
   // finalize() resolves once all entries are queued, not once streaming is
   // complete — the stream itself is still consumed below as it's written.
   // Not awaited: it must run concurrently with the response body being

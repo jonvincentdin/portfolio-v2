@@ -30,7 +30,7 @@ export function ArrowLink({
       target={external ? "_blank" : undefined}
       rel={external ? "noreferrer" : undefined}
       className={cn(
-        "group inline-flex items-center gap-3 font-technical text-technical-label uppercase tracking-[0.1em] transition-colors duration-150",
+        "group inline-flex items-center gap-3 font-technical text-technical-label uppercase tracking-[0.1em] transition-[color,background-color,border-color,transform] duration-150 active:scale-95",
         isPrimary
           ? "bg-accent px-6 py-3 text-accent-foreground hover:bg-accent/90"
           : "border-b border-foreground-primary/30 pb-1 text-foreground-primary hover:border-accent hover:text-accent",

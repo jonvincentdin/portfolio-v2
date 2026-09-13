@@ -1,0 +1,251 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model SiteSettings {
+  id                String   @id @default("default")
+  name              String
+  role              String
+  supportingStatement String
+  introduction      String
+  location          String
+  specialization    String
+  status            String
+  contactEmail      String
+  siteUrl           String
+  viewProjectsLabel String   @default("View Projects")
+  contactLabel      String   @default("Contact")
+  updatedAt         DateTime @updatedAt
+}
+
+model AboutSettings {
+  id         String           @id @default("default")
+  headline   String
+  paragraphs AboutParagraph[]
+  principles AboutPrinciple[]
+  updatedAt  DateTime         @updatedAt
+}
+
+model AboutParagraph {
+  id      String         @id @default(cuid())
+  aboutId String
+  about   AboutSettings  @relation(fields: [aboutId], references: [id], onDelete: Cascade)
+  order   Int
+  text    String
+  @@unique([aboutId, order])
+}
+
+model AboutPrinciple {
+  id          String        @id @default(cuid())
+  aboutId     String
+  about       AboutSettings @relation(fields: [aboutId], references: [id], onDelete: Cascade)
+  order       Int
+  title       String
+  description String
+  @@unique([aboutId, order])
+}
+
+model ContactSettings {
+  id           String   @id @default("default")
+  heading      String
+  introduction String
+  submitLabel  String
+  updatedAt    DateTime @updatedAt
+}
+
+model ContactSubmission {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model SocialLink {
+  id        String   @id @default(cuid())
+  label     String
+  href      String
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}
+
+model MediaAsset {
+  id            String         @id @default(cuid())
+  name          String
+  storageKey    String         @unique
+  kind          String         @default("file")
+  type          String         @default("other")
+  description   String         @default("")
+  mimeType      String
+  size          Int
+  data          Bytes
+  projectAssets ProjectAsset[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Project {
+  id           String         @id
+  folderName   String         @unique
+  slug         String         @unique
+  name         String
+  shortName    String
+  tagline      String
+  description  String
+  year         Int
+  featured     Boolean        @default(false)
+  visible      Boolean        @default(true)
+  downloadable Boolean        @default(true)
+  displayOrder Int
+  status       String
+  category     String[]
+  role         String[]
+  technologies String[]
+  caseStudy    Json
+  links        ProjectLink[]
+  features     ProjectFeature[]
+  assets       ProjectAsset[]
+  updatedAt    DateTime       @updatedAt
+}
+
+model ProjectLink {
+  id        String  @id @default(cuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  label     String
+  url       String
+  kind      String  @default("additional")
+  order     Int     @default(0)
+}
+
+model ProjectFeature {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  order       Int
+  title       String
+  description String
+  imagePath   String?
+  @@unique([projectId, order])
+}
+
+model ProjectAsset {
+  id           String   @id @default(cuid())
+  projectId    String
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  mediaAssetId String?
+  mediaAsset   MediaAsset? @relation(fields: [mediaAssetId], references: [id], onDelete: Restrict)
+  path         String
+  name         String?
+  kind         String   @default("file")
+  type         String?
+  description  String   @default("")
+  access       String   @default("downloadable")
+  mimeType     String?
+  size         Int?
+  data         Bytes?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  @@unique([projectId, path])
+}
+
+model Experience {
+  id             String   @id
+  displayOrder   Int      @default(0)
+  visible        Boolean  @default(true)
+  company        String
+  position       String
+  startDate      String
+  endDate        String?
+  current        Boolean  @default(false)
+  location       String
+  description    String   @default("")
+  responsibilities String[]
+  technologies   String[]
+  updatedAt      DateTime @updatedAt
+}
+
+model Education {
+  id           String   @id
+  displayOrder Int      @default(0)
+  visible      Boolean  @default(true)
+  institution  String
+  program      String
+  startYear    String
+  endYear      String
+  description  String   @default("")
+  achievements String[]
+  updatedAt    DateTime @updatedAt
+}
+
+model Certification {
+  id           String   @id
+  displayOrder Int      @default(0)
+  visible      Boolean  @default(true)
+  title        String
+  issuer       String
+  date         String
+  credentialId String   @default("")
+  credentialUrl String  @default("")
+  imagePath    String?
+  updatedAt    DateTime @updatedAt
+}
+
+model Achievement {
+  id           String   @id
+  displayOrder Int      @default(0)
+  visible      Boolean  @default(true)
+  title        String
+  organization String
+  date         String
+  description  String   @default("")
+  imagePath    String?
+  updatedAt    DateTime @updatedAt
+}
+
+model Service {
+  id           String   @id
+  displayOrder Int      @default(0)
+  visible      Boolean  @default(true)
+  title        String
+  description  String
+  capabilities String[]
+  updatedAt    DateTime @updatedAt
+}
+
+model SkillCategory {
+  id           String      @id
+  category     String
+  displayOrder Int         @default(0)
+  visible      Boolean     @default(true)
+  skills       SkillItem[]
+  updatedAt    DateTime    @updatedAt
+}
+
+model SkillItem {
+  id         String        @id @default(cuid())
+  categoryId String
+  category   SkillCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name       String
+  displayOrder Int          @default(0)
+  level      String?
+  featured   Boolean        @default(false)
+  visible    Boolean        @default(true)
+}
+
+model ProfileImage {
+  id        String   @id @default("default")
+  width     Int
+  height    Int
+  format    String
+  mimeType  String
+  size      Int
+  data      Bytes
+  updatedAt DateTime @updatedAt
+}

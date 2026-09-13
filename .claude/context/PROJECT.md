@@ -1,5 +1,14 @@
 # PROJECT.md
 
+## Database CMS Extension
+An owner-only OTP editor provides structured editing for all portfolio
+collections, project creation, project asset/file uploads, visibility/download
+controls, profile-image management, and contact-submission persistence. Runtime
+content and binary assets live in PostgreSQL through Prisma; checked-in
+`content/` remains the seedable fallback. Auth rate-limit/session state remains
+outside Git in `.data`.
+The Media Library stores each binary once and allows many project links.
+
 ## Name
 Automotive / Gran Turismo–Inspired Developer Portfolio
 

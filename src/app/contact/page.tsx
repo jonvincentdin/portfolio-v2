@@ -3,11 +3,18 @@ import { Container } from "@/components/ui/Container";
 import { TechnicalLabel } from "@/components/ui/TechnicalLabel";
 import { Reveal } from "@/components/motion/Reveal";
 import { ContactForm } from "@/components/contact/ContactForm";
-import { SITE_IDENTITY } from "@/lib/site";
-import { SOCIAL_LINKS } from "@/lib/social";
+import { getSiteIdentity } from "@/lib/site";
+import { getSocialLinks } from "@/lib/social";
+import { getContactContent } from "@/lib/content/editor";
 
 export const metadata: Metadata = {
   title: "Contact",
+  description:
+    "Get in touch to start a project or just talk shop — direct email and social links included.",
+  openGraph: {
+    title: "Contact",
+    description: "Get in touch to start a project or just talk shop.",
+  },
 };
 
 /**
@@ -16,7 +23,8 @@ export const metadata: Metadata = {
  * page reads as a deliberate final "showroom screen" rather than a
  * generic split-panel contact page.
  */
-export default function ContactPage() {
+export default async function ContactPage() {
+  const [site, socialLinks, contact] = await Promise.all([getSiteIdentity(), getSocialLinks(), getContactContent()]);
   return (
     <Container className="py-16 sm:py-24">
       <Reveal mode="mount">
@@ -24,7 +32,7 @@ export default function ContactPage() {
           05 / Contact
         </TechnicalLabel>
         <h1 className="mt-3 max-w-2xl font-heading text-display-lg uppercase tracking-tight break-words sm:text-display-xl">
-          Let&apos;s build something worth driving.
+          {contact.heading}
         </h1>
       </Reveal>
 
@@ -36,7 +44,7 @@ export default function ContactPage() {
       </Reveal>
 
       <Reveal mode="mount" delayMs={220} className="mt-14 max-w-xl">
-        <ContactForm />
+        <ContactForm submitLabel={contact.submitLabel} />
       </Reveal>
 
       <Reveal mode="mount" delayMs={320} className="mt-16 border-t border-border pt-8">
@@ -44,14 +52,14 @@ export default function ContactPage() {
           Direct
         </TechnicalLabel>
         <a
-          href={`mailto:${SITE_IDENTITY.contactEmail}`}
+          href={`mailto:${site.contactEmail}`}
           className="font-heading text-heading-md uppercase tracking-tight transition-colors duration-150 hover:text-accent"
         >
-          {SITE_IDENTITY.contactEmail}
+          {site.contactEmail}
         </a>
 
         <div className="mt-6 flex flex-wrap gap-6">
-          {SOCIAL_LINKS.filter((link) => link.label !== "Email").map((link) => (
+          {socialLinks.filter((link) => link.label !== "Email").map((link) => (
             <a
               key={link.label}
               href={link.href}

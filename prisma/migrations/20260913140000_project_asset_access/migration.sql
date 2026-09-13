@@ -1,0 +1,2 @@
+ALTER TABLE "ProjectAsset"
+ADD COLUMN IF NOT EXISTS "access" TEXT NOT NULL DEFAULT 'downloadable';

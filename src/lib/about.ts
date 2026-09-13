@@ -1,3 +1,4 @@
+
 /**
  * About page editorial content — headline, philosophy, and engineering
  * principles. Plain constant, not a JSON content type, for the same reason
@@ -33,3 +34,9 @@ export const ABOUT_CONTENT = {
     },
   ],
 } as const;
+
+export async function getAboutContent() {
+  const { databaseConfigured } = await import("@/lib/db");
+  if (databaseConfigured) return (await import("@/lib/content/database")).getDatabaseSnapshot().then((snapshot) => snapshot.about);
+  return ABOUT_CONTENT;
+}
