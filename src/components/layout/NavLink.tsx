@@ -33,8 +33,9 @@ export function NavLink({ item, onClick, linkRef, tabIndex }: NavLinkProps) {
       onClick={onClick}
       tabIndex={tabIndex}
       aria-current={isActive ? "page" : undefined}
+      data-audio="navigation-shift"
       className={cn(
-        "group inline-flex items-center gap-2 font-technical text-technical-label uppercase tracking-[0.1em] transition-colors",
+        "motion-control group inline-flex items-center gap-2 font-technical text-technical-label uppercase tracking-[0.1em] transition-colors motion-micro",
         isActive ? "text-foreground-primary" : "text-foreground-muted hover:text-foreground-primary",
       )}
     >
@@ -45,7 +46,7 @@ export function NavLink({ item, onClick, linkRef, tabIndex }: NavLinkProps) {
         {item.label}
         <span
           className={cn(
-            "absolute -bottom-1 left-0 h-px bg-current transition-all duration-150",
+            "absolute -bottom-1 left-0 h-px bg-current transition-all motion-micro",
             isActive ? "w-full" : "w-0 group-hover:w-full",
           )}
         />

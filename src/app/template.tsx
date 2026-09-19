@@ -1,8 +1,8 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
+import { motion } from "framer-motion";
 import { usePrefersReducedMotion } from "@/lib/motion/usePrefersReducedMotion";
-import { DURATION, EASE_STANDARD } from "@/lib/motion/tokens";
+import { getPageTransitionVariants } from "@/lib/motion/tokens";
 
 type TemplateProps = {
   children: React.ReactNode;
@@ -10,9 +10,8 @@ type TemplateProps = {
 
 /**
  * Route-level enter/exit transition (spec §31): the outgoing page fades
- * and slides left, the incoming page fades in from the right, using
- * `DURATION.cinematic` (700ms) — MOTION.md flagged this exact duration
- * bucket for page-level route transitions back in Milestone 05.
+ * and slides left, the incoming page fades in from the right, using the
+ * centralized 400ms route preset from `lib/motion/tokens.ts`.
  *
  * This must be `app/template.tsx`, not a component manually keyed by
  * `usePathname()` inside `layout.tsx`. A `template.tsx` is a documented
@@ -26,25 +25,7 @@ type TemplateProps = {
 export default function Template({ children }: TemplateProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
 
-  const variants: Variants = prefersReducedMotion
-    ? {
-        initial: { opacity: 0 },
-        animate: { opacity: 1, transition: { duration: 0.01 } },
-        exit: { opacity: 0, transition: { duration: 0.01 } },
-      }
-    : {
-        initial: { opacity: 0, x: 30 },
-        animate: {
-          opacity: 1,
-          x: 0,
-          transition: { duration: DURATION.cinematic, ease: EASE_STANDARD },
-        },
-        exit: {
-          opacity: 0,
-          x: -30,
-          transition: { duration: DURATION.cinematic, ease: EASE_STANDARD },
-        },
-      };
+  const variants = getPageTransitionVariants(prefersReducedMotion);
 
   return (
     <motion.div initial="initial" animate="animate" exit="exit" variants={variants}>

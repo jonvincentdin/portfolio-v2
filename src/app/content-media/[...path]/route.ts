@@ -5,12 +5,12 @@ import { databaseConfigured, db } from "@/lib/db";
 
 /**
  * Serves image files from content/ (project hero/thumbnail/gallery images,
- * and later certification/achievement images) so they can be used with
+ * and later certification/achievement images) plus managed audio replacements so they can be used with
  * next/image. content/ lives outside public/, which is the only directory
  * Next.js serves statically — this route is the deliberate bridge between
  * the two, restricted to image extensions only.
  *
- * Deliberately scoped to images only: downloadable project files (PDF, ZIP,
+ * Deliberately scoped to media only: downloadable project files (PDF, ZIP,
  * etc. under a project's files/ folder) are NOT served here — those go
  * through the dedicated, slug-validated download system in Milestone 06.
  * Serving them here would create a second, less deliberate access path to
@@ -54,7 +54,7 @@ export async function GET(
 
   if (databaseConfigured && segments[0] === "library" && segments.length === 2) {
     const asset = await db.mediaAsset.findUnique({ where: { id: segments[1] }, select: { data: true, mimeType: true, kind: true } });
-    if (!asset?.data || asset.kind !== "image" || !asset.mimeType.startsWith("image/")) return new Response("Not found", { status: 404 });
+    if (!asset?.data || !["image", "audio"].includes(asset.kind) || !(asset.mimeType.startsWith("image/") || asset.mimeType.startsWith("audio/"))) return new Response("Not found", { status: 404 });
     return new Response(new Uint8Array(asset.data), { headers: { "Content-Type": asset.mimeType, "Cache-Control": "public, max-age=31536000, immutable" } });
   }
 

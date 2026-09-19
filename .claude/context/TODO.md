@@ -1,5 +1,38 @@
 # TODO.md
 
+## Visual Experience Upgrade — Milestone 02: Central Motion System (complete)
+- [x] Central motion preset vocabulary and shared easing/duration tokens
+- [x] Framer Motion route/showroom/reveal transition helpers
+- [x] CSS motion utility classes for lightweight hover, press, and field states
+- [x] Reduced-motion fallback shared by CSS and Framer Motion paths
+
+## Visual Experience Upgrade — Milestone 03: Routing, Transitions & Scroll Restoration (complete)
+- [x] New route entries reset to the top after commit
+- [x] Hash anchors and sticky-header offset remain supported
+- [x] Back/forward navigation preserves native browser scroll restoration
+- [x] Route transition shortened and centralized at 400ms
+- [ ] Live browser interaction verification pending browser availability
+
+## Visual Experience Upgrade — Milestone 04: Global Scroll Experience (complete)
+- [x] Passive synchronized scroll progress indicator
+- [x] RAF-throttled updates with no scroll hijacking
+- [x] Desktop route label and simplified mobile presentation
+- [x] Editor/owner distraction reduction
+
+## Visual Experience Continuation — Milestones 11–15 (complete)
+- [x] M11 shared tactile button/link states, focus feedback, press feedback,
+      and disabled-safe motion
+- [x] M12 project media pointer lighting, restrained depth response, and
+      reduced-motion/coarse-pointer fallback
+- [x] M13 current-role progression cue on the existing experience timeline
+- [x] M14 selectable education progression with keyboard/touch semantics and
+      mobile vertical transformation
+- [x] M15 expandable skill clusters and featured technology chips without
+      fabricated proficiency percentages
+- [x] M16 controlled certification/achievement highlights, optional image
+      response, metadata reveal, polished selection states, and CMS-safe
+      rendering
+
 ## Database CMS Extension (implemented)
 - [x] Prisma relational model and binary asset storage
 - [x] Seed existing JSON/files into PostgreSQL
@@ -258,3 +291,13 @@ Legend: `[ ]` planned · `[~]` in progress · `[x]` completed
 - [x] Polish only — no new features
 - [x] Update context; this is the final public-site milestone in the original
       spec
+
+## Visual Experience Continuation — Milestones 05–10
+- [x] Cursor engine and Cursor Designer integrated with Site Experience.
+- [x] Central optional audio engine and interaction sound hooks integrated.
+- [x] Shared media library supports validated audio replacement assets.
+- [x] Existing Home hero extended with lightweight pointer lighting and
+      telemetry treatment; mobile and reduced-motion fallbacks preserved.
+- [x] Draft preview follows the active editor tab, including Site Experience.
+- [ ] In-app browser screenshot/click verification when a browser surface is
+      available.

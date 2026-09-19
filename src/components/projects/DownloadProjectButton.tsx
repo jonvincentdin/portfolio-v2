@@ -58,15 +58,17 @@ export function DownloadProjectButton({ slug, folderName, className }: DownloadP
       type="button"
       onClick={handleClick}
       disabled={state !== "idle"}
+      data-cursor="button"
+      data-audio="ui-click"
       className={cn(
-        "group inline-flex items-center gap-3 bg-accent px-6 py-3 font-technical text-technical-label uppercase tracking-[0.1em] text-accent-foreground transition-[background-color,transform] duration-150 hover:bg-accent/90 active:scale-95 disabled:cursor-default disabled:opacity-80 disabled:active:scale-100",
+        "motion-control group inline-flex items-center gap-3 bg-accent px-6 py-3 font-technical text-technical-label uppercase tracking-[0.1em] text-accent-foreground transition-[background-color,transform] motion-micro hover:bg-accent/90 active:scale-95 disabled:cursor-default disabled:opacity-80 disabled:active:scale-100",
         className,
       )}
     >
       {LABELS[state]}
       {state === "idle" ? (
         <span
-          className="inline-block transition-transform duration-150 group-hover:translate-y-0.5"
+          className="inline-block transition-transform motion-micro group-hover:translate-y-0.5"
           aria-hidden="true"
         >
           ↓

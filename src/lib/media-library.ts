@@ -1,7 +1,7 @@
 export type MediaLibraryAsset = {
   id: string;
   name: string;
-  kind: "image" | "file";
+  kind: "image" | "audio" | "file";
   type: string;
   mimeType: string;
   size: number;

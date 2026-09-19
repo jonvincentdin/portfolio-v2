@@ -20,6 +20,7 @@ model SiteSettings {
   siteUrl           String
   viewProjectsLabel String   @default("View Projects")
   contactLabel      String   @default("Contact")
+  siteExperience    Json     @default("{}")
   updatedAt         DateTime @updatedAt
 }
 

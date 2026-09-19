@@ -43,16 +43,31 @@ Status legend: `[ ] planned  [~] in progress  [x] done`
 | EngineeringPrinciples | Numbered principles list (About page) | — (reads `ABOUT_CONTENT`) | Server | TechnicalLabel, Reveal | [x] *(Milestone 07, not in original inventory)* |
 | ServicesList | Services as vehicle-capability rows, not equal-sized cards | `services` | Server | TechnicalLabel, Reveal | [x] *(Milestone 07, not in original inventory — spec §55 didn't name a Services component explicitly)* |
 | ExperienceTimeline | Work history timeline | `entries` | Client (Framer Motion `useScroll` for the growing line) | Reveal, TechnicalLabel | [x] *(Milestone 09 — scroll-linked line growth per spec §42, see DECISIONS.md D-019)* |
-| EducationTimeline | Education history | `entries` | Server | Reveal, TechnicalLabel | [x] *(Milestone 09 — stacked row list, not a second scroll-linked timeline)* |
-| CertificationGallery | Cert list/grid | `certifications` | Server | AngularPanel, ArrowLink, Reveal, TechnicalLabel | [x] *(Milestone 09)* |
-| AchievementPanel | Achievement entries | `achievements` | Server | AngularPanel, Reveal, TechnicalLabel | [x] *(Milestone 09)* |
+| EducationTimeline | Selectable education progression and detail panel | `entries` | Client | TechnicalLabel, AudioEngine, CursorEngine | [x] *(Milestone 14 — horizontal progression on desktop, deliberate vertical journey on mobile)* |
+| CertificationGallery | Selectable credential list/grid | `certifications` | Server | CredentialCard, Reveal | [x] *(Milestone 16)* |
+| AchievementPanel | Selectable achievement list/grid | `achievements` | Server | CredentialCard, Reveal | [x] *(Milestone 16)* |
 | SkillDashboard | Telemetry-style skill display | `categories` | Server | Reveal, SkillCategory | [x] *(Milestone 08)* |
-| SkillCategory | One category block | `category` | Server | AngularPanel, TechnicalLabel, SkillItem | [x] *(Milestone 08)* |
+| SkillCategory | Expandable skill cluster with featured technology chips | `category` | Client | AngularPanel, TechnicalLabel, SkillItem | [x] *(Milestone 15)* |
 | SkillItem | Single skill (name + level, no fake %) | `skill` | Server | — | [x] *(Milestone 08 — discrete 5-segment bar keyed to the SkillLevel enum's real ordinal rank, never a percentage; see DECISIONS.md D-018)* |
 | ContactForm | Name/email/subject/message + idle/sending/success/error states | — (self-contained) | Client | TechnicalLabel, `lib/schemas/contact.ts` | [x] *(Milestone 10 — validates client-side with the same Zod schema the API route re-validates server-side; see DECISIONS.md D-020)* |
 | PageTransition | Persistent `AnimatePresence` wrapper for route transitions | `children` | Client | `app/template.tsx` | [x] *(Milestone 12 — rendered once in `layout.tsx`; the actual enter/exit variants live in `app/template.tsx`, not here — see DECISIONS.md D-026 for why the split is required)* |
 | Template (`app/template.tsx`) | Route-level enter/exit motion.div (spec §31) | `children` | Client | motion tokens | [x] *(Milestone 12 — not in original inventory under this name; Next.js's `template.tsx` convention guarantees a fresh instance per navigation, which `PageTransition`'s `AnimatePresence` needs)* |
+| ScrollRestoration | New-route top reset with hash and history preservation | — | Client | `usePathname`, browser history | [x] *(Milestone 03 — pathname changes reset new entries, same-page hashes remain native, and popstate preserves back/forward positions)* |
+| ScrollProgress | Passive telemetry-style page progress indicator | — | Client | `usePathname`, `requestAnimationFrame` | [x] *(Milestone 04 — synchronized to natural document scroll, simplified on mobile, hidden in the owner/editor surfaces)* |
 | MotionImage | Hover scale/translate image | `src,alt` | Client | motion tokens | [ ] *(deliberately not built — the two real usages of hover-scale imagery use a simple inline Tailwind `hover:scale-[1.02]` instead; see DECISIONS.md D-029)* |
 
 This table is the authoritative component inventory and will be updated (not
 replaced) as each milestone implements its slice.
+
+## Visual Experience Continuation Components
+
+| Component | Purpose | Key Props | Server/Client | Status |
+|---|---|---|---|---|
+| CursorEngine | Fine-pointer cursor core/outer/trail/glow/label layers with contextual states | `settings` | Client | [x] |
+| AudioEngine | Central optional interaction audio, preview events, mute persistence, and asset fallback | `settings` | Client | [x] |
+| HeroExperience | Pointer-driven CSS studio lighting and technical grid around the existing Home hero | `children` | Client | [x] |
+| ProjectInteractiveFrame | Pointer-light and restrained depth response for project media | `children,className` | Client | [x] *(Milestone 12)* |
+| CredentialCard | Controlled credential selection with optional image/depth response | `kind,title,organization,date,...` | Client | AngularPanel, ArrowLink, shared media URL helper | [x] *(Milestone 16)* |
+| SiteExperienceEditor | Cursor Designer and Audio controls under the existing editor snapshot | `value,onChange` | Client | [x] |
+| ScrollRestoration | New-route top reset with hash/history handling | — | Client | [x] |
+| ScrollProgress | Passive route-aware document progress indicator | — | Client | [x] |

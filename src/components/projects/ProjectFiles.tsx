@@ -45,7 +45,7 @@ export async function ProjectFiles({ project }: ProjectFilesProps) {
                     </p>
                   </div>
                 </div>
-                {file.access === "downloadable" ? <a href={`/api/projects/${project.slug}/files/${file.path}`} className="font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-primary underline decoration-border underline-offset-4 transition-[color,opacity] duration-150 hover:text-accent hover:decoration-accent active:opacity-70">Download</a> : <span className="font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-muted">Visible only</span>}
+                {file.access === "downloadable" ? <a href={`/api/projects/${project.slug}/files/${file.path}`} className="font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-primary underline decoration-border underline-offset-4 transition-[color,opacity] motion-micro hover:text-accent hover:decoration-accent active:opacity-70">Download</a> : <span className="font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-muted">Visible only</span>}
               </div>
             );
           })}

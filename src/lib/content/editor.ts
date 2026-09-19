@@ -8,7 +8,7 @@ import { getAllExperienceForEditor } from "@/lib/content/experience";
 import { getSourceProjectsForEditor } from "@/lib/content/projects";
 import { getAllServicesForEditor } from "@/lib/content/services";
 import { getAllSkillCategoriesForEditor } from "@/lib/content/skills";
-import { SiteIdentitySchema, EditorSnapshotSchema, type EditorSnapshot } from "@/lib/schemas";
+import { SiteIdentitySchema, EditorSnapshotSchema, DEFAULT_SITE_EXPERIENCE, type EditorSnapshot } from "@/lib/schemas";
 import { SITE_IDENTITY } from "@/lib/site";
 import { SOCIAL_LINKS } from "@/lib/social";
 import { ContentFileError } from "./fs-utils";
@@ -42,12 +42,17 @@ export function getSourceEditorSnapshot(): EditorSnapshot {
     achievements: getAllAchievementsForEditor(),
     services: getAllServicesForEditor(),
     skills: getAllSkillCategoriesForEditor(),
+    siteExperience: DEFAULT_SITE_EXPERIENCE,
   });
 }
 
 export async function getEditorSnapshot(): Promise<EditorSnapshot> {
   if (databaseConfigured) return getDatabaseSnapshot();
   return getSourceEditorSnapshot();
+}
+
+export async function getSiteExperience() {
+  return (await getEditorSnapshot()).siteExperience;
 }
 
 async function assertProjectReferences(snapshot: EditorSnapshot) {

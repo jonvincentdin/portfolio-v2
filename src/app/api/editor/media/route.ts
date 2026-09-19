@@ -11,13 +11,13 @@ function toAsset(asset: { id: string; name: string; kind: string; type: string; 
   return {
     id: asset.id,
     name: asset.name,
-    kind: asset.kind === "image" ? "image" : "file",
+    kind: asset.kind === "image" ? "image" : asset.kind === "audio" ? "audio" : "file",
     type: asset.type,
     mimeType: asset.mimeType,
     size: asset.size,
     description: asset.description,
     createdAt: asset.createdAt.toISOString(),
-    ...(asset.kind === "image" ? { url: `/content-media/library/${asset.id}` } : {}),
+    ...(asset.kind === "image" || asset.kind === "audio" ? { url: `/content-media/library/${asset.id}` } : {}),
     ...(asset._count ? { usageCount: asset._count.projectAssets } : {}),
   };
 }
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     const file = form.get("file");
     const kind = String(form.get("kind") ?? "file");
     if (!(file instanceof File)) return Response.json({ message: "Choose a file." }, { status: 400 });
-    if (kind !== "image" && kind !== "file") return Response.json({ message: "Choose image or file." }, { status: 400 });
+    if (kind !== "image" && kind !== "audio" && kind !== "file") return Response.json({ message: "Choose image, audio, or file." }, { status: 400 });
     const extension = path.extname(file.name).toLowerCase() || ".bin";
     const upload = await readProjectUpload(file, `library/${crypto.randomUUID()}${extension}`, kind);
     const name = String(form.get("name") ?? "").trim() || upload.name;

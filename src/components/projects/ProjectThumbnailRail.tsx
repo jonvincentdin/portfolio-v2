@@ -5,7 +5,7 @@ import Image from "next/image";
 import { LayoutGroup, motion } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
 import { usePrefersReducedMotion } from "@/lib/motion/usePrefersReducedMotion";
-import { DURATION, EASE_MECHANICAL } from "@/lib/motion/tokens";
+import { getMotionTransition } from "@/lib/motion/tokens";
 import { getProjectMediaUrl, type LoadedProject } from "@/lib/content/media";
 
 type ProjectThumbnailRailProps = {
@@ -76,11 +76,11 @@ export function ProjectThumbnailRail({ projects, activeIndex, onSelect }: Projec
               aria-selected={isActive}
               aria-current={isActive ? "true" : undefined}
               onClick={() => onSelect(index)}
-              className="group relative shrink-0 snap-start pb-3 text-left"
+              className="motion-control group relative shrink-0 snap-start pb-3 text-left"
             >
               <span
                 className={cn(
-                  "relative block h-16 w-24 origin-bottom overflow-hidden border transition-[opacity,border-color,transform] duration-300 sm:h-20 sm:w-32",
+                  "relative block h-16 w-24 origin-bottom overflow-hidden border transition-[opacity,border-color,transform] motion-responsive sm:h-20 sm:w-32",
                   isActive
                     ? "scale-105 border-accent opacity-100"
                     : "border-border opacity-60 group-hover:opacity-90",
@@ -103,10 +103,7 @@ export function ProjectThumbnailRail({ projects, activeIndex, onSelect }: Projec
                 <motion.span
                   layoutId="thumbnail-active-indicator"
                   className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent"
-                  transition={{
-                    duration: prefersReducedMotion ? 0.01 : DURATION.normal,
-                    ease: EASE_MECHANICAL,
-                  }}
+                  transition={getMotionTransition("responsive", prefersReducedMotion)}
                 />
               ) : null}
             </button>

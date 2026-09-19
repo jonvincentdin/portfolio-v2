@@ -29,8 +29,10 @@ export function ArrowLink({
       href={href}
       target={external ? "_blank" : undefined}
       rel={external ? "noreferrer" : undefined}
+      data-cursor={external ? "external" : "link"}
+      data-audio="ui-click"
       className={cn(
-        "group inline-flex items-center gap-3 font-technical text-technical-label uppercase tracking-[0.1em] transition-[color,background-color,border-color,transform] duration-150 active:scale-95",
+        "motion-control group inline-flex items-center gap-3 font-technical text-technical-label uppercase tracking-[0.1em] transition-[color,background-color,border-color,transform] motion-micro active:scale-95",
         isPrimary
           ? "bg-accent px-6 py-3 text-accent-foreground hover:bg-accent/90"
           : "border-b border-foreground-primary/30 pb-1 text-foreground-primary hover:border-accent hover:text-accent",
@@ -38,7 +40,7 @@ export function ArrowLink({
       )}
     >
       {children}
-      <span className="inline-block transition-transform duration-150 group-hover:translate-x-1" aria-hidden="true">
+      <span className="inline-block transition-transform motion-micro group-hover:translate-x-1" aria-hidden="true">
         →
       </span>
     </Link>

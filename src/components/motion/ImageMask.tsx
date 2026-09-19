@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { usePrefersReducedMotion } from "@/lib/motion/usePrefersReducedMotion";
-import { DURATION, EASE_MECHANICAL } from "@/lib/motion/tokens";
+import { getMotionTransition } from "@/lib/motion/tokens";
 
 type ImageMaskProps = {
   children: React.ReactNode;
@@ -61,7 +61,7 @@ export function ImageMask({ children, className }: ImageMaskProps) {
         className="h-full w-full"
         initial={false}
         animate={{ clipPath: isVisible ? "inset(0 0 0 0%)" : "inset(0 0 0 100%)" }}
-        transition={{ duration: prefersReducedMotion ? 0.01 : DURATION.cinematic, ease: EASE_MECHANICAL }}
+        transition={getMotionTransition("cinematic", prefersReducedMotion)}
       >
         {children}
       </motion.div>

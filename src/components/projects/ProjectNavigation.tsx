@@ -23,9 +23,11 @@ export function ProjectNavigation({ onPrevious, onNext, disabled = false, classN
         onClick={onPrevious}
         disabled={disabled}
         aria-label="Previous project"
-        className="group inline-flex items-center gap-3 font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-primary transition-[color,transform] duration-150 hover:text-accent active:scale-95 disabled:pointer-events-none disabled:opacity-30"
+        data-cursor="button"
+        data-audio="navigation-shift"
+        className="motion-control group inline-flex items-center gap-3 font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-primary transition-[color,transform] motion-micro hover:text-accent active:scale-95 disabled:pointer-events-none disabled:opacity-30"
       >
-        <span className="inline-block transition-transform duration-150 group-hover:-translate-x-1" aria-hidden="true">
+        <span className="inline-block transition-transform motion-micro group-hover:-translate-x-1" aria-hidden="true">
           ←
         </span>
         Previous
@@ -36,10 +38,12 @@ export function ProjectNavigation({ onPrevious, onNext, disabled = false, classN
         onClick={onNext}
         disabled={disabled}
         aria-label="Next project"
-        className="group inline-flex items-center gap-3 font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-primary transition-[color,transform] duration-150 hover:text-accent active:scale-95 disabled:pointer-events-none disabled:opacity-30"
+        data-cursor="button"
+        data-audio="navigation-shift"
+        className="motion-control group inline-flex items-center gap-3 font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-primary transition-[color,transform] motion-micro hover:text-accent active:scale-95 disabled:pointer-events-none disabled:opacity-30"
       >
         Next
-        <span className="inline-block transition-transform duration-150 group-hover:translate-x-1" aria-hidden="true">
+        <span className="inline-block transition-transform motion-micro group-hover:translate-x-1" aria-hidden="true">
           →
         </span>
       </button>

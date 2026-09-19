@@ -4,6 +4,12 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/motion/PageTransition";
 import { CursorGridGlow } from "@/components/motion/CursorGridGlow";
+import { GlobalSpotlight } from "@/components/motion/GlobalSpotlight";
+import { ScrollRestoration } from "@/components/motion/ScrollRestoration";
+import { ScrollProgress } from "@/components/motion/ScrollProgress";
+import { CursorEngine } from "@/components/motion/CursorEngine";
+import { AudioEngine } from "@/components/motion/AudioEngine";
+import { getSiteExperience } from "@/lib/content/editor";
 import { getSiteIdentity } from "@/lib/site";
 import "./globals.css";
 
@@ -25,11 +31,18 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const siteExperience = await getSiteExperience();
+
   return (
     <html lang="en" className={`${fontVariables} h-full`}>
       <body className="flex min-h-full flex-col bg-background-primary font-body text-foreground-primary antialiased">
         <CursorGridGlow />
+        <GlobalSpotlight />
+        <CursorEngine settings={siteExperience.cursor} />
+        <AudioEngine settings={siteExperience.audio} />
+        <ScrollRestoration />
+        <ScrollProgress />
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-accent focus:px-4 focus:py-2 focus:font-technical focus:text-technical-label focus:uppercase focus:tracking-[0.1em] focus:text-accent-foreground"

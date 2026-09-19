@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { ProjectShowroom } from "@/components/projects/ProjectShowroom";
+import { ProjectSectionRenderer } from "@/components/projects/ProjectSectionRenderer";
 import { getAllProjects } from "@/lib/content";
+import { getSiteExperience } from "@/lib/content/editor";
+import { DEFAULT_PROJECT_SECTIONS } from "@/lib/schemas";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -15,13 +17,20 @@ export const metadata: Metadata = {
 };
 
 /**
- * Projects showroom (spec §12–§13). Milestone 04: loader integration,
- * current-project state, image/info display, previous/next, counter, and a
- * basic thumbnail selector — functionality first. Directional transition
- * motion and touch gestures land in Milestone 05.
+ * Projects page — renders one section per entry in `siteExperience.projectSections`.
+ * Each section has its own layout template (showroom, carousel, grid, timeline,
+ * spotlight, or film-strip) and can show a subset of projects by slug.
+ * Sections are configured in the /editor under "Projects layout".
  */
 export default async function ProjectsPage() {
-  const projects = await getAllProjects();
+  const [projects, siteExperience] = await Promise.all([
+    getAllProjects(),
+    getSiteExperience(),
+  ]);
+
+  const sections = (siteExperience.projectSections ?? DEFAULT_PROJECT_SECTIONS).filter(
+    (section) => section.visible !== false,
+  );
 
   if (projects.length === 0) {
     return (
@@ -36,8 +45,12 @@ export default async function ProjectsPage() {
   }
 
   return (
-    <Container size="wide" className="py-16 sm:py-24">
-      <ProjectShowroom projects={projects} />
-    </Container>
+    <div className="divide-y divide-border">
+      {sections.map((section) => (
+        <Container key={section.id} size="wide" className="py-16 sm:py-24">
+          <ProjectSectionRenderer section={section} allProjects={projects} />
+        </Container>
+      ))}
+    </div>
   );
 }

@@ -7,8 +7,9 @@ import { ArrowLink } from "@/components/ui/ArrowLink";
 import { ProgressIndicator } from "@/components/ui/ProgressIndicator";
 import { getProjectMediaUrl, type LoadedProject } from "@/lib/content/media";
 import { usePrefersReducedMotion } from "@/lib/motion/usePrefersReducedMotion";
-import { DURATION, EASE_MECHANICAL, EASE_STANDARD } from "@/lib/motion/tokens";
+import { getMotionTransition } from "@/lib/motion/tokens";
 import { ProjectSpecs } from "./ProjectSpecs";
+import { ProjectInteractiveFrame } from "./ProjectInteractiveFrame";
 
 type ProjectViewerProps = {
   project: LoadedProject;
@@ -48,11 +49,14 @@ export function ProjectViewer({
 }: ProjectViewerProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
 
+  const cardTransition = getMotionTransition("shiftTransition", prefersReducedMotion);
+  const itemTransition = getMotionTransition("responsive", prefersReducedMotion);
+
   const cardVariants: Variants = prefersReducedMotion
     ? {
         enter: { opacity: 0 },
-        center: { opacity: 1, transition: { duration: 0.01 } },
-        exit: { opacity: 0, transition: { duration: 0.01 } },
+        center: { opacity: 1, transition: cardTransition },
+        exit: { opacity: 0, transition: cardTransition },
       }
     : {
         enter: (dir: 1 | -1) => ({ x: dir >= 0 ? 80 : -80, opacity: 0 }),
@@ -60,8 +64,7 @@ export function ProjectViewer({
           x: 0,
           opacity: 1,
           transition: {
-            duration: DURATION.cinematic,
-            ease: EASE_MECHANICAL,
+            ...cardTransition,
             staggerChildren: 0.06,
             delayChildren: 0.05,
           },
@@ -69,15 +72,15 @@ export function ProjectViewer({
         exit: (dir: 1 | -1) => ({
           x: dir >= 0 ? -80 : 80,
           opacity: 0,
-          transition: { duration: DURATION.cinematic, ease: EASE_MECHANICAL },
+          transition: cardTransition,
         }),
       };
 
   const itemVariants: Variants = prefersReducedMotion
-    ? { enter: { opacity: 0 }, center: { opacity: 1, transition: { duration: 0.01 } } }
+    ? { enter: { opacity: 0 }, center: { opacity: 1, transition: itemTransition } }
     : {
         enter: { opacity: 0, y: 10 },
-        center: { opacity: 1, y: 0, transition: { duration: DURATION.normal, ease: EASE_STANDARD } },
+        center: { opacity: 1, y: 0, transition: itemTransition },
       };
 
   function handleDragEnd(_event: PointerEvent | MouseEvent | TouchEvent, info: PanInfo) {
@@ -117,7 +120,8 @@ export function ProjectViewer({
         variants={itemVariants}
         className="mt-6 lg:mt-0 lg:[grid-column:2] lg:[grid-row:1/5]"
       >
-        <AngularPanel className="relative aspect-[16/10] overflow-hidden lg:aspect-auto lg:h-full lg:min-h-[420px]">
+        <ProjectInteractiveFrame>
+          <AngularPanel className="relative aspect-[16/10] overflow-hidden lg:aspect-auto lg:h-full lg:min-h-[420px]">
           <Image
             src={getProjectMediaUrl(project, project.media.hero)}
             alt={`${project.name} — ${project.tagline}`}
@@ -127,7 +131,8 @@ export function ProjectViewer({
             priority={index === 0}
             draggable={false}
           />
-        </AngularPanel>
+          </AngularPanel>
+        </ProjectInteractiveFrame>
       </motion.div>
 
       <motion.p

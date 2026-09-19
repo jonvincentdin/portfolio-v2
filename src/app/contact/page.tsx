@@ -53,7 +53,7 @@ export default async function ContactPage() {
         </TechnicalLabel>
         <a
           href={`mailto:${site.contactEmail}`}
-          className="font-heading text-heading-md uppercase tracking-tight transition-colors duration-150 hover:text-accent"
+          className="font-heading text-heading-md uppercase tracking-tight transition-colors motion-micro hover:text-accent"
         >
           {site.contactEmail}
         </a>
@@ -65,7 +65,7 @@ export default async function ContactPage() {
               href={link.href}
               target={link.href.startsWith("http") ? "_blank" : undefined}
               rel={link.href.startsWith("http") ? "noreferrer" : undefined}
-              className="font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-muted transition-colors duration-150 hover:text-foreground-primary"
+              className="font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-muted transition-colors motion-micro hover:text-foreground-primary"
             >
               {link.label}
             </a>

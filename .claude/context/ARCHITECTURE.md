@@ -248,6 +248,36 @@ would silently inherit the root layout's homepage-branded social preview.
   against all 6 representative pages, checking `wcag2a`/`wcag2aa`/
   `best-practice` rules: zero violations after the fixes above.
 
+## Visual Experience Continuation (Milestones 05–10)
+
+The visual layer is intentionally an enhancement over the existing portfolio.
+`RootLayout` loads `getSiteExperience()` from the existing database/source
+snapshot and mounts `CursorEngine` and `AudioEngine` once. Cursor and sound
+behavior is then delegated from semantic controls via data attributes. The
+Home hero uses `HeroExperience`, a lightweight CSS/pointer layer with no 3D
+asset dependency and a complete coarse-pointer/reduced-motion fallback.
+
+Audio assets use the existing `MediaAsset`/media-library path with `kind`
+`audio`; the content-media route validates and serves only stored image/audio
+media. Generated Web Audio tones remain the default if no replacement asset is
+configured. `SiteSettings.siteExperience` is validated by Zod and persisted
+alongside the current editor snapshot, preserving one CMS source of truth.
+
+## Visual Experience Continuation (Milestones 11–15)
+
+The public interaction layer remains data-independent: project media depth is
+handled by `ProjectInteractiveFrame`, education progression derives directly
+from the existing education collection, and skill expansion derives directly
+from the existing skill categories. No duplicate content arrays or editor-only
+presentation data were introduced. The interactions are client-isolated and
+fall back to ordinary readable content for touch and reduced-motion users.
+
+M16 credential cards resolve optional certification/achievement images through
+the same `/content-media` boundary: checked-in collection paths use their
+collection directory, while `library/{id}` values use the managed media
+record. Missing images render an explicit fallback and cannot remove the
+credential text or verification action.
+
 ## Technical Risks & Mitigations
 | Risk | Mitigation |
 |---|---|

@@ -93,7 +93,7 @@ export function ContactForm({ submitLabel = "Send Message" }: { submitLabel?: st
             onChange={(event) => updateField(field, event.target.value)}
             disabled={isDisabled}
             className={cn(
-              "w-full border-b bg-transparent py-2 font-body text-body-md text-foreground-primary transition-colors duration-150 placeholder:text-foreground-muted/50 focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+              "w-full border-b bg-transparent py-2 font-body text-body-md text-foreground-primary transition-colors motion-micro placeholder:text-foreground-muted/50 focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
               errors[field] ? "border-red-400" : "border-border-strong",
             )}
           />
@@ -116,7 +116,7 @@ export function ContactForm({ submitLabel = "Send Message" }: { submitLabel?: st
           onChange={(event) => updateField("message", event.target.value)}
           disabled={isDisabled}
           className={cn(
-            "w-full resize-none border-b bg-transparent py-2 font-body text-body-md text-foreground-primary transition-colors duration-150 focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+            "w-full resize-none border-b bg-transparent py-2 font-body text-body-md text-foreground-primary transition-colors motion-micro focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
             errors.message ? "border-red-400" : "border-border-strong",
           )}
         />
@@ -139,15 +139,17 @@ export function ContactForm({ submitLabel = "Send Message" }: { submitLabel?: st
         </p>
       ) : null}
 
-      <button
-        type="submit"
+          <button
+            type="submit"
+            data-cursor="button"
+            data-audio="ui-click"
         disabled={isDisabled}
-        className="group inline-flex w-fit items-center gap-3 bg-accent px-6 py-3 font-technical text-technical-label uppercase tracking-[0.1em] text-accent-foreground transition-[background-color,transform] duration-150 hover:bg-accent/90 active:scale-95 disabled:cursor-default disabled:opacity-80 disabled:active:scale-100"
+        className="group inline-flex w-fit items-center gap-3 bg-accent px-6 py-3 font-technical text-technical-label uppercase tracking-[0.1em] text-accent-foreground transition-[background-color,transform] motion-micro hover:bg-accent/90 active:scale-95 disabled:cursor-default disabled:opacity-80 disabled:active:scale-100"
       >
         {state === "idle" ? submitLabel : BUTTON_LABEL[state]}
         {state === "idle" ? (
           <span
-            className="inline-block transition-transform duration-150 group-hover:translate-x-1"
+            className="inline-block transition-transform motion-micro group-hover:translate-x-1"
             aria-hidden="true"
           >
             →

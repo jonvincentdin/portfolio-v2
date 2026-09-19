@@ -1,5 +1,53 @@
 # PROGRESS.md
 
+## Visual Experience Upgrade — Milestone 01: Existing Project Audit (complete)
+- [x] Audited the current Next.js/App Router architecture, route map, navigation,
+      CMS/editor, content loaders, project/media system, motion, responsive
+      behavior, accessibility, and storage boundaries.
+- [x] Confirmed `EditorPreview` follows the active editor tab and selected
+      project draft without introducing a separate preview data source.
+- [x] Recorded the current gaps and safe extension points for later visual,
+      theme, audio, and interaction milestones.
+- [x] Verified `tsc`, lint, Prisma schema validation, and production build.
+- [x] No later-milestone runtime redesign was introduced.
+
+See `docs/MILESTONE_01_AUDIT.md` for the complete audit.
+
+## Visual Experience Upgrade — Milestone 02: Central Motion System (complete)
+- [x] Added named reusable motion presets for micro, responsive, reveal,
+      directional, cinematic, route, hover, press, and spring behavior.
+- [x] Centralized reduced-motion fallbacks for Framer Motion transitions and
+      shared CSS transition tokens for lightweight interactions.
+- [x] Routed current route, showroom, counter, thumbnail, image-mask, reveal,
+      navigation, CTA, form, and editor feedback motion through the system.
+- [x] Preserved the existing motion language and did not add decorative
+      animations or bypass the CMS/editor architecture.
+- [x] Updated `MOTION.md` and verified typecheck, lint, diff check, and build.
+
+See `MOTION.md` for the preset vocabulary and usage boundaries.
+
+## Visual Experience Upgrade — Milestone 03: Routing, Transitions & Scroll Restoration (complete)
+- [x] Added route-aware scroll restoration for new pathname navigations.
+- [x] Preserved same-page and cross-route hash anchor behavior with header
+      offset support.
+- [x] Preserved browser back/forward restoration by leaving `popstate` to
+      native history handling.
+- [x] Refined route transitions to a responsive 400ms directional fade/shift
+      with controlled scale and slight blur.
+- [x] Verified typecheck, lint, production build, and diff check.
+- [ ] Live browser click/back/forward verification — blocked because no
+      browser surface is available in this environment; documented below.
+
+## Visual Experience Upgrade — Milestone 04: Global Scroll Experience (complete)
+- [x] Added a passive, RAF-throttled scroll progress indicator to the public
+      root layout.
+- [x] Progress is derived from the natural document scroll range and remains
+      synchronized without scroll hijacking or input interception.
+- [x] Desktop includes route section labeling; mobile receives the simpler
+      rail-plus-percentage presentation.
+- [x] Owner and Editor surfaces remain free of public scroll decoration.
+- [x] Verified typecheck, lint, production build, and diff check.
+
 ## Media Library Extension (complete)
 - [x] Global `MediaAsset` model with reusable metadata and binary storage.
 - [x] Project links retain project-relative paths while referencing library IDs.
@@ -41,8 +89,8 @@ which has been schema-synced, seeded, and backfilled for the media library.
       environment.
 
 ## Current Milestone
-MEDIA LIBRARY EXTENSION — COMPLETE; reusable uploads, project links, and
-database-backed delivery are verified.
+VISUAL EXPERIENCE UPGRADE — MILESTONE 01 AUDIT COMPLETE; the original CMS,
+media-library, and public-site milestones remain complete.
 
 ## Historical milestone status
 MILESTONE 15 — OWNER EDITOR / CMS (complete); MEDIA LIBRARY EXTENSION
@@ -157,6 +205,49 @@ every page permanently invisible after one navigation (D-026).
       rejection.
 - [x] Updated the affected context documentation and verified the master
       prompt is present at `automotive_gran_turismo_portfolio_claude_prompt_v2.md`.
+
+## Visual Experience Continuation — Milestones 05–10
+
+- [x] **M05 — Unique Custom Cursor Engine:** fine-pointer-only cursor layers,
+      presets, contextual states, velocity trail, reduced-motion/coarse-pointer
+      fallback, and delegated control attributes.
+- [x] **M06 — Complete Cursor Designer:** editor controls under Site Experience,
+      nested cursor customization, reset, and current-tab draft preview.
+- [x] **M07 — Central Audio Engine:** gesture-respecting central manager,
+      generated fallback tones, cooldown/voice limits, category/master volume,
+      mute persistence, and preview events.
+- [x] **M08 — Interaction Sound Design:** restrained click, navigation, menu,
+      and transition hooks on real portfolio controls; no autoplay or car audio.
+- [x] **M09 — Audio Customization:** editor mute/volume/sound controls,
+      per-sound preview, shared media-library audio replacement, reset, and
+      server-side MIME/size validation.
+- [x] **M10 — Hero Experience:** staged existing hero composition extended with
+      system-ready detail, CSS studio lighting, telemetry grid, pointer response,
+      and safe mobile/reduced-motion behavior. No car or WebGL dependency added.
+- [x] **M11 — Buttons & Micro-interactions:** shared tactile control states,
+      focus-visible treatment, subtle hover lift, press compression, and
+      disabled-safe behavior on primary public controls.
+- [x] **M12 — Project Experience:** project media now uses a low-cost pointer
+      light/depth frame with a small image response, disabled for touch and
+      reduced-motion users while preserving all project links and CMS data.
+- [x] **M13 — Experience Section:** work history keeps the scroll-linked
+      progression line and now identifies the current role without inventing
+      additional content.
+- [x] **M14 — Education Experience:** education is an accessible selectable
+      progression track with illuminated stages, audio/cursor hooks, and a
+      deliberate vertical mobile layout.
+- [x] **M15 — Skills Experience:** skill categories are keyboard/touch-safe
+      expandable clusters with featured technology chips and the existing
+      factual discrete level indicators.
+- [x] **M16 — Certifications & Achievements:** shared credential surfaces now
+      provide controlled selection, pointer depth/light response, optional
+      image rendering with failure fallback, metadata reveal, and preserved
+      verification/content links.
+- [x] `npx.cmd tsc --noEmit`, `npx.cmd prisma validate`, `npm.cmd run lint`,
+      `git diff --check`, and production `npm.cmd run build` pass. Lint retains
+      four pre-existing `<img>` warnings in editor media/project controls.
+- [ ] Live in-app browser verification remains pending because no browser
+      surface was available in this session; no screenshot-based claims are made.
 
 ## In Progress
 - Nothing — the original specification's final public-site milestone is complete.

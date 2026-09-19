@@ -32,7 +32,7 @@ async function main() {
     await tx.contactSubmission.deleteMany();
     await tx.experience.deleteMany(); await tx.education.deleteMany(); await tx.certification.deleteMany(); await tx.achievement.deleteMany(); await tx.service.deleteMany(); await tx.skillItem.deleteMany(); await tx.skillCategory.deleteMany();
 
-    await tx.siteSettings.create({ data: { id: "default", ...snapshot.site } });
+    await tx.siteSettings.create({ data: { id: "default", ...snapshot.site, siteExperience: snapshot.siteExperience } });
     const about = await tx.aboutSettings.create({ data: { id: "default", headline: snapshot.about.headline } });
     await tx.aboutParagraph.createMany({ data: snapshot.about.philosophy.map((text, order) => ({ aboutId: about.id, text, order })) });
     await tx.aboutPrinciple.createMany({ data: snapshot.about.principles.map((principle, order) => ({ aboutId: about.id, ...principle, order })) });

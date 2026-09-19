@@ -10,6 +10,7 @@ import { getSiteIdentity } from "@/lib/site";
 import { getSocialLinks } from "@/lib/social";
 import { getProfileImage } from "@/lib/profile";
 import { AngularPanel } from "@/components/ui/AngularPanel";
+import { HeroExperience } from "@/components/motion/HeroExperience";
 
 /**
  * Home (spec §8–§9). Hero content reveals on mount, staggered, as the
@@ -25,7 +26,8 @@ export default async function HomePage() {
 
   return (
     <>
-      <Container className="relative flex min-h-[calc(100vh-4rem)] flex-col justify-center gap-10 overflow-hidden py-20 sm:min-h-[calc(100vh-5rem)] lg:overflow-visible">
+      <HeroExperience>
+        <Container className="relative flex min-h-[calc(100vh-4rem)] flex-col justify-center gap-10 overflow-hidden py-20 sm:min-h-[calc(100vh-5rem)] lg:overflow-visible">
         {profileImage ? (
           <AngularPanel className="order-first relative aspect-[4/5] w-full max-w-sm self-end overflow-hidden lg:absolute lg:top-1/2 lg:right-0 lg:order-none lg:w-[34%] lg:max-w-none lg:-translate-y-1/2">
             <Image src={profileImage.url} alt={`${site.name} profile`} fill sizes="(min-width: 1024px) 34vw, 90vw" className="object-cover" priority />
@@ -44,6 +46,7 @@ export default async function HomePage() {
 
         <div>
           <Reveal mode="mount">
+            <TechnicalLabel>System / Ready</TechnicalLabel>
             <TechnicalLabel accent>{site.role}</TechnicalLabel>
           </Reveal>
           <Reveal mode="mount" delayMs={80}>
@@ -105,14 +108,15 @@ export default async function HomePage() {
                 href={link.href}
                 target={link.href.startsWith("http") ? "_blank" : undefined}
                 rel={link.href.startsWith("http") ? "noreferrer" : undefined}
-                className="font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-muted transition-colors hover:text-foreground-primary"
+                className="font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-muted transition-colors motion-micro hover:text-foreground-primary"
               >
                 {link.label}
               </a>
             ))}
           </div>
         </Reveal>
-      </Container>
+        </Container>
+      </HeroExperience>
 
       {featuredProject ? (
         <Container className="border-t border-border py-24">

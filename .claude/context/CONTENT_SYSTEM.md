@@ -117,6 +117,17 @@ download`) streams a ZIP of the entire project folder — not just the listed
 files — via `archiver`'s `ZipArchive` class (DECISIONS.md D-015), verified
 end-to-end with real downloads and `unzip -l` folder-structure inspection.
 
+## Site Experience Settings
+
+`SiteSettings.siteExperience` is the single persisted JSON field for optional
+visual-experience configuration. `SiteExperienceSchema` supplies safe defaults
+for the cursor presets and generated interaction sounds, so older database
+records remain valid without a manual migration of content JSON. The editor
+serializes this field through the same `EditorSnapshot` save path as the rest
+of the CMS. Audio replacements use the shared media library (`audio` assets)
+and are referenced by managed `library/{id}` keys; no raw asset paths are
+required from the owner.
+
 ## Example Content (Milestone 02)
 `content/` currently has three example projects, exercising different parts
 of the schema:

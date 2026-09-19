@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
-import { EditorSnapshotSchema, type EditorSnapshot, type EditorProject } from "@/lib/schemas";
+import { EditorSnapshotSchema, SiteExperienceSchema, type EditorSnapshot, type EditorProject } from "@/lib/schemas";
 
 const emptyCaseStudy = { overview: "", problem: "", objective: "", solution: "", challenges: "", results: "", lessons: "" };
 
@@ -56,12 +56,13 @@ export async function getDatabaseSnapshot(): Promise<EditorSnapshot> {
     achievements: achievements.map((entry) => ({ id: entry.id, order: entry.displayOrder, visible: entry.visible, title: entry.title, organization: entry.organization, date: entry.date, description: entry.description, ...(entry.imagePath ? { image: entry.imagePath } : {}) })),
     services: services.map((entry) => ({ id: entry.id, order: entry.displayOrder, visible: entry.visible, title: entry.title, description: entry.description, capabilities: entry.capabilities })),
     skills: skills.map((category) => ({ category: category.category, order: category.displayOrder, visible: category.visible, skills: category.skills.map((skill) => ({ name: skill.name, order: skill.displayOrder, ...(skill.level ? { level: skill.level as "Learning" } : {}), featured: skill.featured, visible: skill.visible })) })),
+    siteExperience: SiteExperienceSchema.parse(site.siteExperience ?? {}),
   });
 }
 
 export async function saveDatabaseSnapshot(snapshot: EditorSnapshot) {
   await db.$transaction(async (tx) => {
-    await tx.siteSettings.upsert({ where: { id: "default" }, update: snapshot.site, create: { id: "default", ...snapshot.site } });
+    await tx.siteSettings.upsert({ where: { id: "default" }, update: { ...snapshot.site, siteExperience: snapshot.siteExperience }, create: { id: "default", ...snapshot.site, siteExperience: snapshot.siteExperience } });
     const about = await tx.aboutSettings.upsert({ where: { id: "default" }, update: { headline: snapshot.about.headline }, create: { id: "default", headline: snapshot.about.headline } });
     await tx.aboutParagraph.deleteMany({ where: { aboutId: about.id } });
     await tx.aboutPrinciple.deleteMany({ where: { aboutId: about.id } });

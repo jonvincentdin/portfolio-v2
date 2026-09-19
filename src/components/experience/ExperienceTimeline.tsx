@@ -46,8 +46,10 @@ export function ExperienceTimeline({ entries }: ExperienceTimelineProps) {
 
   if (entries.length === 0) return null;
 
+  const currentIndex = entries.findIndex((entry) => entry.current);
+
   return (
-    <div ref={containerRef} className="relative pl-8">
+    <div ref={containerRef} aria-label="Work history progression" className="relative pl-8">
       <div className="absolute top-0 bottom-0 left-0 w-px bg-border" aria-hidden="true" />
       <motion.div
         className="absolute top-0 left-0 h-full w-px origin-top bg-accent"
@@ -56,16 +58,16 @@ export function ExperienceTimeline({ entries }: ExperienceTimelineProps) {
       />
 
       <div className="flex flex-col gap-12">
-        {entries.map((entry) => (
+        {entries.map((entry, index) => (
           <Reveal key={entry.id}>
             <div className="relative">
               <span
-                className="absolute top-1.5 -left-8 h-2 w-2 -translate-x-1/2 bg-accent"
+                className={`absolute top-1.5 -left-8 h-2 w-2 -translate-x-1/2 bg-accent ${index === currentIndex ? "shadow-[0_0_0_4px_color-mix(in_srgb,var(--accent)_18%,transparent)]" : ""}`}
                 aria-hidden="true"
               />
 
               <TechnicalLabel accent as="div" className="mb-2">
-                {formatDateRange(entry)}
+                {formatDateRange(entry)}{entry.current ? " / CURRENT" : ""}
               </TechnicalLabel>
 
               <h3 className="font-heading text-heading-md uppercase tracking-tight">

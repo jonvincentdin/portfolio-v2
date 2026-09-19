@@ -9,7 +9,7 @@ export type ProjectUpload = { path: string; name: string; kind: string; type: st
 
 function typeFor(filePath: string) {
   const extension = path.extname(filePath).toLowerCase().slice(1);
-  return ["pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx", "zip", "rar", "txt", "csv", "json", "png", "jpg", "webp", "svg", "mp4", "mov", "fig", "sketch"].includes(extension) ? extension : "other";
+  return ["pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx", "zip", "rar", "txt", "csv", "json", "png", "jpg", "webp", "svg", "mp3", "wav", "ogg", "m4a", "mp4", "mov", "fig", "sketch"].includes(extension) ? extension : "other";
 }
 
 function checkImage(buffer: Buffer, mimeType: string) {
@@ -26,5 +26,6 @@ export async function readProjectUpload(file: File, assetPath: string, kind: str
   const data = Buffer.from(await file.arrayBuffer());
   const mimeType = file.type || "application/octet-stream";
   if (IMAGE_KINDS.has(kind)) checkImage(data, mimeType);
+  if (kind === "audio" && !mimeType.startsWith("audio/")) throw new ContentFileError("Audio content must use a recognized audio MIME type.");
   return { path: parsedPath.data, name: file.name || path.basename(parsedPath.data), kind, type: typeFor(parsedPath.data), mimeType, size: data.byteLength, data };
 }

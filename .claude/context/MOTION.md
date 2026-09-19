@@ -1,5 +1,38 @@
 # MOTION.md
 
+## Visual Experience Upgrade — Milestone 02
+
+The motion system now exposes named presets from `src/lib/motion/tokens.ts`
+instead of requiring components to assemble ad hoc transition objects. The
+current vocabulary is:
+
+| Preset | Intended use |
+|---|---|
+| `micro`, `press` | buttons, fields, icons, press states |
+| `fast`, `hoverLift` | quick interaction feedback |
+| `responsive`, `smooth` | selectors, counters, cards, image hover |
+| `sectionReveal` | section entrances and reveal choreography |
+| `speedIn` | short acceleration-style state changes |
+| `shiftTransition` | directional project movement |
+| `cinematic`, `pageTransition` | major transitions and route changes |
+| `springSoft`, `springResponsive` | interruption-friendly spring behavior |
+
+`getMotionTransition()` applies the shared reduced-motion fallback to every
+Framer Motion preset. `getPageTransitionVariants()` owns the route transition
+shape, while the lightweight CSS classes `motion-micro`,
+`motion-responsive`, and `motion-section-reveal` mirror the same token values
+for transitions that do not need a client animation boundary.
+
+The system is intentionally split by cost: CSS handles stateless hover/press
+feedback, while Framer Motion handles stateful layout, direction, and route
+transitions. This keeps interactions interruptible without introducing a
+second animation library or moving server-rendered content into client
+components.
+
+The route preset is intentionally 400ms: fast enough for navigation to remain
+responsive, while the project showroom can retain its longer cinematic
+choreography.
+
 ## Editor Motion (database CMS)
 The owner editor uses no continuous or decorative animation. Preview, save,
 upload, and error states communicate through labels/status text while existing
@@ -30,8 +63,9 @@ everywhere; no component defines its own ad hoc duration/easing.
   icon nudges.
 - **NORMAL (300ms):** thumbnail selection state changes, form field states.
 - **MEDIUM (500ms):** scroll reveals, section entrances, skill bar reveals.
+- **ROUTE (400ms):** page-level route transitions.
 - **CINEMATIC (700ms):** project showroom transitions (image + metadata as a
-  coherent system), page-level route transitions.
+  coherent system).
 - **SLOW (900ms):** rare — large hero reveal choreography only.
 
 ## Project Showroom Transition (core interaction, spec §32)
@@ -110,9 +144,11 @@ transitions for simple, stateless hover/press effects (buttons, links) to
 keep those interactions cheap.
 
 ## Page Transitions (spec §31)
-**Implemented (Milestone 12):** the outgoing page fades and slides left
-(`opacity: 1→0, x: 0→-30`), the incoming page fades in from the right
-(`opacity: 0→1, x: 30→0`), both over `DURATION.cinematic` (700ms) —
+**Implemented (Milestone 12 / centralized in Milestone 02):** the outgoing page
+fades and shifts left, the incoming page fades in from the right, with a
+controlled scale and slight blur at the boundary. The route preset is
+`DURATION.route` (400ms), which keeps navigation responsive while preserving
+the directional feel —
 MOTION.md flagged this exact bucket for page-level route transitions back
 in Milestone 05, before the component existed.
 
@@ -132,6 +168,26 @@ instance per navigation — see DECISIONS.md D-026 for the full diagnosis.
 Verified after the fix by sampling opacity/x at seven timepoints across a
 real click: a clean animated curve that settles at `opacity: 1,
 transform: none` and stays there.
+
+## Scroll Restoration (Milestone 03)
+
+`ScrollRestoration` is mounted once in the root layout. A pathname change from
+an internal link schedules an immediate scroll to the top after the new route
+commits. A URL hash is resolved to its target instead, and same-page anchors
+remain native browser behavior. `popstate` navigations are left to the browser
+with `history.scrollRestoration = "auto"`, preserving back/forward positions.
+The initial render is not forced to move, so direct entry and refresh retain
+normal browser behavior.
+
+## Global Scroll Progress (Milestone 04)
+
+`ScrollProgress` is a passive, RAF-throttled indicator mounted in the root
+layout. It derives percentage from the document's natural scroll range and
+labels the current public route using the shared navigation indexes. Desktop
+shows the section label, progress rail, and percentage; mobile keeps the rail
+and percentage only. It has `pointer-events: none`, does not alter scroll
+physics, and is hidden in Owner/Editor screens so editing remains distraction-
+free.
 
 ## Image Mask Reveal (spec §30)
 **Implemented (Milestone 12):** `src/components/motion/ImageMask.tsx` — a
@@ -200,3 +256,39 @@ static hierarchy cues; the existing showroom, page-transition, mask, reveal,
 download, and press-state motion remains the complete motion vocabulary. This
 keeps the site premium through restraint and preserves the reduced-motion
 behavior already verified in Milestones 12 and 13.
+
+## Visual Experience Continuation — Milestones 05–10
+
+The later visual-experience pass adds two optional global layers without
+changing the public content model:
+
+- `CursorEngine` is a fine-pointer-only delegated cursor system. Its core,
+  outer ring, trail, glow, labels, contextual states, velocity response, and
+  preset vocabulary are configured through `SiteExperience.cursor`.
+- `AudioEngine` is a central, gesture-respecting interaction sound manager.
+  It uses restrained generated tones by default, supports category/master
+  volumes, per-sound enable/volume settings, optional media-library audio
+  replacements, cooldowns, a four-voice ceiling, and persisted mute state.
+- `HeroExperience` adds a CSS-only pointer light and telemetry grid to the
+  existing Home composition. It does not introduce a car or make WebGL a
+  dependency.
+
+Both engines disappear on coarse pointers and reduced-motion preferences.
+They are mounted once in `app/layout.tsx`, so controls opt in through
+`data-cursor`/`data-audio` attributes rather than importing one-off effects.
+The owner editor exposes them together under Site Experience and the draft
+preview renders the currently selected editor tab, including this setting
+surface.
+
+## Visual Experience Continuation (Milestones 11–15)
+
+Public controls use the `motion-control` class for a shared one-pixel hover
+lift, restrained press compression, and visible accent focus ring. Project
+media uses `ProjectInteractiveFrame`, which writes pointer position and tilt
+to CSS variables instead of React state; coarse pointers and reduced-motion
+preferences receive a static frame. Education uses the same motion language
+for its selected progression node and line, while skill clusters keep their
+content available as an immediate, keyboard-safe expand/collapse interaction.
+Credential cards use the same restrained pointer response and expose details
+only through an explicit button selection, keeping verification metadata and
+achievement descriptions keyboard-accessible and readable without motion.

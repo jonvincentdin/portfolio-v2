@@ -118,7 +118,7 @@ export function MobileNavigation() {
       aria-label="Site navigation"
       aria-hidden={!isOpen}
       className={cn(
-        "fixed inset-0 z-40 flex flex-col justify-center bg-background-primary transition-opacity duration-300",
+        "fixed inset-0 z-40 flex flex-col justify-center bg-background-primary transition-opacity motion-responsive",
         isOpen ? "opacity-100" : "pointer-events-none opacity-0",
       )}
     >
@@ -146,17 +146,19 @@ export function MobileNavigation() {
         aria-controls="mobile-navigation"
         aria-label={isOpen ? "Close menu" : "Open menu"}
         onClick={() => setIsOpen((v) => !v)}
-        className="relative z-50 flex h-10 w-10 flex-col items-center justify-center gap-1.5 transition-transform duration-150 active:scale-90"
+        data-cursor="button"
+        data-audio={isOpen ? "ui-close" : "ui-open"}
+        className="motion-control relative z-50 flex h-10 w-10 flex-col items-center justify-center gap-1.5 transition-transform motion-micro active:scale-90"
       >
         <span
           className={cn(
-            "block h-px w-6 bg-foreground-primary transition-transform duration-150",
+            "block h-px w-6 bg-foreground-primary transition-transform motion-micro",
             isOpen && "translate-y-[3.5px] rotate-45",
           )}
         />
         <span
           className={cn(
-            "block h-px w-6 bg-foreground-primary transition-transform duration-150",
+            "block h-px w-6 bg-foreground-primary transition-transform motion-micro",
             isOpen && "-translate-y-[3.5px] -rotate-45",
           )}
         />

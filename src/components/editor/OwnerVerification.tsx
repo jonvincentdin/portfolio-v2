@@ -43,7 +43,7 @@ export function OwnerVerification() {
       </p>
 
       {step === "request" ? (
-        <button type="button" onClick={requestCode} disabled={busy} className="mt-8 w-full bg-accent px-5 py-4 font-technical text-technical-label uppercase tracking-[0.1em] text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-60">
+        <button type="button" onClick={requestCode} disabled={busy} className="mt-8 w-full bg-accent px-5 py-4 font-technical text-technical-label uppercase tracking-[0.1em] text-accent-foreground transition-opacity motion-micro hover:opacity-90 disabled:opacity-60">
           {busy ? "Requesting..." : "Send Verification Code"}
         </button>
       ) : (

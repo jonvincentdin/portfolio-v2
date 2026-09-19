@@ -20,3 +20,13 @@ export type { LoadedProject } from "./projects";
 export function getProjectMediaUrl(project: LoadedProject, relativePath: string): string {
   return `/content-media/projects/${project.folderName}/${relativePath}`;
 }
+
+/**
+ * Resolves optional non-project content images from either the checked-in
+ * content tree or the shared managed media library.
+ */
+export function getCollectionMediaUrl(collection: "certifications" | "achievements", value: string): string {
+  if (value.startsWith("http") || value.startsWith("/")) return value;
+  if (value.startsWith("library/")) return `/content-media/${value}`;
+  return `/content-media/${collection}/${value}`;
+}

@@ -6,6 +6,7 @@ import { CertificationSchema } from "./certification";
 import { AchievementSchema } from "./achievement";
 import { ServiceSchema } from "./service";
 import { SkillCategorySchema } from "./skill";
+import { DEFAULT_SITE_EXPERIENCE, SiteExperienceSchema } from "./site-experience";
 const SafeHttpUrlSchema = z.string().url().refine((value) => ["http:", "https:"].includes(new URL(value).protocol), "must use http or https");
 
 export const SiteIdentitySchema = z.object({
@@ -61,6 +62,7 @@ export const EditorSnapshotSchema = z.object({
   achievements: z.array(AchievementSchema),
   services: z.array(ServiceSchema),
   skills: z.array(SkillCategorySchema),
+  siteExperience: SiteExperienceSchema.default(DEFAULT_SITE_EXPERIENCE),
 });
 
 export type SiteIdentityData = z.infer<typeof SiteIdentitySchema>;

@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { usePrefersReducedMotion } from "@/lib/motion/usePrefersReducedMotion";
-import { DURATION, EASE_MECHANICAL } from "@/lib/motion/tokens";
+import { getMotionTransition } from "@/lib/motion/tokens";
 import { TechnicalLabel } from "./TechnicalLabel";
 
 type ProgressIndicatorProps = {
@@ -45,10 +45,7 @@ export function ProgressIndicator({ current, total, direction, className }: Prog
                 ? { opacity: 0 }
                 : { y: direction > 0 ? "-0.6em" : "0.6em", opacity: 0 }
             }
-            transition={{
-              duration: prefersReducedMotion ? 0.01 : DURATION.normal,
-              ease: EASE_MECHANICAL,
-            }}
+            transition={getMotionTransition("responsive", prefersReducedMotion)}
             className="absolute inset-0 flex items-center"
           >
             {pad(current)}

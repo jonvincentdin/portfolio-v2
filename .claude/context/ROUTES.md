@@ -37,6 +37,9 @@ without `DATABASE_URL`, these routes use the checked-in project folders.
   providing the page-level enter/exit transition (spec §31, Milestone 12).
   It's paired with `PageTransition` (rendered in `layout.tsx`) — see
   MOTION.md and DECISIONS.md D-026 for why both pieces are required.
+- `ScrollRestoration` is mounted in the root layout. It resets newly opened
+  routes to the top after the route commits, resolves cross-route hash targets,
+  and leaves `popstate` navigation to the browser's native history restoration.
 - `/contact` is fully built as of Milestone 10: form (name/email/subject/
   message) with client + server validation sharing one Zod schema, an
   idle/sending/success/error state machine, and a direct email + social

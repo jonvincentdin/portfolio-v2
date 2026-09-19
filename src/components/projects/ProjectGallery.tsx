@@ -27,7 +27,7 @@ export function ProjectGallery({ project }: ProjectGalleryProps) {
               alt={`${project.name} screenshot`}
               fill
               sizes="(min-width: 640px) 45vw, 100vw"
-              className="object-cover transition-transform duration-300 hover:scale-[1.02]"
+              className="object-cover transition-transform motion-responsive hover:scale-[1.02]"
             />
           </AngularPanel>
         ))}
