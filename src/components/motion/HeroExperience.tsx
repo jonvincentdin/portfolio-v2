@@ -53,7 +53,6 @@ export function HeroExperience({ children }: HeroExperienceProps) {
 
   return (
     <div ref={stageRef} className="hero-stage">
-      <div className="hero-stage__lighting" aria-hidden="true" />
       <div className="hero-stage__telemetry" aria-hidden="true" />
       {children}
     </div>

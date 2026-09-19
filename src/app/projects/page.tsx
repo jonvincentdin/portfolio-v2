@@ -47,7 +47,7 @@ export default async function ProjectsPage() {
   return (
     <div className="divide-y divide-border">
       {sections.map((section) => (
-        <Container key={section.id} size="wide" className="py-16 sm:py-24">
+        <Container key={section.id} className="py-16 sm:py-24">
           <ProjectSectionRenderer section={section} allProjects={projects} />
         </Container>
       ))}

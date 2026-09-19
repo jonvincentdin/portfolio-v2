@@ -32,7 +32,7 @@ export function ProjectSectionRenderer({
 
   switch (section.template) {
     case "showroom":
-      return <ProjectShowroom projects={projects} />;
+      return <ProjectShowroom projects={projects} kicker={section.kicker} label={section.label} />;
     case "carousel":
       return <CarouselTemplate {...props} />;
     case "grid":

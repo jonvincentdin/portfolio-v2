@@ -1,145 +1,216 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence } from "framer-motion";
 import type { LoadedProject } from "@/lib/content/media";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ProjectNavigation } from "./ProjectNavigation";
 import { ProjectThumbnailRail } from "./ProjectThumbnailRail";
 import { ProjectViewer } from "./ProjectViewer";
 
 type ProjectShowroomProps = {
   projects: LoadedProject[];
+  kicker?: string;
+  label?: string;
 };
 
-/**
- * Top-level showroom state/controller (spec §1, §12–§13). Owns the current
- * index and a `direction` value (1 = forward, -1 = back) that drives the
- * directional slide animation in ProjectViewer and ProgressIndicator (spec
- * §32, §34). Wires up mouse (buttons), keyboard (left/right arrow),
- * touch/swipe (drag on the card itself), and thumbnail-click navigation.
- *
- * Sequential scrolling: when a far thumbnail is clicked (|delta| > 1), the
- * showroom steps through every intermediate project one by one so the viewer
- * sees the full "scroll". Step interval scales with jump size — bigger jumps
- * play faster so it always feels snappy. A new navigation while stepping
- * cancels the current sequence and starts fresh.
- */
-export function ProjectShowroom({ projects }: ProjectShowroomProps) {
+const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+const SINGLE_MS = 500;
+
+function jumpDuration(steps: number): number {
+  return Math.min(1000, 280 + steps * 130);
+}
+
+export function ProjectShowroom({ projects, kicker, label }: ProjectShowroomProps) {
+  const total = projects.length;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
-  const total = projects.length;
 
-  // Queue of pending indices for the sequential scroll effect.
-  // Each timeout ID is stored so we can cancel on override.
-  const sequenceTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const indexRef = useRef(0);
+  indexRef.current = currentIndex;
 
-  function cancelSequence() {
-    for (const id of sequenceTimers.current) clearTimeout(id);
-    sequenceTimers.current = [];
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  const dragging = useRef(false);
+  const dragStartX = useRef(0);
+  const dragLastX = useRef(0);
+
+  // ── Track helpers ───────────────────────────────────────────────
+
+  function snapTo(index: number) {
+    const track = trackRef.current;
+    if (!track) return;
+    track.style.transition = "none";
+    track.style.transform = `translateX(-${(index / total) * 100}%)`;
   }
 
+  function slideTo(index: number, durationMs = SINGLE_MS) {
+    const track = trackRef.current;
+    if (!track) return;
+    track.style.transition = `transform ${durationMs}ms ${EASE}`;
+    track.style.transform = `translateX(-${(index / total) * 100}%)`;
+  }
+
+  // ── Navigation ──────────────────────────────────────────────────
+
   const goToNext = useCallback(() => {
-    cancelSequence();
+    const next = (indexRef.current + 1) % total;
     setDirection(1);
-    setCurrentIndex((i) => (i + 1) % total);
+    setCurrentIndex(next);
+    indexRef.current = next;
+    slideTo(next);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [total]);
 
   const goToPrevious = useCallback(() => {
-    cancelSequence();
+    const prev = (indexRef.current - 1 + total) % total;
     setDirection(-1);
-    setCurrentIndex((i) => (i - 1 + total) % total);
+    setCurrentIndex(prev);
+    indexRef.current = prev;
+    slideTo(prev);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [total]);
 
   const goToIndex = useCallback(
     (targetIndex: number) => {
-      cancelSequence();
-
-      setCurrentIndex((currentIndexSnapshot) => {
-        const delta = targetIndex - currentIndexSnapshot;
-        if (delta === 0) return currentIndexSnapshot;
-
-        const dir: 1 | -1 = delta > 0 ? 1 : -1;
-        const steps = Math.abs(delta);
-
-        // Build the ordered list of indices to step through.
-        const path: number[] = [];
-        for (let step = 1; step <= steps; step++) {
-          path.push((currentIndexSnapshot + dir * step + total) % total);
-        }
-
-        // Shorter interval for bigger jumps so it never feels sluggish.
-        // 1 step = 0ms delay (instant, same as before), 2 steps = 200ms each,
-        // 3+ steps = max(90, 260 - steps * 24) ms each.
-        const intervalMs =
-          steps <= 1 ? 0 : steps === 2 ? 200 : Math.max(90, 260 - steps * 24);
-
-        // Schedule each step, applying direction state immediately each time.
-        path.forEach((idx, i) => {
-          const id = setTimeout(() => {
-            setDirection(dir);
-            setCurrentIndex(idx);
-          }, i * intervalMs);
-          sequenceTimers.current.push(id);
-        });
-
-        // Return current value unchanged — state updates from the timeouts
-        return currentIndexSnapshot;
-      });
+      const current = indexRef.current;
+      if (targetIndex === current) return;
+      const delta = targetIndex - current;
+      const dir: 1 | -1 = delta > 0 ? 1 : -1;
+      const steps = Math.abs(delta);
+      setDirection(dir);
+      setCurrentIndex(targetIndex);
+      indexRef.current = targetIndex;
+      slideTo(targetIndex, steps === 1 ? SINGLE_MS : jumpDuration(steps));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [total],
   );
 
-  // Cancel all pending steps on unmount.
-  useEffect(() => () => cancelSequence(), []);
+  // ── Drag ────────────────────────────────────────────────────────
+
+  function handlePointerDown(e: React.PointerEvent) {
+    if (total <= 1) return;
+    const t = e.target as HTMLElement;
+    if (t.closest("button, a, [role='button'], input, textarea")) return;
+    dragging.current = true;
+    dragStartX.current = e.clientX;
+    dragLastX.current = e.clientX;
+    trackRef.current?.setPointerCapture(e.pointerId);
+  }
+
+  function handlePointerMove(e: React.PointerEvent) {
+    if (!dragging.current) return;
+    dragLastX.current = e.clientX;
+    const delta = e.clientX - dragStartX.current;
+    const track = trackRef.current;
+    if (!track) return;
+    track.style.transition = "none";
+    track.style.transform = `translateX(calc(-${(indexRef.current / total) * 100}% + ${delta}px))`;
+  }
+
+  function handlePointerUp() {
+    if (!dragging.current) return;
+    dragging.current = false;
+    const delta = dragLastX.current - dragStartX.current;
+    const track = trackRef.current;
+    const threshold = (track?.offsetWidth ?? 300) * 0.15;
+
+    if (delta < -threshold) {
+      // Swipe left → next (wraps)
+      const next = (indexRef.current + 1) % total;
+      setDirection(1);
+      setCurrentIndex(next);
+      indexRef.current = next;
+      slideTo(next);
+    } else if (delta > threshold) {
+      // Swipe right → previous (wraps)
+      const prev = (indexRef.current - 1 + total) % total;
+      setDirection(-1);
+      setCurrentIndex(prev);
+      indexRef.current = prev;
+      slideTo(prev);
+    } else {
+      slideTo(indexRef.current);
+    }
+  }
+
+  // ── Keyboard ────────────────────────────────────────────────────
 
   useEffect(() => {
     if (total <= 1) return;
-
-    function handleKeyDown(event: KeyboardEvent) {
-      const target = event.target as HTMLElement | null;
-      const isTypingContext =
-        target?.tagName === "INPUT" ||
-        target?.tagName === "TEXTAREA" ||
-        target?.isContentEditable;
-      if (isTypingContext) return;
-
-      if (event.key === "ArrowRight") {
-        goToNext();
-      } else if (event.key === "ArrowLeft") {
-        goToPrevious();
-      }
+    function onKeyDown(e: KeyboardEvent) {
+      const t = e.target as HTMLElement | null;
+      if (t?.tagName === "INPUT" || t?.tagName === "TEXTAREA" || t?.isContentEditable) return;
+      if (e.key === "ArrowRight") goToNext();
+      else if (e.key === "ArrowLeft") goToPrevious();
     }
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, [total, goToNext, goToPrevious]);
 
-  const currentProject = projects[currentIndex];
+  useEffect(() => {
+    snapTo(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ── Render ──────────────────────────────────────────────────────
 
   return (
-    <div aria-label="Project showroom">
-      <AnimatePresence mode="popLayout" initial={false} custom={direction}>
-        <ProjectViewer
-          key={currentProject.slug}
-          project={currentProject}
-          index={currentIndex}
-          total={total}
-          direction={direction}
-          swipeEnabled={total > 1}
-          onSwipeNext={goToNext}
-          onSwipePrevious={goToPrevious}
-          navigation={
-            <ProjectNavigation onPrevious={goToPrevious} onNext={goToNext} disabled={total <= 1} />
-          }
-        />
-      </AnimatePresence>
+    <div aria-label="Project showroom" className="flex flex-col gap-0">
+      {/* Section heading — same pattern as About / Experience */}
+      <SectionHeading
+        kicker={kicker ?? "03 / Work"}
+        title={label ?? "Projects"}
+        className="mb-10"
+      />
 
-      <div className="mt-14 border-t border-border pt-8">
-        <ProjectThumbnailRail projects={projects} activeIndex={currentIndex} onSelect={goToIndex} />
+      {/* Overflow-hidden track viewport */}
+      <div className="overflow-hidden" style={{ touchAction: "pan-y" }}>
+        <div
+          ref={trackRef}
+          className="flex project-track"
+          style={{ width: `${total * 100}%`, willChange: "transform" }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+        >
+          {projects.map((project, index) => (
+            <div
+              key={project.slug}
+              style={{ width: `${100 / total}%`, flexShrink: 0 }}
+              draggable={false}
+            >
+              <ProjectViewer
+                project={project}
+                index={index}
+              />
+            </div>
+          ))}
+        </div>
       </div>
+
+      {/* Navigation — fixed row, always same position regardless of content */}
+      {total > 1 ? (
+        <div className="mt-5 flex items-center justify-between border-t border-border pt-4">
+          <ProjectNavigation
+            onPrevious={goToPrevious}
+            onNext={goToNext}
+            disabled={false}
+          />
+        </div>
+      ) : null}
+
+      {/* Thumbnail rail */}
+      {total > 1 ? (
+        <div className="mt-4">
+          <ProjectThumbnailRail
+            projects={projects}
+            activeIndex={currentIndex}
+            onSelect={goToIndex}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

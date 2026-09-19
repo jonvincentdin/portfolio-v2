@@ -1,160 +1,62 @@
 "use client";
 
 import Image from "next/image";
-import { motion, type PanInfo, type Variants } from "framer-motion";
 import { AngularPanel } from "@/components/ui/AngularPanel";
 import { ArrowLink } from "@/components/ui/ArrowLink";
-import { ProgressIndicator } from "@/components/ui/ProgressIndicator";
 import { getProjectMediaUrl, type LoadedProject } from "@/lib/content/media";
-import { usePrefersReducedMotion } from "@/lib/motion/usePrefersReducedMotion";
-import { getMotionTransition } from "@/lib/motion/tokens";
 import { ProjectSpecs } from "./ProjectSpecs";
 import { ProjectInteractiveFrame } from "./ProjectInteractiveFrame";
 
 type ProjectViewerProps = {
   project: LoadedProject;
   index: number;
-  total: number;
-  direction: 1 | -1;
-  navigation: React.ReactNode;
-  onSwipeNext: () => void;
-  onSwipePrevious: () => void;
-  swipeEnabled: boolean;
 };
 
-const SWIPE_OFFSET_THRESHOLD = 80;
-const SWIPE_VELOCITY_THRESHOLD = 500;
-
 /**
- * Displays the current project as a single animated card (spec §32):
- * image, title, metadata, and spec rows move together as one directional
- * group on enter/exit, with a short internal stagger on entry. Also the
- * swipeable surface for touch gestures (spec's Milestone 05 "Touch:
- * swipe support").
- *
- * Layout follows RESPONSIVE.md: mobile is a single deliberate stack
- * (number → name → image → summary → specifications → controls); desktop
- * (lg+) rearranges into a metadata/spec column beside a dominant image,
- * with controls directly under the image.
+ * One project slide in the track-based showroom.
+ * All motion comes from the parent track's translateX — no AnimatePresence here.
+ * Navigation buttons live in ProjectShowroom (fixed row) so they never shift.
  */
-export function ProjectViewer({
-  project,
-  index,
-  total,
-  direction,
-  navigation,
-  onSwipeNext,
-  onSwipePrevious,
-  swipeEnabled,
-}: ProjectViewerProps) {
-  const prefersReducedMotion = usePrefersReducedMotion();
-
-  const cardTransition = getMotionTransition("shiftTransition", prefersReducedMotion);
-  const itemTransition = getMotionTransition("responsive", prefersReducedMotion);
-
-  const cardVariants: Variants = prefersReducedMotion
-    ? {
-        enter: { opacity: 0 },
-        center: { opacity: 1, transition: cardTransition },
-        exit: { opacity: 0, transition: cardTransition },
-      }
-    : {
-        enter: (dir: 1 | -1) => ({ x: dir >= 0 ? 80 : -80, opacity: 0 }),
-        center: {
-          x: 0,
-          opacity: 1,
-          transition: {
-            ...cardTransition,
-            staggerChildren: 0.06,
-            delayChildren: 0.05,
-          },
-        },
-        exit: (dir: 1 | -1) => ({
-          x: dir >= 0 ? -80 : 80,
-          opacity: 0,
-          transition: cardTransition,
-        }),
-      };
-
-  const itemVariants: Variants = prefersReducedMotion
-    ? { enter: { opacity: 0 }, center: { opacity: 1, transition: itemTransition } }
-    : {
-        enter: { opacity: 0, y: 10 },
-        center: { opacity: 1, y: 0, transition: itemTransition },
-      };
-
-  function handleDragEnd(_event: PointerEvent | MouseEvent | TouchEvent, info: PanInfo) {
-    const { offset, velocity } = info;
-    if (offset.x <= -SWIPE_OFFSET_THRESHOLD || velocity.x <= -SWIPE_VELOCITY_THRESHOLD) {
-      onSwipeNext();
-    } else if (offset.x >= SWIPE_OFFSET_THRESHOLD || velocity.x >= SWIPE_VELOCITY_THRESHOLD) {
-      onSwipePrevious();
-    }
-  }
-
+export function ProjectViewer({ project, index }: ProjectViewerProps) {
   return (
-    <motion.div
-      custom={direction}
-      variants={cardVariants}
-      initial="enter"
-      animate="center"
-      exit="exit"
-      drag={swipeEnabled && !prefersReducedMotion ? "x" : false}
-      dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.12}
-      onDragEnd={handleDragEnd}
-      className="touch-pan-y lg:grid lg:grid-cols-[380px_1fr] lg:gap-x-14"
-    >
-      <motion.div variants={itemVariants} className="lg:[grid-column:1] lg:[grid-row:1]">
-        <ProgressIndicator current={index + 1} total={total} direction={direction} />
-      </motion.div>
+    <div className="select-none lg:grid lg:grid-cols-[340px_1fr] lg:gap-x-10">
 
-      <motion.div variants={itemVariants} className="mt-3 lg:mt-0 lg:[grid-column:1] lg:[grid-row:2]">
-        <h1 className="font-heading text-heading-lg uppercase tracking-tight break-words sm:text-display-lg">
+      <div className="mt-2 lg:mt-0 lg:[grid-column:1] lg:[grid-row:2]">
+        <h1 className="font-heading text-heading-lg uppercase tracking-tight break-words">
           {project.name}
         </h1>
-        <p className="mt-2 font-body text-body-lg text-foreground-muted">{project.tagline}</p>
-      </motion.div>
+        <p className="mt-1 font-body text-body-md text-foreground-muted">{project.tagline}</p>
+      </div>
 
-      <motion.div
-        variants={itemVariants}
-        className="mt-6 lg:mt-0 lg:[grid-column:2] lg:[grid-row:1/5]"
-      >
+      {/* Hero image — spans multiple rows on desktop */}
+      <div className="mt-4 lg:mt-0 lg:[grid-column:2] lg:[grid-row:1/5]">
         <ProjectInteractiveFrame>
-          <AngularPanel className="relative aspect-[16/10] overflow-hidden lg:aspect-auto lg:h-full lg:min-h-[420px]">
-          <Image
-            src={getProjectMediaUrl(project, project.media.hero)}
-            alt={`${project.name} — ${project.tagline}`}
-            fill
-            sizes="(min-width: 1024px) 62vw, 100vw"
-            className="pointer-events-none object-cover"
-            priority={index === 0}
-            draggable={false}
-          />
+          <AngularPanel className="relative aspect-[16/10] overflow-hidden lg:aspect-auto lg:h-full lg:min-h-[380px]">
+            <Image
+              src={getProjectMediaUrl(project, project.media.hero)}
+              alt={`${project.name} — ${project.tagline}`}
+              fill
+              sizes="(min-width: 1024px) 60vw, 100vw"
+              className="pointer-events-none object-cover"
+              priority={index === 0}
+              draggable={false}
+            />
           </AngularPanel>
         </ProjectInteractiveFrame>
-      </motion.div>
+      </div>
 
-      <motion.p
-        variants={itemVariants}
-        className="mt-6 max-w-2xl font-body text-body-md text-foreground-muted lg:mt-6 lg:[grid-column:1] lg:[grid-row:3]"
-      >
+      {/* Description */}
+      <p className="mt-3 max-w-xl font-body text-body-sm text-foreground-muted lg:mt-3 lg:[grid-column:1] lg:[grid-row:3]">
         {project.description}
-      </motion.p>
+      </p>
 
-      <motion.div variants={itemVariants} className="mt-8 lg:mt-6 lg:[grid-column:1] lg:[grid-row:4]">
+      {/* Specs + CTA */}
+      <div className="mt-4 lg:mt-3 lg:[grid-column:1] lg:[grid-row:4]">
         <ProjectSpecs project={project} />
-        <ArrowLink href={`/projects/${project.slug}`} variant="primary" className="mt-6">
+        <ArrowLink href={`/projects/${project.slug}`} variant="primary" className="mt-4">
           View Case Study
         </ArrowLink>
-      </motion.div>
-
-      <motion.div
-        variants={itemVariants}
-        className="mt-8 border-t border-border pt-6 lg:mt-6 lg:border-t-0 lg:pt-0 lg:[grid-column:2] lg:[grid-row:5]"
-      >
-        {navigation}
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
