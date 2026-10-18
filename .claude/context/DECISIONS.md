@@ -1,5 +1,17 @@
 # DECISIONS.md
 
+## D-043 - Completion M2 adds a short progressive course
+
+Keep the complete manual showroom as the universal content path, with a short
+desktop scroll course above it. Limit the course to three existing project
+records and 960px of additional document travel, preserving ordinary scrolling,
+case-study URLs and CMS ownership. Use measured fit to avoid pinning oversized
+content; mobile/reduced-motion presentation needs no scroll animation. Controls
+and native links remain the alternative to scrolling. This prototype deliberately
+adds no dependency or separate media/content format. Browser acceptance remains
+pending; implementation checks do not establish frame rate or touch usability.
+
+
 Record of architectural/design decisions, each with the reasoning behind it.
 Newest entries at the top.
 

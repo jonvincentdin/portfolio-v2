@@ -1,5 +1,20 @@
 # PROGRESS.md
 
+## Portfolio completion - M2 (2026-10-19)
+
+**Implementation delivered; browser acceptance pending.** User authorized M2.
+See [M2 delivery](../../docs/PORTFOLIO_M2_JOURNEY.md).
+
+- [x] Short native-scroll project course using up to three existing project records.
+- [x] Named checkpoints, previous/next, skip link, complete manual browse links.
+- [x] Mobile/reduced-motion fallback, fit-dependent pinning, corrected swipe threshold/cancel.
+- [x] Scoped lint, TypeScript in production build, seed-mode HTTP route checks.
+- [ ] Live screenshots, keyboard/touch, zoom/history and performance traces remain pending.
+
+Commit and push before handoff. Stop here until **Proceed to M3**.
+The M0 database quota and missing browser environment remain unresolved.
+
+
 ## Portfolio completion — M1 (2026-10-18)
 
 **Implementation delivered; browser acceptance pending.** The user explicitly
@@ -15,8 +30,8 @@ authorized M1 after the partial M0 audit. See
 - [ ] Desktop/mobile screenshots, keyboard/touch, zoom, history and reduced-motion
       browser acceptance: no browser surface available.
 
-Commit and push milestone deliveries before handing back to the user. M2 is not
-started and requires **“Proceed to M2”**. M0's database/browser gaps remain open.
+Commit and push milestone deliveries before handing back to the user. M2 was
+subsequently authorized; see above. M0's database/browser gaps remain open.
 
 ## Portfolio completion — M0 (2026-10-18, partial)
 

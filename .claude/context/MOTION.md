@@ -1,5 +1,23 @@
 # MOTION.md
 
+## Completion M2 native-scroll journey (2026-10-19)
+
+ProjectJourney progressively enables at >=1024px width / >=850px height, with
+a fine pointer and no reduced-motion preference. At most three existing project
+images crossfade and shift/scale with document progress; a moving light and
+course marker reinforce checkpoint position. Passive scroll plus one pending RAF
+updates transforms/opacity; React state changes only at checkpoint boundaries.
+The stage pins at 112px only when measured content fits with 136px clearance.
+Travel is capped at 480px per interval (maximum 960px). ResizeObserver, resize,
+media-query changes and pageshow update layout/progress. A focused case-study
+link keeps its destination stable. Checkpoint controls explicitly scroll with
+instant behavior; ordinary wheel/touch input is never intercepted.
+Mobile, short viewports, reduced motion and no-JS use the full manual showroom
+with direct case-study links. There is no added dependency, 3D asset or permanent
+will-change hint. Manual transition timing/easing reuse shared tokens. Actual
+frame rate, screenshots, zoom and history acceptance still need a browser.
+
+
 ## Visual Experience Upgrade — Milestone 02
 
 The motion system now exposes named presets from `src/lib/motion/tokens.ts`

@@ -1,5 +1,16 @@
 # COMPONENTS.md
 
+## Completion M2 changes (2026-10-19)
+
+ProjectShowroom includes ProjectJourney: a progressively enhanced desktop course
+through its first three records, followed by the full manual browser. It uses
+existing media URLs and case-study routes. Unique browse IDs support multiple
+showroom sections. Other CMS layout templates and editor contracts are unchanged.
+ProjectNavigation targets are at least 44px tall. Swipe thresholds use viewport
+width (40-120px), cancellation restores the current slide, and reduced motion
+suppresses dragging and track transitions. No new runtime dependency.
+
+
 ## Completion M1 changes (2026-10-18)
 
 `SectionNavigation` is a client component taking `{ id, label }[]`; native links

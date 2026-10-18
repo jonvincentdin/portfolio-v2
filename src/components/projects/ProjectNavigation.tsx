@@ -25,7 +25,7 @@ export function ProjectNavigation({ onPrevious, onNext, disabled = false, classN
         aria-label="Previous project"
         data-cursor="button"
         data-audio="navigation-shift"
-        className="motion-control group inline-flex items-center gap-3 font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-primary transition-[color,transform] motion-micro hover:text-accent active:scale-95 disabled:pointer-events-none disabled:opacity-30"
+        className="motion-control group inline-flex min-h-11 items-center gap-3 font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-primary transition-[color,transform] motion-micro hover:text-accent active:scale-95 disabled:pointer-events-none disabled:opacity-30"
       >
         <span className="inline-block transition-transform motion-micro group-hover:-translate-x-1" aria-hidden="true">
           ←
@@ -40,7 +40,7 @@ export function ProjectNavigation({ onPrevious, onNext, disabled = false, classN
         aria-label="Next project"
         data-cursor="button"
         data-audio="navigation-shift"
-        className="motion-control group inline-flex items-center gap-3 font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-primary transition-[color,transform] motion-micro hover:text-accent active:scale-95 disabled:pointer-events-none disabled:opacity-30"
+        className="motion-control group inline-flex min-h-11 items-center gap-3 font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-primary transition-[color,transform] motion-micro hover:text-accent active:scale-95 disabled:pointer-events-none disabled:opacity-30"
       >
         Next
         <span className="inline-block transition-transform motion-micro group-hover:translate-x-1" aria-hidden="true">
