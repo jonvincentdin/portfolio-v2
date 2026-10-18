@@ -1,5 +1,15 @@
 # RESPONSIVE.md
 
+## Completion M3 presentation (2026-10-19)
+
+Showroom uses an actual grid: mobile name/tagline, image, summary/specifications;
+desktop metadata at left and dominant image at right. Case-study year/role/status
+stack below 640px to avoid squeezing long role text. Prose stacks on small screens
+and uses a heading/content grid from 1024px. Images retain their full contents
+inside reserved aspect-ratio frames. Gallery has one column then two at 640px.
+Live breakpoint/zoom screenshots remain pending; these are implementation rules.
+
+
 ## Editor Responsive Behavior (database CMS)
 At 375/390/430px section navigation becomes a full-width select; fields and
 textareas use `min-w-0` and controls wrap. At 768px the editor remains one

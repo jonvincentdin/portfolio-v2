@@ -31,19 +31,19 @@ export function ProjectFeature({ feature, index, project }: ProjectFeatureProps)
             Feature {String(index + 1).padStart(2, "0")}
           </TechnicalLabel>
           <h3 className="font-heading text-heading-md uppercase tracking-tight">{feature.title}</h3>
-          <p className="mt-4 max-w-xl font-body text-body-md text-foreground-muted">
+          <p className="mt-4 max-w-[65ch] whitespace-pre-line font-body text-body-md text-foreground-muted [overflow-wrap:anywhere]">
             {feature.description}
           </p>
         </div>
 
         {feature.image ? (
-          <AngularPanel className="relative aspect-[4/3] w-full overflow-hidden lg:flex-1">
+          <AngularPanel className="project-media-frame relative aspect-[4/3] w-full overflow-hidden lg:flex-1">
             <Image
               src={getProjectMediaUrl(project, feature.image)}
               alt={feature.title}
               fill
               sizes="(min-width: 1024px) 45vw, 100vw"
-              className="object-cover"
+              className="object-contain"
             />
           </AngularPanel>
         ) : null}

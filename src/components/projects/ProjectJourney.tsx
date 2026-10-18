@@ -84,12 +84,12 @@ export function ProjectJourney({ projects, browseId }: { projects: LoadedProject
   if (checkpoints.length < 2) return null;
   return (
     <div ref={courseRef} className="project-journey" data-pinned="false">
-      <div ref={stageRef} className="project-journey-stage rounded-lg border border-border bg-background-primary p-6">
+      <div ref={stageRef} className="project-journey-stage border-y border-border bg-background-primary py-6">
         <div className="mb-4 flex items-center justify-between gap-6">
           <p className="font-technical text-technical-label uppercase text-foreground-muted">Project test track · Scroll to explore</p>
           <a className="inline-flex min-h-11 items-center text-accent underline" href={`#${browseId}`}>Skip motion / Browse projects</a>
         </div>
-        <div className="relative isolate h-[320px] overflow-hidden rounded-md bg-black">
+        <div className="project-media-frame relative isolate h-[320px] overflow-hidden border border-border">
           {checkpoints.map((project, index) => (
             <div key={project.slug} data-journey-panel className="absolute inset-0" style={{ opacity: index === 0 ? 1 : 0 }} aria-hidden={index !== active}>
               <Image src={getProjectMediaUrl(project, project.media.hero)} alt={`${project.name} preview`} fill sizes="(min-width: 1024px) 85vw, 1px" className="object-contain" />

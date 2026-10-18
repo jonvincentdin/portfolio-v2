@@ -1,5 +1,20 @@
 # DESIGN_SYSTEM.md
 
+## Completion M3 presentation (2026-10-19)
+
+Project detail surfaces use restrained rectangular/ angular frames and complete
+object-contain screenshots. Decorative panel registration marks are suppressed
+only on project-media-frame surfaces. Existing color tokens are retained:
+computed muted-text contrast is 5.73:1 on primary, 5.47:1 on secondary, 5.34:1 on
+surface. This is token arithmetic, not screenshot-based contrast acceptance.
+
+Build-sheet labels remain technical; values now use normal-case 14px body text
+in wrapping definition-list rows. Case-study prose has a 65ch measure and preserves
+paragraph/line breaks. Desktop prose pairs headings with content columns; mobile
+stacks them. Case-study title scales from 40px to 88px. Gallery images provide
+numbered captions and full-size links. No content or CMS schema changed.
+
+
 ## Owner Editor (database CMS)
 The private editor reuses the dark technical canvas, clipped panels, accent
 labels, underlined inputs, and restrained borders. Save is the filled primary

@@ -1,5 +1,21 @@
 # PROGRESS.md
 
+## Portfolio completion - M3 (2026-10-19)
+
+**Implementation delivered; visual acceptance pending.** Explicitly authorized M3.
+See [M3 delivery](../../docs/PORTFOLIO_M3_PRESENTATION.md).
+
+- [x] Responsive showroom image/summary hierarchy and readable build-sheet rows.
+- [x] Uncropped project imagery, numbered galleries and full-size image links.
+- [x] Case-study heading scale, paragraph preservation and section rhythm.
+- [x] Angular journey framing; quieter screenshot surfaces.
+- [x] Production build/TypeScript, scoped lint, HTTP/media checks and token contrast calculation.
+- [ ] Browser screenshots, responsive/zoom/touch/keyboard visual acceptance unavailable.
+
+Commit and push M3 before handoff. Stop until **Proceed to M4**.
+M0 database quota and browser acceptance gaps remain open.
+
+
 ## Portfolio completion - M2 (2026-10-19)
 
 **Implementation delivered; browser acceptance pending.** User authorized M2.

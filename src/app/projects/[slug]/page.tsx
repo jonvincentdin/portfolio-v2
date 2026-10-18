@@ -97,12 +97,12 @@ export default async function ProjectCaseStudyPage({ params }: PageProps) {
       <TechnicalLabel accent as="div">
         Project {project.id}
       </TechnicalLabel>
-      <h1 className="mt-3 font-heading text-display-lg uppercase tracking-tight break-words sm:text-display-xl">
+      <h1 className="mt-3 max-w-[18ch] font-heading text-[clamp(2.5rem,6vw,5.5rem)] leading-[1.05] uppercase tracking-tight break-words">
         {project.name}
       </h1>
       <p className="mt-4 max-w-2xl font-body text-body-lg text-foreground-muted">{project.tagline}</p>
 
-      <dl className="mt-8 grid max-w-md grid-cols-3 gap-6 border-t border-border pt-6">
+      <dl className="mt-8 grid max-w-2xl grid-cols-1 gap-5 border-t border-border pt-6 sm:grid-cols-[0.6fr_1.4fr_1fr] sm:gap-8">
         <div>
           <dt className="mb-1">
             <TechnicalLabel>Year</TechnicalLabel>
@@ -152,20 +152,20 @@ export default async function ProjectCaseStudyPage({ params }: PageProps) {
 
       <SectionNavigation sections={sectionLinks} />
 
-      <AngularPanel className="relative mt-12 aspect-[16/9] overflow-hidden">
+      <AngularPanel className="project-media-frame relative mt-8 aspect-[16/10] overflow-hidden sm:mt-12 sm:aspect-[16/9]">
         <ImageMask className="absolute inset-0">
           <Image
             src={getProjectMediaUrl(project, project.media.hero)}
             alt={`${project.name} — ${project.tagline}`}
             fill
-            sizes="100vw"
-            className="object-cover"
+            sizes="(min-width: 1280px) 1152px, 100vw"
+            className="object-contain"
             priority
           />
         </ImageMask>
       </AngularPanel>
 
-      <div className="mt-16 flex flex-col gap-16">
+      <div className="mt-12 flex flex-col gap-12 sm:mt-20 sm:gap-20">
         {caseStudySections.map((section) => (
           <CaseStudySection key={section.id} id={section.id} label={section.label} content={section.content} />
         ))}

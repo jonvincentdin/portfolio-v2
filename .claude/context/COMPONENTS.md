@@ -1,5 +1,15 @@
 # COMPONENTS.md
 
+## Completion M3 changes (2026-10-19)
+
+CaseStudySection renders a visible editorial h2 and blank-line-separated prose.
+ProjectSpecs/SpecificationRow form a semantic dl/dt/dd build sheet with wrapping
+normal-case values. ProjectGallery adds numbered figure captions and direct full-
+size media links. ProjectViewer uses a responsive grid and shared quiet screenshot
+framing; ProjectFeature and case-study hero use the same uncropped image policy.
+ProjectJourney retains M2 behavior with angular framing. See M3 delivery evidence.
+
+
 ## Completion M2 changes (2026-10-19)
 
 ProjectShowroom includes ProjectJourney: a progressively enhanced desktop course

@@ -1,5 +1,3 @@
-import { TechnicalLabel } from "@/components/ui/TechnicalLabel";
-
 type CaseStudySectionProps = {
   id: string;
   label: string;
@@ -15,11 +13,13 @@ type CaseStudySectionProps = {
  */
 export function CaseStudySection({ id, label, content }: CaseStudySectionProps) {
   return (
-    <section id={id} tabIndex={-1} className="section-anchor max-w-3xl">
-        <TechnicalLabel accent as="h2" className="mb-3">
-          {label}
-        </TechnicalLabel>
-        <p className="font-body text-body-lg text-foreground-muted">{content}</p>
+    <section id={id} tabIndex={-1} className="section-anchor grid gap-5 border-t border-border pt-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12">
+      <h2 className="font-heading text-heading-md tracking-tight">{label}</h2>
+      <div className="min-w-0 max-w-[65ch] space-y-5 font-body text-body-md text-foreground-muted sm:text-body-lg">
+        {content.trim().split(/\n\s*\n/).map((paragraph, index) => (
+          <p key={index} className="whitespace-pre-line [overflow-wrap:anywhere]">{paragraph}</p>
+        ))}
+      </div>
     </section>
   );
 }

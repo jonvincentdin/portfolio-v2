@@ -1481,3 +1481,7 @@ button {
   .project-journey[data-ready="true"] { display: block; margin-bottom: 2.5rem; }
   .project-journey[data-pinned="true"] .project-journey-stage { position: sticky; top: 112px; }
 }
+
+/* M3: screenshots are evidence; keep complete interfaces visible in quiet frames. */
+.project-media-frame { background: var(--background-secondary); }
+.project-media-frame.angular-panel::before { display: none; }

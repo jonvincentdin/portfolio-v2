@@ -19,13 +19,13 @@ export function ProjectSpecs({ project, headingAs = "div" }: ProjectSpecsProps) 
       <TechnicalLabel accent as={headingAs} className="mb-2 block">
         Project Specifications
       </TechnicalLabel>
-      <div className="divide-y divide-border/60 border-t border-border">
+      <dl className="divide-y divide-border/60 border-t border-border">
         <SpecificationRow label="Role" value={project.role.join(", ")} />
         <SpecificationRow label="Stack" value={project.technologies.join(" / ")} />
         <SpecificationRow label="Category" value={project.category.join(", ")} />
         <SpecificationRow label="Status" value={project.status} />
         <SpecificationRow label="Year" value={String(project.year)} />
-      </div>
+      </dl>
     </div>
   );
 }

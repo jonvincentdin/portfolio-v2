@@ -1,5 +1,16 @@
 # DECISIONS.md
 
+## D-044 - Preserve project evidence and simplify its presentation
+
+Use object-contain for showroom, hero, feature and gallery project images so
+arbitrary CMS screenshots are not cropped to fixed presentation ratios. Keep
+reserved frames for loading stability and provide direct full-size gallery links.
+Technical labels carry the automotive language; specification values and narrative
+use readable body typography. Preserve authored paragraph breaks and use existing
+fields only. Do not introduce crop settings, new content formats or editor work
+in M3. Screenshot acceptance is explicitly pending browser availability.
+
+
 ## D-043 - Completion M2 adds a short progressive course
 
 Keep the complete manual showroom as the universal content path, with a short

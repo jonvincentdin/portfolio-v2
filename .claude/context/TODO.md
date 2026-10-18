@@ -14,7 +14,8 @@
       [M1 delivery](../../docs/PORTFOLIO_M1_NAVIGATION.md).
 - [~] M2 scroll-controlled automotive project journey — implementation delivered;
       browser acceptance pending. See [M2 delivery](../../docs/PORTFOLIO_M2_JOURNEY.md).
-- [ ] M3 visual system and content presentation — separate approval.
+- [~] M3 visual system and content presentation - implementation delivered;
+      visual acceptance pending. See [M3 delivery](../../docs/PORTFOLIO_M3_PRESENTATION.md).
 - [ ] M4 simple editor workflow — separate approval; preserve advanced CMS tools.
 - [ ] M5 QA and finish — separate approval.
 
