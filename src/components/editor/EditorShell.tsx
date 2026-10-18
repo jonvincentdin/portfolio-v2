@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ProfileImage } from "@/lib/profile";
 import type { EditorProject, EditorSnapshot } from "@/lib/schemas";
-import { DEFAULT_PROJECT_SECTIONS } from "@/lib/schemas";
+import { DEFAULT_PROJECT_SECTIONS, DEFAULT_EXPERIENCE_SECTIONS } from "@/lib/schemas";
 import { SiteExperienceEditor } from "./SiteExperienceEditor";
 import { ProjectSectionsEditor } from "./ProjectSectionsEditor";
+import { ExperienceSectionsEditor } from "./ExperienceSectionsEditor";
 import { CollectionEditor, type RecordValue } from "./CollectionEditor";
 import { EditorPreview } from "./EditorPreview";
 import { MediaLibrary } from "./MediaLibrary";
@@ -21,6 +22,7 @@ type Section =
   | "project-sections"
   | "library"
   | "experience"
+  | "experience-sections"
   | "education"
   | "certifications"
   | "skills"
@@ -48,6 +50,7 @@ const editorSections: Array<{ id: Section; label: string; description: string }>
   { id: "certifications", label: "Certifications", description: "Credentials and proof" },
   { id: "skills", label: "Skills", description: "Categories and levels" },
   { id: "achievements", label: "Achievements", description: "Awards and milestones" },
+  { id: "experience-sections", label: "Experience layout", description: "Sections, templates and order" },
   { id: "services", label: "Services", description: "Offerings and capabilities" },
   { id: "social", label: "Social links", description: "Public profiles" },
   { id: "contact", label: "Contact", description: "Contact page copy" },
@@ -108,6 +111,7 @@ export function EditorShell({
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("All changes saved");
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [projectFolder, setProjectFolder] = useState(
     initialContent.projects[0]?.folderName ?? "",
   );
@@ -273,6 +277,7 @@ export function EditorShell({
   async function save() {
     setSaving(true);
     setMessage("Saving changes...");
+    setValidationErrors([]);
     try {
       const response = await fetch("/api/editor/content", {
         method: "POST",
@@ -280,7 +285,26 @@ export function EditorShell({
         body: JSON.stringify(content),
       });
       const body = await response.json();
-      if (!response.ok) throw new Error(body.message || "Unable to save content.");
+      if (!response.ok) {
+        // Parse Zod validation issues into field path strings
+        if (Array.isArray(body.issues) && body.issues.length > 0) {
+          const paths = body.issues.map(
+            (issue: { path?: (string | number)[]; message?: string }) =>
+              (issue.path ?? []).join("."),
+          );
+          setValidationErrors(paths);
+          const fieldNames = body.issues
+            .map(
+              (issue: { path?: (string | number)[]; message?: string }) =>
+                `${(issue.path ?? []).join(" → ")}: ${issue.message ?? "invalid"}`,
+            )
+            .slice(0, 5);
+          throw new Error(
+            `Validation failed:\n${fieldNames.join("\n")}${body.issues.length > 5 ? `\n…and ${body.issues.length - 5} more` : ""}`,
+          );
+        }
+        throw new Error(body.message || "Unable to save content.");
+      }
       setDirty(false);
       setMessage(`Saved ${new Date(body.savedAt).toLocaleTimeString()}`);
       router.refresh();
@@ -317,7 +341,7 @@ export function EditorShell({
           <div className="flex flex-wrap items-center gap-3">
             <span
               role="status"
-              className="font-technical text-technical-label uppercase tracking-[0.08em] text-foreground-muted"
+              className={`font-technical text-technical-label uppercase tracking-[0.08em] whitespace-pre-line ${validationErrors.length > 0 ? "text-red-400" : "text-foreground-muted"}`}
             >
               {message}
             </span>
@@ -534,6 +558,19 @@ export function EditorShell({
               ) : null}
 
               {active === "library" ? <MediaLibrary /> : null}
+
+              {active === "experience-sections" ? (
+                <ExperienceSectionsEditor
+                  sections={content.siteExperience.experienceSections ?? DEFAULT_EXPERIENCE_SECTIONS}
+                  onChange={(experienceSections) => {
+                    setContent((current) => ({
+                      ...current,
+                      siteExperience: { ...current.siteExperience, experienceSections },
+                    }));
+                    markDirty();
+                  }}
+                />
+              ) : null}
 
               {active === "site-experience" ? (
                 <SiteExperienceEditor

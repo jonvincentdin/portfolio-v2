@@ -134,12 +134,91 @@ export const DEFAULT_PROJECT_SECTIONS: ProjectSection[] = [
   { id: "main", label: "Projects", kicker: "03 / Work", template: "showroom", visible: true },
 ];
 
+/* --------------------------------------------------------------------------
+   Experience Sections — configurable sections on the /experience page.
+   Each section has a type (what data it shows) and a template (how it looks).
+   -------------------------------------------------------------------------- */
+
+export const ExperienceSectionTypeSchema = z.enum([
+  "work-history",
+  "education",
+  "certifications",
+  "achievements",
+]);
+
+export const ExperienceSectionTemplateSchema = z.enum([
+  // Work History templates
+  "timeline",
+  "terminal",
+  "dossier",
+  // Education templates
+  "edu-timeline",
+  "blueprint",
+  "orbit",
+  // Certification templates
+  "gallery",
+  "holographic",
+  "vault",
+  "matrix",
+  // Achievement templates
+  "panel",
+  "mission-log",
+  "trophy-case",
+]);
+
+export const ExperienceSectionSchema = z.object({
+  id: z.string().min(1),
+  label: z.string().min(1),
+  kicker: z.string().optional(),
+  type: ExperienceSectionTypeSchema,
+  template: ExperienceSectionTemplateSchema,
+  visible: z.boolean().default(true),
+});
+
+export type ExperienceSectionType = z.infer<typeof ExperienceSectionTypeSchema>;
+export type ExperienceSectionTemplate = z.infer<typeof ExperienceSectionTemplateSchema>;
+export type ExperienceSection = z.infer<typeof ExperienceSectionSchema>;
+
+/** Templates valid for each section type. */
+export const EXPERIENCE_TEMPLATES_BY_TYPE: Record<ExperienceSectionType, { value: ExperienceSectionTemplate; label: string; description: string }[]> = {
+  "work-history": [
+    { value: "timeline", label: "Timeline", description: "Vertical scroll-driven accent line with reveal animations" },
+    { value: "terminal", label: "Terminal", description: "CLI/terminal aesthetic — jobs as command session outputs" },
+    { value: "dossier", label: "Dossier", description: "Classified intel briefing with angular panels and stamps" },
+    { value: "orbit", label: "Orbit", description: "Orbital diagram with jobs on rotating concentric rings" },
+  ],
+  education: [
+    { value: "edu-timeline", label: "Timeline", description: "Vertical timeline matching work history style" },
+    { value: "blueprint", label: "Blueprint", description: "Engineering schematic with dimension lines and annotations" },
+    { value: "orbit", label: "Orbit", description: "Orbital rings with education nodes on concentric arcs" },
+  ],
+  certifications: [
+    { value: "gallery", label: "Gallery", description: "Tilt-card grid with 3D perspective and light tracking" },
+    { value: "holographic", label: "Holographic", description: "Prismatic cards with rainbow refraction and foil effect" },
+    { value: "vault", label: "Vault", description: "Bank vault compartments that swing open on click" },
+    { value: "matrix", label: "Matrix", description: "Cryptographic credential matrix with hash identities and file viewer" },
+  ],
+  achievements: [
+    { value: "panel", label: "Panel", description: "Credential card grid with expandable details" },
+    { value: "mission-log", label: "Mission Log", description: "Space mission control entries with status indicators" },
+    { value: "trophy-case", label: "Trophy Case", description: "Glass shelf display with spotlight depth effect" },
+  ],
+};
+
+export const DEFAULT_EXPERIENCE_SECTIONS: ExperienceSection[] = [
+  { id: "work", label: "Work History", kicker: "Work History", type: "work-history", template: "timeline", visible: true },
+  { id: "edu", label: "Education", kicker: "Education", type: "education", template: "edu-timeline", visible: true },
+  { id: "certs", label: "Certifications", kicker: "Certifications", type: "certifications", template: "gallery", visible: true },
+  { id: "achieve", label: "Achievements", kicker: "Achievements", type: "achievements", template: "panel", visible: true },
+];
+
 /* -------------------------------------------------------------------------- */
 
 export const SiteExperienceSchema = z.object({
   cursor: CursorSettingsSchema.default(DEFAULT_CURSOR),
   audio: AudioSettingsSchema.default(DEFAULT_AUDIO),
   projectSections: z.array(ProjectSectionSchema).optional(),
+  experienceSections: z.array(ExperienceSectionSchema).optional(),
 });
 
 export const DEFAULT_SITE_EXPERIENCE = SiteExperienceSchema.parse({
@@ -160,6 +239,7 @@ export const DEFAULT_SITE_EXPERIENCE = SiteExperienceSchema.parse({
   projectSections: [
     { id: "main", label: "Projects", kicker: "03 / Work", template: "showroom", visible: true },
   ],
+  experienceSections: DEFAULT_EXPERIENCE_SECTIONS,
 });
 
 export type CursorSettings = z.infer<typeof CursorSettingsSchema>;

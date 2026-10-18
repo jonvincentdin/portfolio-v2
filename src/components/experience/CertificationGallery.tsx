@@ -11,9 +11,9 @@ export function CertificationGallery({ certifications }: CertificationGalleryPro
   if (certifications.length === 0) return null;
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-4 sm:grid-cols-2 items-stretch">
       {certifications.map((cert, index) => (
-        <Reveal key={cert.id || cert.title} delayMs={index * 60}>
+        <Reveal key={cert.id || cert.title} delayMs={index * 60} className="h-full">
           <CredentialCard
             kind="certification"
             title={cert.title}

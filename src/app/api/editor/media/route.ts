@@ -17,7 +17,7 @@ function toAsset(asset: { id: string; name: string; kind: string; type: string; 
     size: asset.size,
     description: asset.description,
     createdAt: asset.createdAt.toISOString(),
-    ...(asset.kind === "image" || asset.kind === "audio" ? { url: `/content-media/library/${asset.id}` } : {}),
+    ...(asset.kind === "image" || asset.kind === "audio" || asset.mimeType === "application/pdf" ? { url: `/content-media/library/${asset.id}` } : {}),
     ...(asset._count ? { usageCount: asset._count.projectAssets } : {}),
   };
 }

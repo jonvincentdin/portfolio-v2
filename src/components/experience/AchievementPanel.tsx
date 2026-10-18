@@ -11,9 +11,9 @@ export function AchievementPanel({ achievements }: AchievementPanelProps) {
   if (achievements.length === 0) return null;
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-4 sm:grid-cols-2 items-stretch">
       {achievements.map((achievement, index) => (
-        <Reveal key={achievement.id || achievement.title} delayMs={index * 60}>
+        <Reveal key={achievement.id || achievement.title} delayMs={index * 60} className="h-full">
           <CredentialCard
             kind="achievement"
             title={achievement.title}

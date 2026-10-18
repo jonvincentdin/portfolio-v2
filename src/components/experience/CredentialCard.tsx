@@ -53,12 +53,12 @@ export function CredentialCard({ kind, title, organization, date, description, c
   return (
     <article
       ref={cardRef}
-      className="credential-card"
+      className="credential-card h-full"
       data-selected={selected}
       onPointerMove={handlePointerMove}
       onPointerLeave={resetPointer}
     >
-      <AngularPanel className="credential-card__surface p-5 sm:p-6">
+      <AngularPanel className="credential-card__surface p-5 sm:p-6 h-full flex flex-col">
         <button
           type="button"
           aria-expanded={hasDetails ? selected : undefined}
@@ -66,7 +66,7 @@ export function CredentialCard({ kind, title, organization, date, description, c
           data-cursor="button"
           data-audio="ui-toggle"
           onClick={() => { if (hasDetails) setSelected((current) => !current); }}
-          className={cn("motion-control relative z-10 grid w-full gap-5 text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:grid-cols-[minmax(9rem,0.8fr)_1.2fr]", !hasDetails && "cursor-default")}
+          className={cn("motion-control relative z-10 grid w-full flex-1 gap-5 text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:grid-cols-[minmax(9rem,0.8fr)_1.2fr]", !hasDetails && "cursor-default")}
         >
           {imageUrl && !imageFailed ? (
             <span className="relative block aspect-[4/3] overflow-hidden border border-border bg-background-primary">
@@ -75,13 +75,13 @@ export function CredentialCard({ kind, title, organization, date, description, c
           ) : imageUrl ? (
             <span className="flex aspect-[4/3] items-center justify-center border border-dashed border-border-strong px-4 text-center font-technical text-[10px] uppercase tracking-[0.08em] text-foreground-muted">Image unavailable</span>
           ) : null}
-          <span className="flex min-w-0 flex-col justify-between gap-5">
+          <span className="flex min-w-0 flex-1 flex-col justify-between gap-5">
             <span>
               <TechnicalLabel accent as="span" className="mb-2 block">{date}</TechnicalLabel>
-              <span className="block font-heading text-heading-md uppercase tracking-tight">{title}</span>
+              <span className="block font-heading text-heading-md uppercase tracking-tight line-clamp-2">{title}</span>
               <span className="mt-1 block font-body text-body-md text-foreground-muted">{organization}</span>
             </span>
-            {hasDetails ? <span className="flex items-center justify-between gap-4 border-t border-border pt-4 font-technical text-technical-label uppercase tracking-[0.08em] text-foreground-muted"><span>{selected ? "Close details" : "Inspect details"}</span><span className="text-accent transition-transform motion-micro" aria-hidden="true">{selected ? "—" : "+"}</span></span> : null}
+            {hasDetails ? <span className="mt-auto flex items-center justify-between gap-4 border-t border-border pt-4 font-technical text-technical-label uppercase tracking-[0.08em] text-foreground-muted"><span>{selected ? "Close details" : "Inspect details"}</span><span className="text-accent transition-transform motion-micro" aria-hidden="true">{selected ? "—" : "+"}</span></span> : null}
           </span>
         </button>
 

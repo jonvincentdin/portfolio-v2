@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { TechnicalLabel } from "@/components/ui/TechnicalLabel";
-import { Reveal } from "@/components/motion/Reveal";
-import { ExperienceTimeline } from "@/components/experience/ExperienceTimeline";
-import { EducationTimeline } from "@/components/experience/EducationTimeline";
-import { CertificationGallery } from "@/components/experience/CertificationGallery";
-import { AchievementPanel } from "@/components/experience/AchievementPanel";
+import { ExperienceSectionRenderer } from "@/components/experience/ExperienceSectionRenderer";
 import { getAllExperience } from "@/lib/content/experience";
 import { getAllEducation } from "@/lib/content/education";
 import { getAllCertifications } from "@/lib/content/certifications";
 import { getAllAchievements } from "@/lib/content/achievements";
+import { getSiteExperience } from "@/lib/content/editor";
+import { DEFAULT_EXPERIENCE_SECTIONS } from "@/lib/schemas";
 
 export const metadata: Metadata = {
   title: "Experience",
@@ -22,60 +21,61 @@ export const metadata: Metadata = {
 };
 
 /**
- * Experience + Education + Certifications + Achievements (spec §6, D-005)
- * on one coherent page. Each section is hidden entirely — heading included
- * — when its underlying content is empty (the pattern learned the hard way
- * in Milestone 07 and applied correctly from the start here).
+ * Experience page — renders configurable sections from siteExperience.
+ * Each section picks a type (work-history, education, certifications,
+ * achievements) and a visual template. Configured in the /editor.
  */
 export default async function ExperiencePage() {
-  const [experience, education, certifications, achievements] = await Promise.all([getAllExperience(), getAllEducation(), getAllCertifications(), getAllAchievements()]);
+  const [experience, education, certifications, achievements, siteExperience] =
+    await Promise.all([
+      getAllExperience(),
+      getAllEducation(),
+      getAllCertifications(),
+      getAllAchievements(),
+      getSiteExperience(),
+    ]);
+
+  const sections = (
+    siteExperience.experienceSections ?? DEFAULT_EXPERIENCE_SECTIONS
+  ).filter((section) => section.visible !== false);
+
+  const hasAnyData =
+    experience.length > 0 ||
+    education.length > 0 ||
+    certifications.length > 0 ||
+    achievements.length > 0;
+
+  if (!hasAnyData) {
+    return (
+      <Container className="min-h-[60vh] py-16 sm:py-24">
+        <SectionHeading kicker="04 / Experience" title="Experience" />
+        <p className="mt-6 max-w-xl font-body text-body-md text-foreground-muted">
+          No experience data has been added yet.
+        </p>
+      </Container>
+    );
+  }
 
   return (
     <Container className="py-16 sm:py-24">
-      <Reveal mode="mount">
-        <TechnicalLabel accent as="div">
-          04 / Experience
-        </TechnicalLabel>
-        <h1 className="mt-3 font-heading text-display-lg uppercase tracking-tight break-words sm:text-display-xl">
-          Experience
-        </h1>
-      </Reveal>
+      <SectionHeading kicker="04 / Experience" title="Experience" className="mb-16" />
 
-      {experience.length > 0 ? (
-        <div className="mt-16">
-          <TechnicalLabel accent as="h2" className="mb-8">
-            Work History
-          </TechnicalLabel>
-          <ExperienceTimeline entries={experience} />
-        </div>
-      ) : null}
-
-      {education.length > 0 ? (
-        <div className="mt-16">
-          <TechnicalLabel accent as="h2" className="mb-6">
-            Education
-          </TechnicalLabel>
-          <EducationTimeline entries={education} />
-        </div>
-      ) : null}
-
-      {certifications.length > 0 ? (
-        <div className="mt-16">
-          <TechnicalLabel accent as="h2" className="mb-6">
-            Certifications
-          </TechnicalLabel>
-          <CertificationGallery certifications={certifications} />
-        </div>
-      ) : null}
-
-      {achievements.length > 0 ? (
-        <div className="mt-16">
-          <TechnicalLabel accent as="h2" className="mb-6">
-            Achievements
-          </TechnicalLabel>
-          <AchievementPanel achievements={achievements} />
-        </div>
-      ) : null}
+      <div className="flex flex-col gap-16">
+        {sections.map((section) => (
+          <div key={section.id}>
+            <TechnicalLabel accent as="h2" className="mb-8">
+              {section.kicker ?? section.label}
+            </TechnicalLabel>
+            <ExperienceSectionRenderer
+              section={section}
+              experience={experience}
+              education={education}
+              certifications={certifications}
+              achievements={achievements}
+            />
+          </div>
+        ))}
+      </div>
     </Container>
   );
 }

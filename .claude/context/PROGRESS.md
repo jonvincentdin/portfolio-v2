@@ -1,5 +1,29 @@
 # PROGRESS.md
 
+## Portfolio completion — M0 (2026-10-18, partial)
+
+Current work uses the new **M0–M5** completion sequence. Historical milestone
+completion claims below do not certify the current dirty working tree.
+
+- [x] Read completion context and linked docs; inspect Git and preserve existing changes.
+- [x] Review current source, research primary references, and run local HTTP checks.
+- [x] Record findings, task map, proposed M1 scope and later milestone boundaries in
+      [PORTFOLIO_M0_AUDIT.md](../../docs/PORTFOLIO_M0_AUDIT.md).
+- [x] TypeScript check passed (`npx.cmd tsc --noEmit --incremental false`).
+- [x] Baseline lint run recorded: failed with 8 errors and 1,581 warnings;
+      includes bundled PDF worker diagnostics and source errors in
+      ProjectShowroom and DossierTemplate. No runtime fixes made in M0.
+- [x] Scoped Markdown diff whitespace check passed.
+- [ ] Live visual/interaction review: no available browser; no screenshots captured.
+- [ ] Database-content/editor audit: configured database reports exceeded quota;
+      all seven page requests returned 500, including after network-enabled retry.
+
+Seed fallback returned successful HTML for public routes, owner/auth redirect,
+and three case studies. This does not verify database content, editor persistence,
+visual layout, keyboard, touch, zoom, or reduced motion. M0 changes Markdown only.
+**M1 has not started; wait for “Proceed to M1”.** First finish the blocked M0
+evidence; then implement navigation and hierarchy within the documented M1 scope.
+
 ## Visual Experience Upgrade — Milestone 01: Existing Project Audit (complete)
 - [x] Audited the current Next.js/App Router architecture, route map, navigation,
       CMS/editor, content loaders, project/media system, motion, responsive
@@ -89,8 +113,9 @@ which has been schema-synced, seeded, and backfilled for the media library.
       environment.
 
 ## Current Milestone
-VISUAL EXPERIENCE UPGRADE — MILESTONE 01 AUDIT COMPLETE; the original CMS,
-media-library, and public-site milestones remain complete.
+PORTFOLIO COMPLETION — M0 PARTIAL; live visual/editor evidence is blocked.
+See the current M0 entry above. Earlier build and visual-upgrade statuses below
+are historical, not current verification.
 
 ## Historical milestone status
 MILESTONE 15 — OWNER EDITOR / CMS (complete); MEDIA LIBRARY EXTENSION

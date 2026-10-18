@@ -37,6 +37,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${fontVariables} h-full`}>
       <body className="flex min-h-full flex-col bg-background-primary font-body text-foreground-primary antialiased">
+        {/* Unregister any foreign service workers (e.g. from other projects on same localhost port) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(regs){regs.forEach(function(r){r.unregister();});})}`,
+          }}
+        />
         <CursorGridGlow />
         <CursorEngine settings={siteExperience.cursor} />
         <AudioEngine settings={siteExperience.audio} />

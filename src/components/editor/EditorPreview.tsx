@@ -3,7 +3,7 @@ import { StatusIndicator } from "@/components/ui/StatusIndicator";
 import { TechnicalLabel } from "@/components/ui/TechnicalLabel";
 import type { EditorSnapshot } from "@/lib/schemas";
 
-type PreviewSection = "home" | "about" | "projects" | "project-sections" | "library" | "site-experience" | "experience" | "education" | "certifications" | "skills" | "achievements" | "services" | "social" | "contact";
+type PreviewSection = "home" | "about" | "projects" | "project-sections" | "experience-sections" | "library" | "site-experience" | "experience" | "education" | "certifications" | "skills" | "achievements" | "services" | "social" | "contact";
 type RecordValue = Record<string, unknown>;
 const collectionLabels: Record<string, string> = { experience: "Experience", education: "Education", certifications: "Certifications", skills: "Skills", achievements: "Achievements", services: "Services" };
 const text = (value: unknown) => typeof value === "string" ? value : "";
