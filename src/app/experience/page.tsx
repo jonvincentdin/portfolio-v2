@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { SectionNavigation } from "@/components/layout/SectionNavigation";
+import { ArrowLink } from "@/components/ui/ArrowLink";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { TechnicalLabel } from "@/components/ui/TechnicalLabel";
@@ -35,34 +37,33 @@ export default async function ExperiencePage() {
       getSiteExperience(),
     ]);
 
+  const counts = { "work-history": experience.length, education: education.length, certifications: certifications.length, achievements: achievements.length };
   const sections = (
     siteExperience.experienceSections ?? DEFAULT_EXPERIENCE_SECTIONS
-  ).filter((section) => section.visible !== false);
+  ).filter((section) => section.visible !== false && counts[section.type] > 0);
 
-  const hasAnyData =
-    experience.length > 0 ||
-    education.length > 0 ||
-    certifications.length > 0 ||
-    achievements.length > 0;
+  const hasAnyData = sections.length > 0;
 
   if (!hasAnyData) {
     return (
       <Container className="min-h-[60vh] py-16 sm:py-24">
-        <SectionHeading kicker="04 / Experience" title="Experience" />
+        <SectionHeading as="h1" kicker="04 / Experience" title="Experience" />
         <p className="mt-6 max-w-xl font-body text-body-md text-foreground-muted">
-          No experience data has been added yet.
+          Experience details are being prepared. Explore my projects or get in touch.
         </p>
+        <ArrowLink href="/projects" className="mt-6">Explore projects</ArrowLink>
       </Container>
     );
   }
 
   return (
     <Container className="py-16 sm:py-24">
-      <SectionHeading kicker="04 / Experience" title="Experience" className="mb-16" />
+      <SectionHeading as="h1" kicker="04 / Experience" title="Experience" className="mb-8" />
+      <SectionNavigation sections={sections.map((section, index) => ({ id: `experience-section-${index + 1}`, label: section.label }))} />
 
       <div className="flex flex-col gap-16">
-        {sections.map((section) => (
-          <div key={section.id}>
+        {sections.map((section, index) => (
+          <section key={section.id} id={`experience-section-${index + 1}`} tabIndex={-1} className="section-anchor">
             <TechnicalLabel accent as="h2" className="mb-8">
               {section.kicker ?? section.label}
             </TechnicalLabel>
@@ -73,7 +74,7 @@ export default async function ExperiencePage() {
               certifications={certifications}
               achievements={achievements}
             />
-          </div>
+          </section>
         ))}
       </div>
     </Container>

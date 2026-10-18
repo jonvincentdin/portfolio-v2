@@ -41,7 +41,15 @@ export function MobileNavigation() {
   const pathname = usePathname();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
-  const navRef = useRef<HTMLElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const wasOpen = useRef(false);
+
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const closeOnDesktop = () => { if (desktop.matches) setIsOpen(false); };
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => desktop.removeEventListener("change", closeOnDesktop);
+  }, []);
 
   // Standard, unavoidable "detect client mount" pattern: document.body
   // doesn't exist during SSR, and there's no way to know we're mounted
@@ -62,10 +70,10 @@ export function MobileNavigation() {
 
   // Lock body scroll while the menu is open.
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    if (!isOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = previousOverflow; };
   }, [isOpen]);
 
   // Focus management: move focus into the menu on open, back to the
@@ -76,8 +84,9 @@ export function MobileNavigation() {
     if (isOpen) {
       firstLinkRef.current?.focus();
     } else {
-      triggerRef.current?.focus();
+      if (wasOpen.current) triggerRef.current?.focus();
     }
+    wasOpen.current = isOpen;
   }, [isOpen]);
 
   useEffect(() => {
@@ -91,7 +100,7 @@ export function MobileNavigation() {
 
       if (event.key !== "Tab") return;
 
-      const focusable = navRef.current?.querySelectorAll<HTMLElement>("a");
+      const focusable = dialogRef.current?.querySelectorAll<HTMLElement>("a, button");
       if (!focusable || focusable.length === 0) return;
 
       const first = focusable[0];
@@ -112,17 +121,22 @@ export function MobileNavigation() {
 
   const overlay = (
     <div
+      ref={dialogRef}
       id="mobile-navigation"
+      inert={!isOpen}
       role="dialog"
       aria-modal="true"
       aria-label="Site navigation"
       aria-hidden={!isOpen}
       className={cn(
-        "fixed inset-0 z-40 flex flex-col justify-center bg-background-primary transition-opacity motion-responsive",
+        "fixed inset-0 z-40 flex flex-col overflow-y-auto bg-background-primary transition-opacity motion-responsive",
         isOpen ? "opacity-100" : "pointer-events-none opacity-0",
       )}
     >
-      <nav ref={navRef} aria-label="Mobile" className="flex flex-col items-start gap-8 px-8">
+      <div className="flex justify-end px-5 pt-4">
+        <button type="button" onClick={() => setIsOpen(false)} className="motion-control min-h-11 px-3 font-technical text-technical-label uppercase">Close menu</button>
+      </div>
+      <nav aria-label="Mobile" className="my-auto flex flex-col items-start gap-4 px-8 py-8">
         {NAV_ITEMS.map((item, index) => (
           <div key={item.href} className="text-2xl font-heading">
             <NavLink
@@ -148,7 +162,7 @@ export function MobileNavigation() {
         onClick={() => setIsOpen((v) => !v)}
         data-cursor="button"
         data-audio={isOpen ? "ui-close" : "ui-open"}
-        className="motion-control relative z-50 flex h-10 w-10 flex-col items-center justify-center gap-1.5 transition-transform motion-micro active:scale-90"
+        className="motion-control relative z-50 flex h-11 w-11 flex-col items-center justify-center gap-1.5 transition-transform motion-micro active:scale-90"
       >
         <span
           className={cn(

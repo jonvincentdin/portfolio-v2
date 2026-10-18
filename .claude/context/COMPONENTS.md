@@ -1,5 +1,19 @@
 # COMPONENTS.md
 
+## Completion M1 changes (2026-10-18)
+
+`SectionNavigation` is a client component taking `{ id, label }[]`; native links
+are rendered server-side and passive scroll tracking highlights the current
+section. It scrolls only its horizontal rail. `SectionHeading` accepts `as`
+(`h1` or default `h2`). Projects/Experience own their page heading; ProjectViewer
+uses `h3`. CaseStudySection takes an `id` and renders a focusable section/h2.
+ProjectSpecs optionally accepts `headingAs="h2"` for case studies.
+The current ProjectShowroom uses a translated track, inert inactive slides and
+scoped keyboard handling; historical Framer Motion descriptions below are not
+its current implementation. ProjectThumbnailRail uses named pressed buttons.
+MobileNavigation traps focus across both links and its new dialog close button.
+See `docs/PORTFOLIO_M1_NAVIGATION.md` for verification limits.
+
 ## Owner Editor + Database Components
 `OwnerVerification`, `EditorShell`, `EditorPreview`, `ProfileUploader`,
 `CollectionEditor`, and `ProjectEditor` are implemented. The editor uses

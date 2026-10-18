@@ -4,6 +4,7 @@ import type { LoadedProject } from "@/lib/content";
 
 type ProjectSpecsProps = {
   project: LoadedProject;
+  headingAs?: "div" | "h2";
 };
 
 /**
@@ -12,10 +13,10 @@ type ProjectSpecsProps = {
  * fabricated (no ENGINE/TRANSMISSION-style placeholders that don't exist
  * on the actual data model).
  */
-export function ProjectSpecs({ project }: ProjectSpecsProps) {
+export function ProjectSpecs({ project, headingAs = "div" }: ProjectSpecsProps) {
   return (
     <div>
-      <TechnicalLabel accent className="mb-2 block">
+      <TechnicalLabel accent as={headingAs} className="mb-2 block">
         Project Specifications
       </TechnicalLabel>
       <div className="divide-y divide-border/60 border-t border-border">

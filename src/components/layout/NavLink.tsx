@@ -24,7 +24,8 @@ type NavLinkProps = {
  */
 export function NavLink({ item, onClick, linkRef, tabIndex }: NavLinkProps) {
   const pathname = usePathname();
-  const isActive = pathname === item.href;
+  const isExact = pathname === item.href;
+  const isActive = isExact || (item.href !== "/" && pathname.startsWith(`${item.href}/`));
 
   return (
     <Link
@@ -32,10 +33,10 @@ export function NavLink({ item, onClick, linkRef, tabIndex }: NavLinkProps) {
       href={item.href}
       onClick={onClick}
       tabIndex={tabIndex}
-      aria-current={isActive ? "page" : undefined}
+      aria-current={isExact ? "page" : isActive ? "location" : undefined}
       data-audio="navigation-shift"
       className={cn(
-        "motion-control group inline-flex items-center gap-2 font-technical text-technical-label uppercase tracking-[0.1em] transition-colors motion-micro",
+        "motion-control group inline-flex min-h-11 items-center gap-2 font-technical text-technical-label uppercase tracking-[0.1em] transition-colors motion-micro",
         isActive ? "text-foreground-primary" : "text-foreground-muted hover:text-foreground-primary",
       )}
     >

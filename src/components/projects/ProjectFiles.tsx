@@ -23,7 +23,7 @@ export async function ProjectFiles({ project }: ProjectFilesProps) {
 
   return (
     <div>
-      <TechnicalLabel accent as="div" className="mb-6">
+      <TechnicalLabel accent as="h2" className="mb-6">
         Project Files
       </TechnicalLabel>
 

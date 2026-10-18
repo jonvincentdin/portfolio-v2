@@ -9,7 +9,9 @@
 - [ ] Complete M0 keyboard/touch/reduced-motion/zoom/loading/empty-state matrix.
 - [ ] Resolve baseline lint failures in their owning implementation milestones;
       M0 recorded 8 errors / 1,581 warnings, with TypeScript passing.
-- [ ] M1 navigation and hierarchy — **not started; requires “Proceed to M1”.**
+- [~] M1 navigation and hierarchy — implementation delivered, scoped checks/build/
+      HTTP verified; browser acceptance remains pending. See
+      [M1 delivery](../../docs/PORTFOLIO_M1_NAVIGATION.md).
 - [ ] M2 scroll-controlled automotive project journey — separate approval.
 - [ ] M3 visual system and content presentation — separate approval.
 - [ ] M4 simple editor workflow — separate approval; preserve advanced CMS tools.
@@ -17,6 +19,8 @@
 
 Historical checklists below use older numbering. Do not interpret their checked
 approval items as permission to start this completion sequence's next milestone.
+Commit and push each milestone delivery before handoff; stop until the user
+explicitly authorizes the next milestone.
 
 ## Visual Experience Upgrade — Milestone 02: Central Motion System (complete)
 - [x] Central motion preset vocabulary and shared easing/duration tokens

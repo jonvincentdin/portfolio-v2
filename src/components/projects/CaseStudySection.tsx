@@ -1,7 +1,7 @@
 import { TechnicalLabel } from "@/components/ui/TechnicalLabel";
-import { Reveal } from "@/components/motion/Reveal";
 
 type CaseStudySectionProps = {
+  id: string;
   label: string;
   content: string;
 };
@@ -13,15 +13,13 @@ type CaseStudySectionProps = {
  * object — there's no fallback/placeholder text here, consistent with
  * never fabricating content the author hasn't supplied.
  */
-export function CaseStudySection({ label, content }: CaseStudySectionProps) {
+export function CaseStudySection({ id, label, content }: CaseStudySectionProps) {
   return (
-    <Reveal>
-      <div className="max-w-3xl">
-        <TechnicalLabel accent as="div" className="mb-3">
+    <section id={id} tabIndex={-1} className="section-anchor max-w-3xl">
+        <TechnicalLabel accent as="h2" className="mb-3">
           {label}
         </TechnicalLabel>
         <p className="font-body text-body-lg text-foreground-muted">{content}</p>
-      </div>
-    </Reveal>
+    </section>
   );
 }

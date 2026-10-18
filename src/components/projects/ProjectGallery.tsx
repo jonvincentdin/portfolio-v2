@@ -16,7 +16,7 @@ type ProjectGalleryProps = {
 export function ProjectGallery({ project }: ProjectGalleryProps) {
   return (
     <div>
-      <TechnicalLabel accent as="div" className="mb-6">
+      <TechnicalLabel accent as="h2" className="mb-6">
         Screenshots
       </TechnicalLabel>
       <div className="grid gap-4 sm:grid-cols-2">

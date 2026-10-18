@@ -29,7 +29,7 @@ export default async function HomePage() {
       <HeroExperience>
         <Container className="relative flex min-h-[calc(100vh-4rem)] flex-col justify-center gap-10 overflow-hidden py-20 sm:min-h-[calc(100vh-5rem)] lg:overflow-visible">
         {profileImage ? (
-          <AngularPanel className="order-first relative aspect-[4/5] w-full max-w-sm self-end overflow-hidden lg:absolute lg:top-1/2 lg:right-0 lg:order-none lg:w-[34%] lg:max-w-none lg:-translate-y-1/2">
+          <AngularPanel className="order-last relative aspect-[4/5] w-full max-w-sm self-end overflow-hidden lg:absolute lg:top-1/2 lg:right-0 lg:order-none lg:w-[34%] lg:max-w-none lg:-translate-y-1/2">
             <Image src={profileImage.url} alt={`${site.name} profile`} fill sizes="(min-width: 1024px) 34vw, 90vw" className="object-cover" priority />
           </AngularPanel>
         ) : null}
@@ -44,7 +44,7 @@ export default async function HomePage() {
           <div className="absolute top-1/2 left-8 h-px w-1/3 bg-border-strong/50" />
         </div>
 
-        <div>
+        <div className="lg:max-w-[60%]">
           <Reveal mode="mount">
             <TechnicalLabel>System / Ready</TechnicalLabel>
             <TechnicalLabel accent>{site.role}</TechnicalLabel>
@@ -66,7 +66,33 @@ export default async function HomePage() {
           </Reveal>
         </div>
 
-        <Reveal mode="mount" delayMs={280}>
+        <Reveal mode="mount" delayMs={240} className="lg:max-w-[60%] flex flex-wrap items-center gap-x-10 gap-y-6">
+          <div className="flex flex-wrap items-center gap-6">
+            <ArrowLink href="/projects" variant="primary">
+              {site.viewProjectsLabel}
+            </ArrowLink>
+            <ArrowLink href="/contact" variant="secondary">
+              {site.contactLabel}
+            </ArrowLink>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-6">
+            <ArrowLink href="/experience">Experience</ArrowLink>
+            {socialLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                target={link.href.startsWith("http") ? "_blank" : undefined}
+                rel={link.href.startsWith("http") ? "noreferrer" : undefined}
+                className="font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-muted transition-colors motion-micro hover:text-foreground-primary"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </Reveal>
+
+        <Reveal mode="mount" delayMs={280} className="lg:max-w-[60%]">
           <dl className="grid max-w-xl grid-cols-2 gap-x-6 gap-y-4 border-t border-border pt-6 sm:grid-cols-3">
             <div>
               <dt className="mb-1">
@@ -91,30 +117,6 @@ export default async function HomePage() {
           </dl>
         </Reveal>
 
-        <Reveal mode="mount" delayMs={340} className="flex flex-wrap items-center gap-x-10 gap-y-6">
-          <div className="flex flex-wrap items-center gap-6">
-            <ArrowLink href="/projects" variant="primary">
-              {site.viewProjectsLabel}
-            </ArrowLink>
-            <ArrowLink href="/contact" variant="secondary">
-              {site.contactLabel}
-            </ArrowLink>
-          </div>
-
-          <div className="flex gap-6">
-            {socialLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                target={link.href.startsWith("http") ? "_blank" : undefined}
-                rel={link.href.startsWith("http") ? "noreferrer" : undefined}
-                className="font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-muted transition-colors motion-micro hover:text-foreground-primary"
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
-        </Reveal>
         </Container>
       </HeroExperience>
 

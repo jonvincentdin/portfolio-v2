@@ -1,5 +1,17 @@
 # ROUTES.md
 
+## Completion M1 navigation (2026-10-18)
+
+Projects remains active on `/projects/[slug]`. Case studies expose Back to
+projects, top-level project actions, and content-derived anchors: `overview`,
+`problem`, `objective`, `solution`, `specifications`, `features`, `challenges`,
+`results`, `lessons`, `screenshots`, `files` (optional targets omitted with data).
+About exposes `principles`, `services`, `skills`; Experience section anchors
+follow the visible, populated section order (`experience-section-1`, etc.).
+Native fragment links preserve normal URL/history behavior; live history/focus
+checks remain pending. Root `loading.tsx` adds textual loading feedback and can
+make server redirects stream as framework redirect metadata.
+
 ## Owner Editor + Database Routes
 `/owner` is the private OTP screen; `/editor` is the authenticated ten-section
 editor; `/profile-media` serves the single validated profile image.

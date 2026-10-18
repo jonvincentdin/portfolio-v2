@@ -1469,3 +1469,8 @@ button {
     animation: none;
   }
 }
+
+/* Extra clearance below the section rail; html supplies the header offset. */
+.section-anchor {
+  scroll-margin-top: 5rem;
+}

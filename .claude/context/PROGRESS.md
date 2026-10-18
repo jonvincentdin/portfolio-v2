@@ -1,5 +1,23 @@
 # PROGRESS.md
 
+## Portfolio completion — M1 (2026-10-18)
+
+**Implementation delivered; browser acceptance pending.** The user explicitly
+authorized M1 after the partial M0 audit. See
+[PORTFOLIO_M1_NAVIGATION.md](../../docs/PORTFOLIO_M1_NAVIGATION.md).
+
+- [x] Active project route navigation, single page headings, section rails and
+      case-study return/actions; clearer Home action order.
+- [x] Showroom focus isolation, scoped arrow navigation, named thumbnail controls;
+      mobile dialog close button and initial-focus correction.
+- [x] Visitor-facing empty states and route loading feedback.
+- [x] TypeScript, scoped ESLint, seed-mode production build and HTTP checks passed.
+- [ ] Desktop/mobile screenshots, keyboard/touch, zoom, history and reduced-motion
+      browser acceptance: no browser surface available.
+
+Commit and push milestone deliveries before handing back to the user. M2 is not
+started and requires **“Proceed to M2”**. M0's database/browser gaps remain open.
+
 ## Portfolio completion — M0 (2026-10-18, partial)
 
 Current work uses the new **M0–M5** completion sequence. Historical milestone
@@ -21,8 +39,8 @@ completion claims below do not certify the current dirty working tree.
 Seed fallback returned successful HTML for public routes, owner/auth redirect,
 and three case studies. This does not verify database content, editor persistence,
 visual layout, keyboard, touch, zoom, or reduced motion. M0 changes Markdown only.
-**M1 has not started; wait for “Proceed to M1”.** First finish the blocked M0
-evidence; then implement navigation and hierarchy within the documented M1 scope.
+The user subsequently authorized M1; see the current entry above. The remaining
+M0 visual/database evidence is still outstanding.
 
 ## Visual Experience Upgrade — Milestone 01: Existing Project Audit (complete)
 - [x] Audited the current Next.js/App Router architecture, route map, navigation,
@@ -113,9 +131,9 @@ which has been schema-synced, seeded, and backfilled for the media library.
       environment.
 
 ## Current Milestone
-PORTFOLIO COMPLETION — M0 PARTIAL; live visual/editor evidence is blocked.
-See the current M0 entry above. Earlier build and visual-upgrade statuses below
-are historical, not current verification.
+PORTFOLIO COMPLETION — M1 implementation delivered; browser acceptance pending.
+M0 live visual/editor evidence also remains pending. Earlier build and
+visual-upgrade statuses below are historical, not current verification.
 
 ## Historical milestone status
 MILESTONE 15 — OWNER EDITOR / CMS (complete); MEDIA LIBRARY EXTENSION

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SectionNavigation } from "@/components/layout/SectionNavigation";
 import { Container } from "@/components/ui/Container";
 import { TechnicalLabel } from "@/components/ui/TechnicalLabel";
 import { Reveal } from "@/components/motion/Reveal";
@@ -41,6 +42,12 @@ export default async function AboutPage() {
         </h1>
       </Reveal>
 
+      <SectionNavigation sections={[
+        { id: "principles", label: "Principles" },
+        ...(services.length ? [{ id: "services", label: "Services" }] : []),
+        ...(skillCategories.length ? [{ id: "skills", label: "Skills" }] : []),
+      ]} />
+
       <Reveal mode="mount" delayMs={120} className="mt-10 flex flex-col gap-6 max-w-2xl">
         {about.philosophy.map((paragraph, index) => (
           <p key={index} className="font-body text-body-lg text-foreground-muted">
@@ -49,7 +56,7 @@ export default async function AboutPage() {
         ))}
       </Reveal>
 
-      <div className="mt-16">
+      <div id="principles" tabIndex={-1} className="section-anchor mt-16">
         <TechnicalLabel accent as="h2" className="mb-6">
           Engineering Principles
         </TechnicalLabel>
@@ -57,7 +64,7 @@ export default async function AboutPage() {
       </div>
 
       {services.length > 0 ? (
-        <div className="mt-16">
+        <div id="services" tabIndex={-1} className="section-anchor mt-16">
           <TechnicalLabel accent as="h2" className="mb-6">
             Services
           </TechnicalLabel>
@@ -69,7 +76,7 @@ export default async function AboutPage() {
       ) : null}
 
       {skillCategories.length > 0 ? (
-        <div className="mt-16">
+        <div id="skills" tabIndex={-1} className="section-anchor mt-16">
           <TechnicalLabel accent as="h2" className="mb-6">
             Development Systems
           </TechnicalLabel>

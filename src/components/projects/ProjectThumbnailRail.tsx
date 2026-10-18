@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import Image from "next/image";
 import { LayoutGroup, motion } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
@@ -24,6 +24,7 @@ type ProjectThumbnailRailProps = {
  */
 export function ProjectThumbnailRail({ projects, activeIndex, onSelect }: ProjectThumbnailRailProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
+  const railId = useId();
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const railRef = useRef<HTMLDivElement>(null);
   const isFirstRender = useRef(true);
@@ -56,10 +57,10 @@ export function ProjectThumbnailRail({ projects, activeIndex, onSelect }: Projec
   if (projects.length <= 1) return null;
 
   return (
-    <LayoutGroup id="project-thumbnail-rail">
+    <LayoutGroup id={railId}>
       <div
         ref={railRef}
-        role="tablist"
+        role="group"
         aria-label="Select a project"
         className="flex gap-4 overflow-x-auto pb-2 [scrollbar-width:thin] snap-x snap-mandatory"
       >
@@ -72,9 +73,8 @@ export function ProjectThumbnailRail({ projects, activeIndex, onSelect }: Projec
                 itemRefs.current[index] = el;
               }}
               type="button"
-              role="tab"
-              aria-selected={isActive}
-              aria-current={isActive ? "true" : undefined}
+              aria-pressed={isActive}
+              aria-label={`Show ${project.name}`}
               onClick={() => onSelect(index)}
               className="motion-control group relative shrink-0 snap-start pb-3 text-left"
             >
@@ -95,7 +95,7 @@ export function ProjectThumbnailRail({ projects, activeIndex, onSelect }: Projec
                 />
               </span>
               <ProjectNameLabel
-                name={`Project ${project.id}`}
+                name={project.shortName || project.name}
                 active={isActive}
               />
 

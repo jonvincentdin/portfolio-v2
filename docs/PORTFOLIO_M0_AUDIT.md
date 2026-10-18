@@ -4,6 +4,10 @@ Date: 2026-10-18 (Asia/Singapore). Baseline: `7bd3cf5` plus the existing dirty w
 
 **Status: partial; live visual and interaction audit blocked. M1 has not started.**
 
+Historical status above records the M0 handoff. The user subsequently authorized
+M1; see [M1 delivery and verification](PORTFOLIO_M1_NAVIGATION.md). M0's remaining
+browser/database evidence is still open.
+
 This is the new completion sequence M0–M5, not the historical build or Visual
 Experience Upgrade numbering. The entry context and all 15 linked documents were
 reviewed. Historical checkmarks are not evidence that the current UI passes.

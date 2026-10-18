@@ -23,10 +23,9 @@ function jumpDuration(steps: number): number {
 export function ProjectShowroom({ projects, kicker, label }: ProjectShowroomProps) {
   const total = projects.length;
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState<1 | -1>(1);
+  const showroomRef = useRef<HTMLDivElement>(null);
 
   const indexRef = useRef(0);
-  indexRef.current = currentIndex;
 
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -54,7 +53,7 @@ export function ProjectShowroom({ projects, kicker, label }: ProjectShowroomProp
 
   const goToNext = useCallback(() => {
     const next = (indexRef.current + 1) % total;
-    setDirection(1);
+
     setCurrentIndex(next);
     indexRef.current = next;
     slideTo(next);
@@ -63,7 +62,7 @@ export function ProjectShowroom({ projects, kicker, label }: ProjectShowroomProp
 
   const goToPrevious = useCallback(() => {
     const prev = (indexRef.current - 1 + total) % total;
-    setDirection(-1);
+
     setCurrentIndex(prev);
     indexRef.current = prev;
     slideTo(prev);
@@ -75,9 +74,8 @@ export function ProjectShowroom({ projects, kicker, label }: ProjectShowroomProp
       const current = indexRef.current;
       if (targetIndex === current) return;
       const delta = targetIndex - current;
-      const dir: 1 | -1 = delta > 0 ? 1 : -1;
       const steps = Math.abs(delta);
-      setDirection(dir);
+
       setCurrentIndex(targetIndex);
       indexRef.current = targetIndex;
       slideTo(targetIndex, steps === 1 ? SINGLE_MS : jumpDuration(steps));
@@ -118,14 +116,14 @@ export function ProjectShowroom({ projects, kicker, label }: ProjectShowroomProp
     if (delta < -threshold) {
       // Swipe left → next (wraps)
       const next = (indexRef.current + 1) % total;
-      setDirection(1);
+
       setCurrentIndex(next);
       indexRef.current = next;
       slideTo(next);
     } else if (delta > threshold) {
       // Swipe right → previous (wraps)
       const prev = (indexRef.current - 1 + total) % total;
-      setDirection(-1);
+
       setCurrentIndex(prev);
       indexRef.current = prev;
       slideTo(prev);
@@ -136,17 +134,17 @@ export function ProjectShowroom({ projects, kicker, label }: ProjectShowroomProp
 
   // ── Keyboard ────────────────────────────────────────────────────
 
-  useEffect(() => {
-    if (total <= 1) return;
-    function onKeyDown(e: KeyboardEvent) {
-      const t = e.target as HTMLElement | null;
-      if (t?.tagName === "INPUT" || t?.tagName === "TEXTAREA" || t?.isContentEditable) return;
-      if (e.key === "ArrowRight") goToNext();
-      else if (e.key === "ArrowLeft") goToPrevious();
-    }
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [total, goToNext, goToPrevious]);
+  function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (total <= 1 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    const target = event.target as HTMLElement;
+    if (target.closest("input, textarea, select, [contenteditable='true']")) return;
+    if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+    event.preventDefault();
+    // Keep focus visible when the currently focused slide becomes inert.
+    if (trackRef.current?.contains(target)) showroomRef.current?.focus({ preventScroll: true });
+    if (event.key === "ArrowRight") goToNext();
+    else goToPrevious();
+  }
 
   useEffect(() => {
     snapTo(0);
@@ -156,7 +154,7 @@ export function ProjectShowroom({ projects, kicker, label }: ProjectShowroomProp
   // ── Render ──────────────────────────────────────────────────────
 
   return (
-    <div aria-label="Project showroom" className="flex flex-col gap-0">
+    <div ref={showroomRef} role="region" aria-label={label ? `${label} showroom` : "Project showroom"} tabIndex={0} onKeyDown={handleKeyDown} className="flex flex-col gap-0 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4">
       {/* Section heading — same pattern as About / Experience */}
       <SectionHeading
         kicker={kicker ?? "03 / Work"}
@@ -164,6 +162,9 @@ export function ProjectShowroom({ projects, kicker, label }: ProjectShowroomProp
         className="mb-10"
       />
 
+      <p aria-live="polite" aria-atomic="true" className="mb-4 font-technical text-technical-label text-foreground-muted">
+        Project {currentIndex + 1} of {total}: {projects[currentIndex]?.name}
+      </p>
       {/* Overflow-hidden track viewport */}
       <div className="overflow-hidden" style={{ touchAction: "pan-y" }}>
         <div
@@ -178,6 +179,8 @@ export function ProjectShowroom({ projects, kicker, label }: ProjectShowroomProp
           {projects.map((project, index) => (
             <div
               key={project.slug}
+              inert={index !== currentIndex}
+              aria-hidden={index !== currentIndex}
               style={{ width: `${100 / total}%`, flexShrink: 0 }}
               draggable={false}
             >

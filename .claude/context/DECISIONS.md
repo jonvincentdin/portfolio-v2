@@ -3,6 +3,19 @@
 Record of architectural/design decisions, each with the reasoning behind it.
 Newest entries at the top.
 
+## D-042 — Completion M1 uses document navigation and existing CMS content
+
+Page headings belong to routes, while CMS-selected layouts render subordinate
+headings. Section links derive from the sections actually rendered, use native
+fragments, and target focusable content with header/rail clearance. Case-study
+prose renders immediately so direct navigation does not depend on reveal timing.
+The section rail tracks scroll without changing document scroll position.
+Showroom slides retain their track presentation but inactive slides are inert;
+arrow input is scoped to the focused showroom. This addresses M0's concrete
+navigation findings without introducing a second content source or replacing
+the automotive/CMS/editor system. Owner access through the name remains intact.
+M1 source/HTTP/build checks passed; browser acceptance is still outstanding.
+
 ## D-040 — PostgreSQL is the runtime CMS source of truth
 The editor persists one Zod-validated snapshot into normalized PostgreSQL
 records through Prisma. Project and profile uploads are stored as database

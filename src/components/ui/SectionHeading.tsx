@@ -9,6 +9,7 @@ type SectionHeadingProps = {
   align?: "left" | "center";
   /** Optional id on the heading element, for aria-labelledby elsewhere. */
   headingId?: string;
+  as?: "h1" | "h2";
 };
 
 /**
@@ -21,6 +22,7 @@ export function SectionHeading({
   className,
   align = "left",
   headingId,
+  as: Heading = "h2",
 }: SectionHeadingProps) {
   return (
     <div className={cn(align === "center" && "text-center", className)}>
@@ -29,12 +31,12 @@ export function SectionHeading({
           {kicker}
         </TechnicalLabel>
       ) : null}
-      <h2
+      <Heading
         id={headingId}
         className="font-heading text-heading-lg text-foreground-primary uppercase tracking-tight break-words sm:text-display-lg"
       >
         {title}
-      </h2>
+      </Heading>
     </div>
   );
 }

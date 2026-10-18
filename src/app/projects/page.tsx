@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ArrowLink } from "@/components/ui/ArrowLink";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ProjectSectionRenderer } from "@/components/projects/ProjectSectionRenderer";
@@ -29,23 +30,27 @@ export default async function ProjectsPage() {
   ]);
 
   const sections = (siteExperience.projectSections ?? DEFAULT_PROJECT_SECTIONS).filter(
-    (section) => section.visible !== false,
+    (section) => section.visible !== false && (!section.projectSlugs?.length || projects.some((project) => section.projectSlugs?.includes(project.slug))),
   );
 
-  if (projects.length === 0) {
+  if (projects.length === 0 || sections.length === 0) {
     return (
       <Container className="min-h-[60vh] py-24">
-        <SectionHeading kicker="03 / Projects" title="Projects" />
+        <SectionHeading as="h1" kicker="03 / Projects" title="Projects" />
         <p className="mt-6 max-w-xl font-body text-body-md text-foreground-muted">
-          No projects have been added yet. Add a folder under
-          content/projects/ to populate this section.
+          Project details are being prepared. Get in touch to discuss my work.
         </p>
+        <ArrowLink href="/contact" className="mt-6">Contact me</ArrowLink>
       </Container>
     );
   }
 
   return (
-    <div className="divide-y divide-border">
+    <div>
+      <Container className="pt-16 sm:pt-24">
+        <SectionHeading as="h1" kicker="03 / Work" title="Projects" />
+        <p className="mt-4 max-w-2xl text-foreground-muted">Explore each build, then open its case study for the story, specifications, and results.</p>
+      </Container>
       {sections.map((section) => (
         <Container
           key={section.id}

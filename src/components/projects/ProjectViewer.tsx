@@ -69,9 +69,9 @@ export function ProjectViewer({ project, index }: ProjectViewerProps) {
   return (
     <div className="select-none lg:grid lg:grid-cols-[340px_minmax(0,1fr)] lg:items-start lg:gap-x-10">
       <div className="order-2 mt-6 lg:order-1 lg:mt-0">
-        <h1 className="font-heading text-heading-lg uppercase tracking-tight break-words">
+        <h3 className="font-heading text-heading-lg uppercase tracking-tight break-words">
           {project.name}
-        </h1>
+        </h3>
         <p className="mt-1 font-body text-body-md text-foreground-muted">{project.tagline}</p>
 
         <div className="mt-6 max-w-xl">

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { SectionNavigation } from "@/components/layout/SectionNavigation";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { TechnicalLabel } from "@/components/ui/TechnicalLabel";
 import { AngularPanel } from "@/components/ui/AngularPanel";
 import { ArrowLink } from "@/components/ui/ArrowLink";
-import { Reveal } from "@/components/motion/Reveal";
 import { ImageMask } from "@/components/motion/ImageMask";
 import { CaseStudySection } from "@/components/projects/CaseStudySection";
 import { ProjectFeature } from "@/components/projects/ProjectFeature";
@@ -64,23 +65,35 @@ export default async function ProjectCaseStudyPage({ params }: PageProps) {
   }
 
   const { caseStudy } = project;
-  const caseStudySections: { label: string; content: string }[] = [
-    { label: "Overview", content: caseStudy.overview },
-    { label: "The Problem", content: caseStudy.problem },
-    { label: "The Objective", content: caseStudy.objective },
-    { label: "The Solution", content: caseStudy.solution },
+  const caseStudySections: { id: string; label: string; content: string }[] = [
+    { id: "overview", label: "Overview", content: caseStudy.overview },
+    { id: "problem", label: "The Problem", content: caseStudy.problem },
+    { id: "objective", label: "The Objective", content: caseStudy.objective },
+    { id: "solution", label: "The Solution", content: caseStudy.solution },
   ].filter((section) => section.content.trim().length > 0);
 
-  const closingSections: { label: string; content: string }[] = [
-    { label: "Challenges", content: caseStudy.challenges },
-    { label: "Results", content: caseStudy.results },
-    { label: "Lessons", content: caseStudy.lessons },
+  const closingSections: { id: string; label: string; content: string }[] = [
+    { id: "challenges", label: "Challenges", content: caseStudy.challenges },
+    { id: "results", label: "Results", content: caseStudy.results },
+    { id: "lessons", label: "Lessons", content: caseStudy.lessons },
   ].filter((section) => section.content.trim().length > 0);
 
   const hasLinks = project.links.live !== "" || project.links.github !== "" || project.links.additional.length > 0;
 
+  const sectionLinks = [
+    ...caseStudySections.map(({ id, label }) => ({ id, label })),
+    { id: "specifications", label: "Specifications" },
+    ...(project.features.length ? [{ id: "features", label: "Features" }] : []),
+    ...closingSections.map(({ id, label }) => ({ id, label })),
+    ...(project.media.gallery.length ? [{ id: "screenshots", label: "Screenshots" }] : []),
+    ...(project.downloadable ? [{ id: "files", label: "Files" }] : []),
+  ];
+
   return (
     <Container className="py-16 sm:py-24">
+      <Link href="/projects" className="motion-control mb-8 inline-flex min-h-11 items-center font-technical text-technical-label uppercase tracking-[0.1em] text-foreground-muted hover:text-accent">
+        Back to projects
+      </Link>
       <TechnicalLabel accent as="div">
         Project {project.id}
       </TechnicalLabel>
@@ -110,6 +123,35 @@ export default async function ProjectCaseStudyPage({ params }: PageProps) {
         </div>
       </dl>
 
+      {hasLinks ? (
+        <div className="mt-8">
+          <div>
+            <TechnicalLabel accent as="div" className="mb-6">
+              Links
+            </TechnicalLabel>
+            <div className="flex flex-wrap gap-6">
+              {project.links.live !== "" ? (
+                <ArrowLink href={project.links.live} variant="primary" external>
+                  View Live
+                </ArrowLink>
+              ) : null}
+              {project.links.github !== "" ? (
+                <ArrowLink href={project.links.github} variant="secondary" external>
+                  Source Code
+                </ArrowLink>
+              ) : null}
+              {project.links.additional.map((link) => (
+                <ArrowLink key={link.url} href={link.url} variant="secondary" external>
+                  {link.label}
+                </ArrowLink>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      <SectionNavigation sections={sectionLinks} />
+
       <AngularPanel className="relative mt-12 aspect-[16/9] overflow-hidden">
         <ImageMask className="absolute inset-0">
           <Image
@@ -125,15 +167,15 @@ export default async function ProjectCaseStudyPage({ params }: PageProps) {
 
       <div className="mt-16 flex flex-col gap-16">
         {caseStudySections.map((section) => (
-          <CaseStudySection key={section.label} label={section.label} content={section.content} />
+          <CaseStudySection key={section.id} id={section.id} label={section.label} content={section.content} />
         ))}
 
-        <Reveal>
-          <ProjectSpecs project={project} />
-        </Reveal>
+        <section id="specifications" tabIndex={-1} className="section-anchor">
+          <ProjectSpecs project={project} headingAs="h2" />
+        </section>
 
         {project.features.length > 0 ? (
-          <div>
+          <section id="features" tabIndex={-1} className="section-anchor">
             <TechnicalLabel accent as="h2" className="mb-8">
               Features
             </TechnicalLabel>
@@ -142,49 +184,24 @@ export default async function ProjectCaseStudyPage({ params }: PageProps) {
                 <ProjectFeature key={feature.title} feature={feature} index={index} project={project} />
               ))}
             </div>
-          </div>
+          </section>
         ) : null}
 
         {closingSections.map((section) => (
-          <CaseStudySection key={section.label} label={section.label} content={section.content} />
+          <CaseStudySection key={section.id} id={section.id} label={section.label} content={section.content} />
         ))}
 
         {project.media.gallery.length > 0 ? (
-          <Reveal>
+          <section id="screenshots" tabIndex={-1} className="section-anchor">
             <ProjectGallery project={project} />
-          </Reveal>
+          </section>
         ) : null}
 
-        {hasLinks ? (
-          <Reveal>
-            <div>
-              <TechnicalLabel accent as="div" className="mb-6">
-                Links
-              </TechnicalLabel>
-              <div className="flex flex-wrap gap-6">
-                {project.links.live !== "" ? (
-                  <ArrowLink href={project.links.live} variant="primary" external>
-                    View Live
-                  </ArrowLink>
-                ) : null}
-                {project.links.github !== "" ? (
-                  <ArrowLink href={project.links.github} variant="secondary" external>
-                    Source Code
-                  </ArrowLink>
-                ) : null}
-                {project.links.additional.map((link) => (
-                  <ArrowLink key={link.url} href={link.url} variant="secondary" external>
-                    {link.label}
-                  </ArrowLink>
-                ))}
-              </div>
-            </div>
-          </Reveal>
+        {project.downloadable ? (
+          <section id="files" tabIndex={-1} className="section-anchor">
+            <ProjectFiles project={project} />
+          </section>
         ) : null}
-
-        <Reveal>
-          <ProjectFiles project={project} />
-        </Reveal>
       </div>
     </Container>
   );
