@@ -1,5 +1,19 @@
 # PROGRESS.md
 
+## Runnable preview fix (2026-10-19)
+
+Explicit PORTFOLIO_CONTENT_SOURCE=seed bypasses configured database reads across
+content, project media and profile loaders. Enabled in this checkout's ignored
+.env.local; DATABASE_URL remains intact. This is read-only checked-in content,
+not recovery of database-only edits. CMS saves/uploads remain blocked; editor
+shows a preview notice and contact submissions return 503 in seed mode. Remove
+the setting and restart after restoring provider quota to resume database use.
+
+Verified the existing dev server on port 3001: Home, Projects, Memora case study,
+About, Experience, Contact and seed hero image returned 200 without quota errors.
+TypeScript and scoped ESLint passed. This interruption does not start M4.
+
+
 ## Portfolio completion - M3 (2026-10-19)
 
 **Implementation delivered; visual acceptance pending.** Explicitly authorized M3.

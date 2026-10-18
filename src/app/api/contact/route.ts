@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { ContactFormSchema } from "@/lib/schemas/contact";
-import { databaseConfigured, db } from "@/lib/db";
+import { databaseConfigured, db, seedContentMode } from "@/lib/db";
 
 export const runtime = "nodejs";
 
@@ -16,6 +16,7 @@ export const runtime = "nodejs";
  * before the database is provisioned.
  */
 export async function POST(request: Request) {
+  if (seedContentMode) return NextResponse.json({ ok: false, error: "This is a read-only portfolio preview. Contact submissions are unavailable until database access is restored." }, { status: 503 });
   let body: unknown;
 
   try {

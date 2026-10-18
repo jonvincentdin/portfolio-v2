@@ -12,7 +12,7 @@ import { SiteIdentitySchema, EditorSnapshotSchema, DEFAULT_SITE_EXPERIENCE, type
 import { SITE_IDENTITY } from "@/lib/site";
 import { SOCIAL_LINKS } from "@/lib/social";
 import { ContentFileError } from "./fs-utils";
-import { databaseConfigured } from "@/lib/db";
+import { databaseConfigured, seedContentMode } from "@/lib/db";
 import { db } from "@/lib/db";
 import { getDatabaseSnapshot, saveDatabaseSnapshot } from "./database";
 
@@ -97,6 +97,7 @@ async function assertProjectReferences(snapshot: EditorSnapshot) {
 }
 
 export async function saveEditorSnapshot(input: unknown): Promise<EditorSnapshot> {
+  if (seedContentMode) throw new DatabaseNotConfiguredError("Seed preview is read-only. Remove PORTFOLIO_CONTENT_SOURCE=seed and restore database access before saving.");
   const parsed = EditorSnapshotSchema.safeParse(input);
   if (!parsed.success) throw parsed.error;
   await assertProjectReferences(parsed.data);

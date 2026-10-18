@@ -53,3 +53,13 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Run while the database is unavailable
+
+Add `PORTFOLIO_CONTENT_SOURCE=seed` to `.env.local`, then run `npm run dev`.
+This explicitly uses checked-in seed content and media even when `DATABASE_URL`
+is configured. It does not contain later database-only edits or uploads, and CMS
+saves/uploads are unavailable. No saved database content is changed.
+
+Remove that setting and restart after restoring database access to use the CMS
+again. A database quota error must be resolved with the database provider; this
+mode provides a runnable read-only portfolio preview, not additional quota.

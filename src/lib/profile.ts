@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { databaseConfigured, db } from "@/lib/db";
 import { ContentFileError } from "@/lib/content/fs-utils";
 
 const MAX_BYTES = 5 * 1024 * 1024;
@@ -30,12 +30,13 @@ function identify(buffer: Buffer, name: string, mime: string): ProfileImage["for
 }
 
 export async function getProfileImage(): Promise<ProfileImage | null> {
-  if (!process.env.DATABASE_URL?.trim()) return null;
+  if (!databaseConfigured) return null;
   const row = await db.profileImage.findUnique({ where: { id: "default" } });
   return row ? { url: "/profile-media", width: row.width, height: row.height, format: row.format as ProfileImage["format"] } : null;
 }
 
 export async function saveProfileImage(file: File): Promise<ProfileImage> {
+  if (!databaseConfigured) throw new ContentFileError("Database access is required to upload a profile image.");
   if (!file || file.size === 0 || file.size > MAX_BYTES) throw new ContentFileError("Profile image must be between 1 byte and 5 MB.");
   const buffer = Buffer.from(await file.arrayBuffer());
   const format = identify(buffer, file.name, file.type);
@@ -47,7 +48,7 @@ export async function saveProfileImage(file: File): Promise<ProfileImage> {
 }
 
 export async function getProfileFile() {
-  if (!process.env.DATABASE_URL?.trim()) return null;
+  if (!databaseConfigured) return null;
   const row = await db.profileImage.findUnique({ where: { id: "default" } });
   return row ? { profile: { url: "/profile-media", width: row.width, height: row.height, format: row.format as ProfileImage["format"] }, data: row.data } : null;
 }
